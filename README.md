@@ -19,19 +19,19 @@ npm run build
 
 ## Was noch von dir eingerichtet werden muss
 
-### 1. Firebase-Projekt
-Neues Firebase-Projekt anlegen, dann in **zwei Dateien** die echten Config-Werte eintragen:
+### 1. Firebase-Projekt ✅ Config eingetragen
+Projekt `daredrop-fe5b8` ist verbunden, die echten Werte stehen bereits in:
 - `src/lib/firebase.js`
-- `public/firebase-messaging-sw.js` (Service Worker hat keinen Zugriff auf die App-Config, deshalb doppelt)
+- `public/firebase-messaging-sw.js`
 
-Firestore und Storage in der Console aktivieren.
+**Noch zu prüfen:** Sind in der Firebase Console für dieses Projekt **Firestore Database** und **Storage** bereits aktiviert? Falls nicht: linkes Menü → "Firestore Database" → Datenbank erstellen (Modus "Produktion" reicht), und → "Storage" → Erste Schritte. Ohne diese zwei aktivierten Dienste schlägt das Erstellen einer Lobby bzw. der Video-Upload mit einem Fehler fehl.
 
-### 2. Push-Notifications (Firebase Cloud Messaging)
-1. Firebase Console → Project Settings → Cloud Messaging → Web Push Zertifikat generieren (VAPID Key)
-2. VAPID Key in `src/lib/firebase.js` eintragen
+### 2. Push-Notifications (Firebase Cloud Messaging) – VAPID Key fehlt noch
+1. Firebase Console → Project Settings → Cloud Messaging → Web Push Zertifikat generieren
+2. Den generierten Key in `src/lib/firebase.js` eintragen, ersetzt `'DEIN_VAPID_KEY'` (Zeile mit `vapidKey:`)
 3. Domain in Vercel deployen (Push braucht HTTPS, localhost funktioniert nur eingeschränkt)
 
-**Wichtige Einschränkung, die das Grundkonzept betrifft:** Web Push funktioniert auf iOS erst ab iOS 16.4 und **nur**, wenn die App über "Zum Home-Bildschirm hinzufügen" als PWA installiert wurde – nicht im normalen Safari-Tab. Das heißt: Spieler, die DareDrop nur im Browser öffnen, bekommen auf iPhones **keine** Push-Benachrichtigungen, egal wie gut FCM eingerichtet ist. Für das im Brief beschriebene Verhalten ("Random rounds start automatically through push notifications" während Leute auf Festivals/in Bars sind) sollte die App deshalb zusätzlich einen In-App-Fallback haben (Firestore-Listener, der neue Runden erkennt, solange die App offen oder im Hintergrund-Tab ist). Das bauen wir in den nächsten Schritten mit ein.
+**Wichtige Einschränkung, die das Grundkonzept betrifft:** Web Push funktioniert auf iOS erst ab iOS 16.4 und **nur**, wenn die App über "Zum Home-Bildschirm hinzufügen" als PWA installiert wurde – nicht im normalen Safari-Tab. Das heißt: Spieler, die DareDrop nur im Browser öffnen, bekommen auf iPhones **keine** Push-Benachrichtigungen, egal wie gut FCM eingerichtet ist. Für das im Brief beschriebene Verhalten ("Random rounds start automatically through push notifications" während Leute auf Festivals/in Bars sind) sollte die App deshalb zusätzlich einen In-App-Fallback haben (Firestore-Listener, der neue Runden erkennt, solange die App offen oder im Hintergrund-Tab ist).
 
 Android unterstützt Web Push zuverlässiger, auch ohne Installation als PWA.
 
@@ -39,7 +39,7 @@ Android unterstützt Web Push zuverlässiger, auch ohne Installation als PWA.
 `public/icons/icon-192.png`, `icon-512.png`, `icon-maskable-512.png` sowie `public/apple-touch-icon.png` und `public/favicon.svg` fehlen noch – aktuell nur als Pfade im Manifest referenziert. Sag Bescheid, wenn ich dafür ein Icon-Design entwerfen soll.
 
 ### 4. Deployment
-Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden, Firebase-Env-Werte als Vercel Environment Variables hinterlegen (nicht hart im Code, sobald öffentlich).
+Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden. Da die Firebase-Werte jetzt direkt im Code stehen (kein Secret, Firebase-Web-Config ist client-seitig sowieso öffentlich sichtbar), ist das unproblematisch – nur den VAPID Key würde ich genauso handhaben, der ist ebenfalls clientseitig öffentlich.
 
 ## Aktueller Stand
 
@@ -86,7 +86,7 @@ sessions/{sessionCode}
   players: [{ id, name, characterId, drink, isHost, joinedAt }]
 ```
 
-Sessions brauchen aktuell **keine** Firestore-Security-Rules-Einschränkung testweise (offener Zugriff), das sollte vor einem öffentlichen Launch noch auf Regeln umgestellt werden (z. B. nur Felder ändern, kein beliebiges Löschen). Sag Bescheid, wenn ich dafür Security Rules entwerfen soll.
+Sessions brauchen aktuell **keine** Firestore-Security-Rules-Einschränkung testweise (offener Zugriff), das sollte vor einem öffentlichen Launch noch auf Regeln umgestellt werden (z. B. nur Felder ändern, kein beliebiges Löschen). Ein erster Vorschlag liegt bereits als `firestore.rules` im Projekt – einfach in der Firebase Console unter Firestore Database → Regeln einfügen.
 
 ## Design-System
 

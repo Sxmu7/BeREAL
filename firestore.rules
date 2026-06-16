@@ -1,0 +1,33 @@
+// Firestore Security Rules für DareDrop
+//
+// Einfügen unter: Firebase Console → Firestore Database → Regeln,
+// dann "Veröffentlichen". Ersetzt die Standard-Regeln (die im
+// Testmodus meist alles erlauben oder nach 30 Tagen alles blockieren).
+//
+// Was diese Regeln erlauben:
+// - Jeder kann eine Session lesen (nötig, um per Code beizutreten)
+// - Jeder kann eine neue Session anlegen
+// - Updates sind erlaubt (Lobby/Rounds ändern sich ständig durch alle
+//   Spieler), aber das Dokument darf nicht komplett gelöscht werden
+//   außer von niemandem über die Client-SDK (deleteSession() im Code
+//   wird dadurch blockiert – das ist bewusst so, Löschen sollte über
+//   eine Cloud Function mit Admin-Rechten laufen, nicht clientseitig)
+//
+// Das ist ein vernünftiger Mittelweg für den aktuellen Entwicklungsstand,
+// kein vollständiges Auth-System. Für einen echten Public-Launch würde
+// ich empfehlen, zusätzlich Firebase Anonymous Auth einzuführen und
+// Schreibzugriff an die eigene Spieler-ID zu binden.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /sessions/{sessionCode} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if false;
+    }
+  }
+}

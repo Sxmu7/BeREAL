@@ -3,18 +3,17 @@ import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { getMessaging, getToken, isSupported } from 'firebase/messaging'
 
-// WICHTIG: Diese Werte aus der Firebase Console eintragen
-// (Projekteinstellungen → Allgemein → "Meine Apps" → Web-App).
-// Achtung: Die Standard-Config aus der Console lässt oft das Feld
-// `databaseURL` weg – falls Realtime Database genutzt wird (wie bei
-// Anlegen/THE Cards), dieses Feld manuell ergänzen.
+// DareDrop – eigenes Firebase-Projekt (daredrop-fe5b8), getrennt von
+// Anlegen/THE Cards. Kein databaseURL nötig, da DareDrop Firestore
+// statt Realtime Database nutzt.
 const firebaseConfig = {
-  apiKey: 'DEIN_API_KEY',
-  authDomain: 'DEIN_PROJECT.firebaseapp.com',
-  projectId: 'DEIN_PROJECT',
-  storageBucket: 'DEIN_PROJECT.appspot.com',
-  messagingSenderId: 'DEINE_SENDER_ID',
-  appId: 'DEINE_APP_ID'
+  apiKey: 'AIzaSyBMUIbRNPw66r-TtQEThION_EM1SdKK9K0',
+  authDomain: 'daredrop-fe5b8.firebaseapp.com',
+  projectId: 'daredrop-fe5b8',
+  storageBucket: 'daredrop-fe5b8.firebasestorage.app',
+  messagingSenderId: '74200708681',
+  appId: '1:74200708681:web:43cf7dcde916f3121ef198',
+  measurementId: 'G-GFMCRQL16G'
 }
 
 export const app = initializeApp(firebaseConfig)
@@ -31,8 +30,9 @@ export const storage = getStorage(app)
  *
  * Voraussetzung in der Firebase Console:
  * 1. Cloud Messaging aktivieren, Web-Push-Zertifikat (VAPID Key) generieren
- * 2. VAPID Key unten eintragen
+ * 2. VAPID Key unten eintragen (noch TODO, siehe Platzhalter)
  * 3. /public/firebase-messaging-sw.js mit der echten firebaseConfig befüllen
+ *    (bereits eingetragen)
  */
 export async function requestPushPermission() {
   const supported = await isSupported().catch(() => false)
@@ -44,7 +44,7 @@ export async function requestPushPermission() {
   try {
     const messaging = getMessaging(app)
     const token = await getToken(messaging, {
-      vapidKey: 'DEIN_VAPID_KEY'
+      vapidKey: 'DEIN_VAPID_KEY' // TODO: aus Firebase Console → Cloud Messaging → Web Push certificates
     })
     return token || null
   } catch (err) {

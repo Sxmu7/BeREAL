@@ -9,12 +9,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js')
 
 firebase.initializeApp({
-  apiKey: 'DEIN_API_KEY',
-  authDomain: 'DEIN_PROJECT.firebaseapp.com',
-  projectId: 'DEIN_PROJECT',
-  storageBucket: 'DEIN_PROJECT.appspot.com',
-  messagingSenderId: 'DEINE_SENDER_ID',
-  appId: 'DEINE_APP_ID'
+  apiKey: 'AIzaSyBMUIbRNPw66r-TtQEThION_EM1SdKK9K0',
+  authDomain: 'daredrop-fe5b8.firebaseapp.com',
+  projectId: 'daredrop-fe5b8',
+  storageBucket: 'daredrop-fe5b8.firebasestorage.app',
+  messagingSenderId: '74200708681',
+  appId: '1:74200708681:web:43cf7dcde916f3121ef198'
 })
 
 const messaging = firebase.messaging()
