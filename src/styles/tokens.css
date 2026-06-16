@@ -1,0 +1,92 @@
+/* ============================================================
+   DareDrop – Design Tokens
+   Dunkles Nachtclub-Blauschwarz statt reinem Schwarz.
+   Magenta = Action/Dare. Cyan = Erfolg/Yes. Amber = Warnung/Punishment.
+   ============================================================ */
+
+:root {
+  /* --- Farben --- */
+  --color-bg: #0a0a14;
+  --color-bg-elevated: #11111f;
+  --color-surface-glass: rgba(255, 255, 255, 0.06);
+  --color-surface-glass-strong: rgba(255, 255, 255, 0.1);
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+  --color-border-glass-strong: rgba(255, 255, 255, 0.22);
+
+  --color-text-primary: #f5f4fb;
+  --color-text-secondary: rgba(245, 244, 251, 0.64);
+  --color-text-tertiary: rgba(245, 244, 251, 0.4);
+
+  --color-dare: #ff2d7a;
+  --color-dare-dim: rgba(255, 45, 122, 0.16);
+  --color-dare-glow: rgba(255, 45, 122, 0.45);
+
+  --color-success: #00e5c7;
+  --color-success-dim: rgba(0, 229, 199, 0.16);
+  --color-success-glow: rgba(0, 229, 199, 0.45);
+
+  --color-warning: #ffb020;
+  --color-warning-dim: rgba(255, 176, 32, 0.16);
+
+  --color-danger: #ff4d4d;
+
+  /* Gradient für Hero/Wheel-Bühne – kein Standard-Violett */
+  --gradient-stage: radial-gradient(
+    circle at 50% 35%,
+    rgba(255, 45, 122, 0.25) 0%,
+    rgba(10, 10, 20, 0) 60%
+  );
+
+  /* --- Typografie --- */
+  --font-display: 'Archivo Black', 'Helvetica Neue', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Mono', 'SF Mono', monospace;
+
+  --fs-hero: clamp(2.75rem, 12vw, 4.5rem);
+  --fs-display: clamp(2rem, 8vw, 3rem);
+  --fs-title: 1.5rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-caption: 0.75rem;
+
+  /* --- Spacing (8pt-Raster) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* --- Radius --- */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-full: 999px;
+
+  /* --- Schatten / Glow --- */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-dare-glow: 0 0 40px var(--color-dare-glow);
+  --shadow-success-glow: 0 0 40px var(--color-success-glow);
+
+  /* --- Motion --- */
+  --ease-out-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 160ms;
+  --duration-base: 280ms;
+  --duration-slow: 480ms;
+
+  /* --- Safe Areas (iOS Notch/Home-Indicator) --- */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

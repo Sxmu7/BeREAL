@@ -1,0 +1,137 @@
+@import './tokens.css';
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--color-dare);
+  color: white;
+}
+
+/* ---- Wiederverwendbare Glass-Oberfläche ---- */
+.glass {
+  background: var(--color-surface-glass);
+  border: 1px solid var(--color-border-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-md);
+}
+
+.glass-strong {
+  background: var(--color-surface-glass-strong);
+  border: 1px solid var(--color-border-glass-strong);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ---- Primärer Button: Dare-Magenta ---- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 18px var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--color-dare);
+  color: white;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-dare-glow);
+  transition: transform var(--duration-fast) var(--ease-out-snap),
+    box-shadow var(--duration-fast) var(--ease-out-snap);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 24px var(--color-dare-glow);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 18px var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-glass);
+  border: 1px solid var(--color-border-glass-strong);
+  color: var(--color-text-primary);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  transition: transform var(--duration-fast) var(--ease-out-snap),
+    background var(--duration-fast) var(--ease-out-snap);
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+  background: var(--color-surface-glass-strong);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---- Eyebrow/Label-Stil ---- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* Sichtbarer Fokusring für Tastatur-Nutzung */
+:focus-visible {
+  outline: 2px solid var(--color-success);
+  outline-offset: 3px;
+}

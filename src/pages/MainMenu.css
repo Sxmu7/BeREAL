@@ -1,0 +1,110 @@
+.main-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + var(--space-5)) var(--space-5)
+    calc(var(--safe-bottom) + var(--space-6));
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.main-menu__header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main-menu__player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+}
+
+.main-menu__player-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-glass-strong);
+}
+
+.main-menu__player-name {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: 700;
+}
+
+.main-menu__player-char {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+}
+
+.main-menu__title-wrap {
+  margin: var(--space-6) 0 var(--space-5);
+}
+
+.main-menu__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  margin: 0;
+}
+
+.main-menu__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--card-accent);
+}
+
+.menu-card__icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.menu-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.menu-card__title {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+}
+
+.menu-card__subtitle {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
+.menu-card__arrow {
+  font-size: 1.125rem;
+  color: var(--color-text-tertiary);
+}

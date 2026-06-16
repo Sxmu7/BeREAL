@@ -1,0 +1,132 @@
+.landing {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + var(--space-7)) var(--space-5)
+    calc(var(--safe-bottom) + var(--space-6));
+  overflow: hidden;
+}
+
+.landing__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-stage);
+  pointer-events: none;
+}
+
+.landing__content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing__hero {
+  text-align: center;
+}
+
+.landing__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  line-height: 0.95;
+  margin: 0 0 var(--space-3);
+  letter-spacing: -0.01em;
+}
+
+.landing__tagline {
+  font-size: 1.0625rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+.landing__stage-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  margin: var(--space-7) 0;
+}
+
+.preview-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.preview-emoji {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.preview-label {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  margin: 0;
+}
+
+.preview-text {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0 0;
+  line-height: 1.4;
+}
+
+.preview-vote-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.preview-vote-yes,
+.preview-vote-no {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+}
+
+.preview-vote-yes {
+  background: var(--color-success-dim);
+  color: var(--color-success);
+}
+
+.preview-vote-no {
+  background: var(--color-dare-dim);
+  color: var(--color-dare);
+}
+
+.landing__dots {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.landing__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-border-glass-strong);
+  transition: background var(--duration-base) var(--ease-out-snap),
+    transform var(--duration-base) var(--ease-out-snap);
+}
+
+.landing__dot--active {
+  background: var(--color-dare);
+  transform: scale(1.4);
+}
+
+.landing__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
