@@ -1,11 +1,12 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
 import { getMessaging, getToken, isSupported } from 'firebase/messaging'
 
 // DareDrop – eigenes Firebase-Projekt (daredrop-fe5b8), getrennt von
 // Anlegen/THE Cards. Kein databaseURL nötig, da DareDrop Firestore
-// statt Realtime Database nutzt.
+// statt Realtime Database nutzt. Kein Firebase Storage, da Storage
+// in diesem Projekt den Blaze-Plan voraussetzt – Video-Proofs laufen
+// daher als Base64 direkt über Firestore (siehe VideoProofRecorder.jsx).
 const firebaseConfig = {
   apiKey: 'AIzaSyBMUIbRNPw66r-TtQEThION_EM1SdKK9K0',
   authDomain: 'daredrop-fe5b8.firebaseapp.com',
@@ -18,7 +19,6 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
-export const storage = getStorage(app)
 
 /**
  * Fragt Push-Berechtigung an und liefert den FCM-Token zurück.

@@ -10,6 +10,7 @@ import {
   generatePlayerId
 } from '../lib/sessions'
 import { getCharacterById } from '../lib/characters'
+import QrCodeDisplay from '../components/QrCodeDisplay'
 import './LobbyScreen.css'
 
 function getOrCreatePlayerId() {
@@ -28,6 +29,7 @@ export default function LobbyScreen({ player }) {
   const [session, setSession] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [hasAttemptedJoin, setHasAttemptedJoin] = useState(false)
+  const [showQr, setShowQr] = useState(false)
   const playerId = useRef(getOrCreatePlayerId()).current
 
   useEffect(() => {
@@ -116,6 +118,23 @@ export default function LobbyScreen({ player }) {
           <span className="lobby-screen__code-value">{code}</span>
           <span className="lobby-screen__code-hint">Tippen zum Kopieren</span>
         </button>
+
+        <button
+          className="lobby-screen__qr-toggle"
+          onClick={() => setShowQr((v) => !v)}
+        >
+          {showQr ? 'QR-Code ausblenden' : '📷 QR-Code zeigen'}
+        </button>
+
+        {showQr && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <QrCodeDisplay code={code} />
+          </motion.div>
+        )}
       </div>
 
       <div className="lobby-screen__circle">

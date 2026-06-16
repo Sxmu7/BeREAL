@@ -1,0 +1,4 @@
+.qr-code-display {
+  display: inline-flex;
+  padding: var(--space-4);
+}

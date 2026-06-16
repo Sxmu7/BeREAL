@@ -97,6 +97,7 @@
 .menu-card__title {
   font-family: var(--font-display);
   font-size: 1.0625rem;
+  color: var(--color-text-primary);
 }
 
 .menu-card__subtitle {

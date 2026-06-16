@@ -210,12 +210,7 @@ export default function GameScreen({ player }) {
             className="game-screen__phase"
           >
             {isSelected ? (
-              <VideoProofRecorder
-                sessionCode={code}
-                roundNumber={round.roundNumber}
-                playerId={playerId}
-                onUploaded={handleProofUploaded}
-              />
+              <VideoProofRecorder onUploaded={handleProofUploaded} />
             ) : (
               <div className="game-screen__spectator">
                 <span className="game-screen__spectator-icon">🎥</span>

@@ -60,6 +60,13 @@
   color: var(--color-text-tertiary);
 }
 
+.lobby-screen__qr-toggle {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding: var(--space-2) var(--space-3);
+}
+
 .lobby-screen__circle {
   flex: 1;
   display: flex;
@@ -100,6 +107,7 @@
   font-size: var(--fs-caption);
   font-weight: 600;
   text-align: center;
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

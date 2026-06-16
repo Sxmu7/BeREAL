@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
+import QrScanner from '../components/QrScanner'
 import './JoinScreen.css'
 
 export default function JoinScreen() {
@@ -10,9 +11,10 @@ export default function JoinScreen() {
   const [code, setCode] = useState('')
   const [isChecking, setIsChecking] = useState(false)
   const [error, setError] = useState(null)
+  const [showScanner, setShowScanner] = useState(false)
 
-  async function handleJoin() {
-    const trimmed = code.trim().toUpperCase()
+  async function handleJoin(scannedCode) {
+    const trimmed = (scannedCode ?? code).trim().toUpperCase()
     if (trimmed.length < 4) return
 
     setError(null)
@@ -35,6 +37,12 @@ export default function JoinScreen() {
       setError('Verbindung fehlgeschlagen. Prüfe die Firebase-Einrichtung.')
       setIsChecking(false)
     }
+  }
+
+  function handleScanned(scannedCode) {
+    setShowScanner(false)
+    setCode(scannedCode)
+    handleJoin(scannedCode)
   }
 
   return (
@@ -77,8 +85,8 @@ export default function JoinScreen() {
 
         {error && <p className="join-screen__error">{error}</p>}
 
-        <button className="join-screen__qr-hint" disabled>
-          📷 QR-Code scannen (folgt)
+        <button className="join-screen__qr-hint" onClick={() => setShowScanner(true)}>
+          📷 QR-Code scannen
         </button>
       </div>
 
@@ -86,11 +94,15 @@ export default function JoinScreen() {
         <button
           className="btn-primary"
           disabled={code.trim().length < 4 || isChecking}
-          onClick={handleJoin}
+          onClick={() => handleJoin()}
         >
           {isChecking ? 'Suche Session…' : 'Beitreten'}
         </button>
       </div>
+
+      {showScanner && (
+        <QrScanner onScanned={handleScanned} onClose={() => setShowScanner(false)} />
+      )}
     </div>
   )
 }

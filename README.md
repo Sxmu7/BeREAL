@@ -62,9 +62,11 @@ Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden. Da 
 | Party-Recap am Session-Ende | ⏳ offen |
 | Push-Notifications (FCM) | 🔧 vorbereitet, braucht deine Console-Einrichtung |
 
-## Wichtiger Hinweis: Storage-Cleanup für Videos
+## Video-Proof ohne Firebase Storage (kein Blaze-Plan nötig)
 
-Der Brief fordert, dass Beweisvideos nach der Abstimmung automatisch gelöscht werden ("Storage Rules: Videos and photos are TEMPORARY"). Das aktuelle Paket lädt Videos zu Firebase Storage hoch und referenziert die URL in `currentRound.proofUrl`, löscht sie aber noch **nicht** automatisch – das sollte nicht der Client übernehmen (zu unzuverlässig, falls jemand die App vorher schließt), sondern eine **Firebase Cloud Function**, die auf `currentRound.phase === 'result'` reagiert und die Datei unter `proofs/{sessionCode}/...` löscht. Das ist der nächste sinnvolle Schritt, sobald Cloud Functions eingerichtet sind (braucht den Blaze-Tarif von Firebase, da Functions nicht im kostenlosen Spark-Plan laufen).
+Ursprünglich war geplant, Beweisvideos zu Firebase Storage hochzuladen. Storage verlangt bei diesem Projekt aber den kostenpflichtigen Blaze-Plan schon zum Einrichten (auch wenn man am Ende im kostenlosen Kontingent bleibt) – das wolltest du nicht. Stattdessen läuft es jetzt so: Das Video wird mit niedriger Auflösung/Bitrate aufgenommen, als Base64-Text direkt ins Firestore-Round-Dokument geschrieben (`currentRound.proofUrl`), und beim Start der nächsten Runde automatisch wieder auf `null` gesetzt – passend zu "Videos and photos are TEMPORARY" aus dem Brief, nur eben über Firestore statt Storage gelöst.
+
+Wichtige Einschränkung: Firestore erlaubt maximal 1 MB pro Dokument, inklusive aller anderen Felder (Settings, Spielerliste, Votes). Die Aufnahme ist deshalb bewusst auf niedrige Auflösung, kurze Länge (max. 12s) und niedrige Bitrate begrenzt; das Video sieht entsprechend nicht "premium" aus, sondern eher wie eine grobe Webcam-Aufnahme. Falls später doch auf bessere Qualität gewechselt werden soll, braucht es entweder den Blaze-Plan für Storage, oder einen alternativen kostenlosen Dateispeicher (z.B. Cloudinary, das ein kostenloses Kontingent ganz ohne Kreditkarte anbietet).
 
 ## Wie der Round-Flow synchronisiert ist
 
@@ -73,6 +75,12 @@ Alle Geräte abonnieren das gleiche Firestore-Dokument (`sessions/{code}`). Der 
 ## Design-Update
 
 Die erste Fassung war zu bunt (Magenta/Cyan/Amber gleichzeitig im Bild, je Charakter eine eigene Farbe). Überarbeitet auf ein minimalistisches System: ein gedämpfter Akzent (`--color-dare`, dunkles Rot-Magenta) statt mehrerer lauter Farben, Glow-Effekte stark zurückgenommen, Charaktere und Menü-Karten jetzt einheitlich neutral. Die Typografie (Archivo Black für Display, Inter für Body, Space Mono für Zahlen/Codes) wurde beibehalten.
+
+**Bugfix:** Buttons und Inputs hatten in manchen Browsern eine dunkle Default-Textfarbe statt die helle App-Textfarbe zu erben (sichtbar z.B. bei "Host Game" / "Join Game" / "Rules" im Hauptmenü, oder Spielernamen in Lobby/Charakterauswahl). Behoben durch explizites `color: inherit` auf `button`/`input` global, plus explizite Farbangaben an den betroffenen Stellen.
+
+## QR-Code für Lobby-Beitritt
+
+Lobby zeigt jetzt optional einen QR-Code (Button "📷 QR-Code zeigen" neben dem Lobby-Code). Bewusst wird **nur der reine 5-stellige Code** im QR kodiert, keine vollständige URL – sonst würde jede beliebige Kamera-App beim Scannen die Vercel-Domain offenlegen. Im Join-Screen kann man über "📷 QR-Code scannen" die eigene Kamera nutzen; die App erkennt automatisch, sobald ein gültiger Code im Bild ist, und tritt direkt bei. Beide Komponenten (`QrCodeDisplay`, `QrScanner`) laufen rein clientseitig, ohne externen QR-Dienst.
 
 ## Firestore-Struktur (Lobby/Session)
 
