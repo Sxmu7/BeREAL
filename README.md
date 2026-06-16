@@ -50,11 +50,43 @@ Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden, Fir
 | Charakter-Auswahl (8 Charaktere) | ✅ fertig |
 | Main Menu | ✅ fertig |
 | Rules-Screen | ✅ fertig (Platzhaltertext, gerne anpassen) |
-| Host-Flow / Lobby | ⏳ nächster Schritt |
-| Wheel / Gameplay / Voting | ⏳ offen |
-| Firebase Firestore Struktur | ⏳ offen |
-| Video-Proof-Upload | ⏳ offen |
+| Host-Setup (alle Settings aus dem Brief) | ✅ fertig |
+| Join-Screen (Code-Eingabe) | ✅ fertig, QR-Scan folgt |
+| Lobby (Live-Sync, Kreis-Layout, Host-Steuerung) | ✅ fertig |
+| Wheel-Spin (synchronisierte Animation) | ✅ fertig |
+| Challenge-Screen (Annehmen/Strafe, Timer) | ✅ fertig |
+| Video-Proof-Aufnahme & Upload | ✅ fertig |
+| Spectator-Mode | ✅ fertig |
+| Voting & Mehrheitsentscheid | ✅ fertig |
+| Battle Rounds (alle bekommen gleiche Challenge) | ⏳ offen |
+| Party-Recap am Session-Ende | ⏳ offen |
 | Push-Notifications (FCM) | 🔧 vorbereitet, braucht deine Console-Einrichtung |
+
+## Wichtiger Hinweis: Storage-Cleanup für Videos
+
+Der Brief fordert, dass Beweisvideos nach der Abstimmung automatisch gelöscht werden ("Storage Rules: Videos and photos are TEMPORARY"). Das aktuelle Paket lädt Videos zu Firebase Storage hoch und referenziert die URL in `currentRound.proofUrl`, löscht sie aber noch **nicht** automatisch – das sollte nicht der Client übernehmen (zu unzuverlässig, falls jemand die App vorher schließt), sondern eine **Firebase Cloud Function**, die auf `currentRound.phase === 'result'` reagiert und die Datei unter `proofs/{sessionCode}/...` löscht. Das ist der nächste sinnvolle Schritt, sobald Cloud Functions eingerichtet sind (braucht den Blaze-Tarif von Firebase, da Functions nicht im kostenlosen Spark-Plan laufen).
+
+## Wie der Round-Flow synchronisiert ist
+
+Alle Geräte abonnieren das gleiche Firestore-Dokument (`sessions/{code}`). Der Host startet neue Runden und treibt den Übergang vom Wheel zur Challenge-Phase an; danach reagiert jedes Gerät eigenständig auf Phasenwechsel im Dokument. Die Abstimmung wird von jedem Client geprüft (nicht nur vom Host), damit die Auswertung auch dann passiert, wenn der Host selbst mitstimmt und zufällig zuletzt an der Reihe ist.
+
+## Design-Update
+
+Die erste Fassung war zu bunt (Magenta/Cyan/Amber gleichzeitig im Bild, je Charakter eine eigene Farbe). Überarbeitet auf ein minimalistisches System: ein gedämpfter Akzent (`--color-dare`, dunkles Rot-Magenta) statt mehrerer lauter Farben, Glow-Effekte stark zurückgenommen, Charaktere und Menü-Karten jetzt einheitlich neutral. Die Typografie (Archivo Black für Display, Inter für Body, Space Mono für Zahlen/Codes) wurde beibehalten.
+
+## Firestore-Struktur (Lobby/Session)
+
+```
+sessions/{sessionCode}
+  hostId: string
+  sessionName: string
+  status: 'lobby' | 'active' | 'ended'
+  settings: { gameMode, challengeFrequency, customIntervalMin/Max,
+              challengeTimer, difficulty, battleRoundEvery, punishmentLevel }
+  players: [{ id, name, characterId, drink, isHost, joinedAt }]
+```
+
+Sessions brauchen aktuell **keine** Firestore-Security-Rules-Einschränkung testweise (offener Zugriff), das sollte vor einem öffentlichen Launch noch auf Regeln umgestellt werden (z. B. nur Felder ändern, kein beliebiges Löschen). Sag Bescheid, wenn ich dafür Security Rules entwerfen soll.
 
 ## Design-System
 

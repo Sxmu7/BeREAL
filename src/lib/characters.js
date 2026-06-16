@@ -1,15 +1,15 @@
-// Charaktere aus dem Brief. Jeder bekommt ein Emoji-Icon und eine
-// Akzentfarbe, damit er auf dem Wheel und in der Lobby sofort
-// unterscheidbar ist, auch ohne den Namen zu lesen.
+// Charaktere aus dem Brief. Jeder bekommt ein Emoji-Icon. Die Auswahl
+// wird einheitlich mit dem App-Akzent hervorgehoben statt mit einer
+// eigenen Farbe pro Charakter – das hält das Bild ruhig.
 export const CHARACTERS = [
-  { id: 'maverick', name: 'Maverick', icon: '🛩️', color: '#FF2D7A' },
-  { id: 'shadow', name: 'Shadow', icon: '🖤', color: '#7C5CFF' },
-  { id: 'blaze', name: 'Blaze', icon: '🔥', color: '#FF6A2D' },
-  { id: 'luna', name: 'Luna', icon: '🌙', color: '#5CC8FF' },
-  { id: 'joker', name: 'Joker', icon: '🃏', color: '#00E5C7' },
-  { id: 'nova', name: 'Nova', icon: '⚡', color: '#FFD23F' },
-  { id: 'frost', name: 'Frost', icon: '❄️', color: '#9BE8FF' },
-  { id: 'king', name: 'King', icon: '👑', color: '#FFB020' }
+  { id: 'maverick', name: 'Maverick', icon: '🛩️' },
+  { id: 'shadow', name: 'Shadow', icon: '🖤' },
+  { id: 'blaze', name: 'Blaze', icon: '🔥' },
+  { id: 'luna', name: 'Luna', icon: '🌙' },
+  { id: 'joker', name: 'Joker', icon: '🃏' },
+  { id: 'nova', name: 'Nova', icon: '⚡' },
+  { id: 'frost', name: 'Frost', icon: '❄️' },
+  { id: 'king', name: 'King', icon: '👑' }
 ]
 
 export function getCharacterById(id) {

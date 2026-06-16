@@ -69,7 +69,7 @@ a {
   -webkit-backdrop-filter: blur(24px);
 }
 
-/* ---- Primärer Button: Dare-Magenta ---- */
+/* ---- Primärer Button: dezenter Akzent, kein lautes Glow ---- */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -81,16 +81,15 @@ a {
   background: var(--color-dare);
   color: white;
   font-size: var(--fs-body);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  box-shadow: var(--shadow-dare-glow);
   transition: transform var(--duration-fast) var(--ease-out-snap),
-    box-shadow var(--duration-fast) var(--ease-out-snap);
+    opacity var(--duration-fast) var(--ease-out-snap);
 }
 
 .btn-primary:active {
   transform: scale(0.97);
-  box-shadow: 0 0 24px var(--color-dare-glow);
+  opacity: 0.88;
 }
 
 .btn-secondary {

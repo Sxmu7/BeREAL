@@ -5,6 +5,10 @@ import NameScreen from './pages/NameScreen'
 import CharacterScreen from './pages/CharacterScreen'
 import MainMenu from './pages/MainMenu'
 import RulesScreen from './pages/RulesScreen'
+import HostSetupScreen from './pages/HostSetupScreen'
+import JoinScreen from './pages/JoinScreen'
+import LobbyScreen from './pages/LobbyScreen'
+import GameScreen from './pages/GameScreen'
 
 export default function App() {
   const { player, setName, setCharacter, resetCharacter } = usePlayer()
@@ -28,6 +32,10 @@ export default function App() {
       />
       <Route path="/menu" element={<MainMenu player={player} />} />
       <Route path="/rules" element={<RulesScreen />} />
+      <Route path="/host" element={<HostSetupScreen player={player} />} />
+      <Route path="/join" element={<JoinScreen />} />
+      <Route path="/lobby/:code" element={<LobbyScreen player={player} />} />
+      <Route path="/game/:code" element={<GameScreen player={player} />} />
     </Routes>
   )
 }

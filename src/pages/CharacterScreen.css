@@ -60,9 +60,8 @@
 }
 
 .character-card--selected {
-  border-color: var(--card-color);
+  border-color: var(--color-dare);
   background: var(--color-surface-glass-strong);
-  box-shadow: 0 0 28px color-mix(in srgb, var(--card-color) 45%, transparent);
 }
 
 .character-card__icon {

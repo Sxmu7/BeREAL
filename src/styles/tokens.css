@@ -5,36 +5,41 @@
    ============================================================ */
 
 :root {
-  /* --- Farben --- */
-  --color-bg: #0a0a14;
-  --color-bg-elevated: #11111f;
-  --color-surface-glass: rgba(255, 255, 255, 0.06);
-  --color-surface-glass-strong: rgba(255, 255, 255, 0.1);
-  --color-border-glass: rgba(255, 255, 255, 0.12);
-  --color-border-glass-strong: rgba(255, 255, 255, 0.22);
+  /* --- Farben ---
+     Minimalistisch: fast monochrom, EIN gedämpfter Akzent statt
+     mehrerer lauter Farben gleichzeitig im Bild. Cyan/Amber nur noch
+     als reine Status-Farbe (Erfolg/Warnung), nicht als Deko. */
+  --color-bg: #0b0b0f;
+  --color-bg-elevated: #131318;
+  --color-surface-glass: rgba(255, 255, 255, 0.04);
+  --color-surface-glass-strong: rgba(255, 255, 255, 0.08);
+  --color-border-glass: rgba(255, 255, 255, 0.09);
+  --color-border-glass-strong: rgba(255, 255, 255, 0.16);
 
-  --color-text-primary: #f5f4fb;
-  --color-text-secondary: rgba(245, 244, 251, 0.64);
-  --color-text-tertiary: rgba(245, 244, 251, 0.4);
+  --color-text-primary: #f2f1f4;
+  --color-text-secondary: rgba(242, 241, 244, 0.58);
+  --color-text-tertiary: rgba(242, 241, 244, 0.36);
 
-  --color-dare: #ff2d7a;
-  --color-dare-dim: rgba(255, 45, 122, 0.16);
-  --color-dare-glow: rgba(255, 45, 122, 0.45);
+  /* Gedämpftes Rot-Magenta statt Neon – einziger Signature-Akzent */
+  --color-dare: #c4435a;
+  --color-dare-dim: rgba(196, 67, 90, 0.12);
+  --color-dare-glow: rgba(196, 67, 90, 0.28);
 
-  --color-success: #00e5c7;
-  --color-success-dim: rgba(0, 229, 199, 0.16);
-  --color-success-glow: rgba(0, 229, 199, 0.45);
+  /* Status-Farben: dezent, nur funktional verwendet */
+  --color-success: #6fae9b;
+  --color-success-dim: rgba(111, 174, 155, 0.12);
+  --color-success-glow: rgba(111, 174, 155, 0.22);
 
-  --color-warning: #ffb020;
-  --color-warning-dim: rgba(255, 176, 32, 0.16);
+  --color-warning: #c9a25b;
+  --color-warning-dim: rgba(201, 162, 91, 0.12);
 
-  --color-danger: #ff4d4d;
+  --color-danger: #c4435a;
 
-  /* Gradient für Hero/Wheel-Bühne – kein Standard-Violett */
+  /* Sehr dezenter Gradient, fast unsichtbar statt lautes Glow-Feld */
   --gradient-stage: radial-gradient(
-    circle at 50% 35%,
-    rgba(255, 45, 122, 0.25) 0%,
-    rgba(10, 10, 20, 0) 60%
+    circle at 50% 30%,
+    rgba(196, 67, 90, 0.1) 0%,
+    rgba(11, 11, 15, 0) 55%
   );
 
   /* --- Typografie --- */
@@ -42,7 +47,7 @@
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Mono', 'SF Mono', monospace;
 
-  --fs-hero: clamp(2.75rem, 12vw, 4.5rem);
+  --fs-hero: clamp(2.5rem, 10vw, 3.75rem);
   --fs-display: clamp(2rem, 8vw, 3rem);
   --fs-title: 1.5rem;
   --fs-body: 1rem;
@@ -67,8 +72,8 @@
 
   /* --- Schatten / Glow --- */
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-dare-glow: 0 0 40px var(--color-dare-glow);
-  --shadow-success-glow: 0 0 40px var(--color-success-glow);
+  --shadow-dare-glow: 0 2px 16px rgba(0, 0, 0, 0.3);
+  --shadow-success-glow: 0 2px 16px rgba(0, 0, 0, 0.3);
 
   /* --- Motion --- */
   --ease-out-snap: cubic-bezier(0.16, 1, 0.3, 1);

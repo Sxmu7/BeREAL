@@ -41,7 +41,6 @@ export default function CharacterScreen({ player, setCharacter }) {
                   ? 'character-card character-card--selected'
                   : 'character-card'
               }
-              style={{ '--card-color': c.color }}
               onClick={() => handleSelect(c.id)}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}

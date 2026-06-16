@@ -1,0 +1,134 @@
+.game-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + var(--space-5)) var(--space-5)
+    calc(var(--safe-bottom) + var(--space-6));
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+}
+
+.game-screen--centered {
+  justify-content: center;
+  align-items: center;
+}
+
+.game-screen__loading {
+  color: var(--color-text-secondary);
+  font-size: var(--fs-body);
+}
+
+.game-screen__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.game-screen__phase {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  justify-content: center;
+}
+
+.game-screen__phase--centered {
+  align-items: center;
+}
+
+.game-screen__challenge-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+
+.game-screen__challenge-text {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.game-screen__punishment-hint {
+  font-size: var(--fs-small);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.game-screen__decision-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.game-screen__waiting-text {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-body);
+  margin: 0;
+}
+
+.game-screen__spectator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.game-screen__spectator-icon {
+  font-size: 2.5rem;
+}
+
+.game-screen__spectator-text {
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0;
+}
+
+.game-screen__proof-video {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  max-height: 50vh;
+}
+
+.game-screen__vote-question {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.game-screen__vote-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.game-screen__result-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+}
+
+.game-screen__result-icon {
+  font-size: 3rem;
+}
+
+.game-screen__result-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.game-screen__phase--centered .btn-primary {
+  margin-top: var(--space-5);
+}

@@ -5,11 +5,11 @@ import CircleStage from '../components/CircleStage'
 import './LandingPage.css'
 
 const PREVIEW_STEPS = [
-  { key: 'spin', label: 'Wheel Spin', glow: 'var(--color-dare-glow)' },
-  { key: 'challenge', label: 'Challenge', glow: 'var(--color-warning)' },
-  { key: 'proof', label: 'Video Proof', glow: 'var(--color-success-glow)' },
-  { key: 'vote', label: 'Voting', glow: 'var(--color-success-glow)' },
-  { key: 'winner', label: 'Winner', glow: 'var(--color-dare-glow)' }
+  { key: 'spin', label: 'Wheel Spin' },
+  { key: 'challenge', label: 'Challenge' },
+  { key: 'proof', label: 'Video Proof' },
+  { key: 'vote', label: 'Voting' },
+  { key: 'winner', label: 'Winner' }
 ]
 
 function StepContent({ step }) {
@@ -42,8 +42,8 @@ function StepContent({ step }) {
         <>
           <span className="eyebrow">Geschafft?</span>
           <div className="preview-vote-row">
-            <span className="preview-vote-yes">Ja</span>
-            <span className="preview-vote-no">Nein</span>
+            <span className="preview-vote-option">Ja</span>
+            <span className="preview-vote-option">Nein</span>
           </div>
         </>
       )
@@ -95,7 +95,7 @@ export default function LandingPage() {
           transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
           className="landing__stage-wrap"
         >
-          <CircleStage size={240} glowColor={currentStep.glow}>
+          <CircleStage size={240}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep.key}

@@ -10,7 +10,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1.5px dashed var(--color-border-glass-strong);
+  border: 1px dashed var(--color-border-glass);
 }
 
 .circle-stage__glow {
@@ -18,7 +18,8 @@
   inset: 8%;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 40%, var(--stage-glow) 0%, transparent 70%);
-  filter: blur(2px);
+  filter: blur(4px);
+  opacity: 0.6;
 }
 
 .circle-stage__content {

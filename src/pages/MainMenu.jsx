@@ -9,24 +9,21 @@ const MENU_ITEMS = [
     title: 'Host Game',
     subtitle: 'Session erstellen & Regeln festlegen',
     icon: '🎛️',
-    path: '/host',
-    accent: 'var(--color-dare)'
+    path: '/host'
   },
   {
     key: 'join',
     title: 'Join Game',
     subtitle: 'Mit Lobby-Code beitreten',
     icon: '🔗',
-    path: '/join',
-    accent: 'var(--color-success)'
+    path: '/join'
   },
   {
     key: 'rules',
     title: 'Rules',
     subtitle: 'So funktioniert DareDrop',
     icon: '📜',
-    path: '/rules',
-    accent: 'var(--color-warning)'
+    path: '/rules'
   }
 ]
 
@@ -64,7 +61,6 @@ export default function MainMenu({ player }) {
           <motion.button
             key={item.key}
             className="menu-card glass"
-            style={{ '--card-accent': item.accent }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 + i * 0.07, ease: 'easeOut' }}
