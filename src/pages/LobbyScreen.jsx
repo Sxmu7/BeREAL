@@ -11,6 +11,7 @@ import {
 } from '../lib/sessions'
 import { getCharacterById } from '../lib/characters'
 import QrCodeDisplay from '../components/QrCodeDisplay'
+import ThemeToggle from '../components/ThemeToggle'
 import './LobbyScreen.css'
 
 function getOrCreatePlayerId() {
@@ -22,7 +23,7 @@ function getOrCreatePlayerId() {
   return id
 }
 
-export default function LobbyScreen({ player }) {
+export default function LobbyScreen({ player, theme, toggleTheme }) {
   const { code } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
@@ -108,9 +109,12 @@ export default function LobbyScreen({ player }) {
 
   return (
     <div className="lobby-screen">
-      <button className="lobby-screen__back" onClick={() => navigate('/menu')}>
-        ← Verlassen
-      </button>
+      <div className="lobby-screen__top-row">
+        <button className="lobby-screen__back" onClick={() => navigate('/menu')}>
+          ← Verlassen
+        </button>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <div className="lobby-screen__header">
         <span className="eyebrow">{session.sessionName}</span>

@@ -75,11 +75,15 @@ Wichtige Einschränkung: Firestore erlaubt maximal 1 MB pro Dokument, inklusive 
 
 Alle Geräte abonnieren das gleiche Firestore-Dokument (`sessions/{code}`). Der Host startet neue Runden und treibt den Übergang vom Wheel zur Challenge-Phase an; danach reagiert jedes Gerät eigenständig auf Phasenwechsel im Dokument. Die Abstimmung wird von jedem Client geprüft (nicht nur vom Host), damit die Auswertung auch dann passiert, wenn der Host selbst mitstimmt und zufällig zuletzt an der Reihe ist.
 
-## Design-Update
+## Design-Update: Apple-Stil mit Light/Dark Mode
 
-Die erste Fassung war zu bunt (Magenta/Cyan/Amber gleichzeitig im Bild, je Charakter eine eigene Farbe). Überarbeitet auf ein minimalistisches System: ein gedämpfter Akzent (`--color-dare`, dunkles Rot-Magenta) statt mehrerer lauter Farben, Glow-Effekte stark zurückgenommen, Charaktere und Menü-Karten jetzt einheitlich neutral. Die Typografie (Archivo Black für Display, Inter für Body, Space Mono für Zahlen/Codes) wurde beibehalten.
+Die App wurde komplett auf eine zurückhaltende Apple-Ästhetik umgestellt: Weiß, Space Grau (`#1d1d1f`) und Apples charakteristisches Hellgrau (`#f5f5f7`) als Flächenfarben, ein einziger Akzent (Apple System-Blau, `#0071e3` im Light Mode / `#0a84ff` im Dark Mode) statt mehrerer Farben gleichzeitig. Glasmorphismus (Backdrop-Blur, transluzente Flächen) wurde durch klare Karten mit dezentem Schatten ersetzt – passend zu Apples eigenem Look, der auf klare Flächen statt Transparenz setzt. Die Typografie läuft jetzt über die native System-Schriftart (`-apple-system`, was auf Apple-Geräten automatisch SF Pro nutzt, mit Inter als Fallback auf anderen Plattformen) statt der vorherigen Archivo Black.
 
-**Bugfix:** Buttons und Inputs hatten in manchen Browsern eine dunkle Default-Textfarbe statt die helle App-Textfarbe zu erben (sichtbar z.B. bei "Host Game" / "Join Game" / "Rules" im Hauptmenü, oder Spielernamen in Lobby/Charakterauswahl). Behoben durch explizites `color: inherit` auf `button`/`input` global, plus explizite Farbangaben an den betroffenen Stellen.
+**Light/Dark Mode:** Jeder Screen hat einen Toggle-Button (Sonne/Mond-Symbol), der zwischen Light und Dark Mode wechselt. Beim ersten Besuch wird automatisch die System-Präferenz übernommen, danach merkt sich die App die explizite Wahl in `localStorage`. Technisch laufen beide Modi komplett über CSS-Variablen in `src/styles/tokens.css`: ein `data-theme="dark"`-Attribut am `<html>`-Element schaltet zwischen zwei Variablen-Sets um (`src/lib/useTheme.js` verwaltet das). Es gibt keinen doppelten Code für beide Modi – jede Komponente nutzt dieselben Variablennamen, nur deren Werte ändern sich.
+
+**Animierte Hintergrundpunkte:** Auf den meisten Screens schwebt im Hintergrund eine dezente Schicht aus wenigen, langsam treibenden Punkten (`src/components/FloatingDots.jsx`), bewusst sparsam und unaufdringlich gehalten, damit der Inhalt im Vordergrund bleibt.
+
+**Bugfix:** Buttons und Inputs hatten in manchen Browsern eine dunkle Default-Textfarbe statt die App-Textfarbe zu erben (sichtbar z.B. bei "Host Game" / "Join Game" / "Rules" im Hauptmenü, oder Spielernamen in Lobby/Charakterauswahl). Behoben durch explizites `color: inherit` auf `button`/`input` global, plus explizite Farbangaben an den betroffenen Stellen.
 
 ## QR-Code für Lobby-Beitritt
 
@@ -113,4 +117,6 @@ Sessions brauchen aktuell **keine** Firestore-Security-Rules-Einschränkung test
 
 ## Design-System
 
-Alle Farben/Schriften/Abstände sind zentral in `src/styles/tokens.css` als CSS-Variablen definiert. Signature-Element ist die kreisförmige "Stage" (`src/components/CircleStage.jsx`), die sich durch Landing Page, später auch Wheel und Lobby zieht.
+Alle Farben/Schriften/Abstände sind zentral in `src/styles/tokens.css` als CSS-Variablen definiert, getrennt nach Light Mode (Standardwerte in `:root`) und Dark Mode (Überschreibungen in `[data-theme='dark']`). Komponenten verwenden ausschließlich die Variablennamen (`var(--color-bg)`, `var(--color-text-primary)`, etc.), nie feste Farbwerte – dadurch funktioniert der Theme-Wechsel automatisch überall, ohne dass einzelne Komponenten Light/Dark-Sonderfälle behandeln müssen. Ausnahmen sind bewusst: Elemente, die immer auf einem echten Kamera-Live-Bild liegen (QR-Scanner-Overlay, Aufnahme-Badge beim Video-Proof), behalten feste helle/dunkle Werte, weil sie unabhängig vom App-Theme auf dunklem Kamerabild sitzen.
+
+Signature-Element ist die kreisförmige "Stage" (`src/components/CircleStage.jsx`), die sich durch Landing Page, Wheel und Lobby zieht.

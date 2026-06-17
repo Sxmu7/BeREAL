@@ -1,4 +1,5 @@
 .name-screen {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -11,8 +12,15 @@
   width: 100%;
 }
 
+.name-screen__top-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .name-screen__back {
-  align-self: flex-start;
   color: var(--color-text-secondary);
   font-size: var(--fs-small);
   font-weight: 600;
@@ -20,6 +28,8 @@
 }
 
 .name-screen__content {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -64,5 +74,7 @@
 }
 
 .name-screen__actions {
+  position: relative;
+  z-index: 1;
   display: flex;
 }

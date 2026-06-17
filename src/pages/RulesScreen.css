@@ -11,18 +11,25 @@
   width: 100%;
 }
 
+.rules-screen__top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
 .rules-screen__back {
-  align-self: flex-start;
   color: var(--color-text-secondary);
   font-size: var(--fs-small);
   font-weight: 600;
   padding: var(--space-2) 0;
-  margin-bottom: var(--space-3);
 }
 
 .rules-screen__title {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--fs-display);
+  letter-spacing: -0.01em;
   margin: 0 0 var(--space-5);
 }
 

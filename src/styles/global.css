@@ -14,6 +14,8 @@ body {
   font-family: var(--font-body);
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
+  transition: background var(--duration-base) var(--ease-out-snap),
+    color var(--duration-base) var(--ease-out-snap);
 }
 
 body {
@@ -51,47 +53,48 @@ a {
 }
 
 ::selection {
-  background: var(--color-dare);
+  background: var(--color-accent);
   color: white;
 }
 
-/* ---- Wiederverwendbare Glass-Oberfläche ---- */
+/* ---- Wiederverwendbare Karte: klare Fläche + Schatten statt Glas ---- */
 .glass {
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: background var(--duration-base) var(--ease-out-snap),
+    border-color var(--duration-base) var(--ease-out-snap),
+    box-shadow var(--duration-base) var(--ease-out-snap);
 }
 
 .glass-strong {
-  background: var(--color-surface-glass-strong);
-  border: 1px solid var(--color-border-glass-strong);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-card-hover);
 }
 
-/* ---- Primärer Button: dezenter Akzent, kein lautes Glow ---- */
+/* ---- Primärer Button: Apple-Systemblau ---- */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  padding: 18px var(--space-6);
+  padding: 16px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--color-dare);
-  color: white;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
   font-size: var(--fs-body);
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
   transition: transform var(--duration-fast) var(--ease-out-snap),
     opacity var(--duration-fast) var(--ease-out-snap);
 }
 
 .btn-primary:active {
   transform: scale(0.97);
-  opacity: 0.88;
+  opacity: 0.85;
 }
 
 .btn-secondary {
@@ -100,20 +103,21 @@ a {
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  padding: 18px var(--space-6);
+  padding: 16px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass-strong);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   font-size: var(--fs-body);
   font-weight: 600;
+  letter-spacing: -0.005em;
   transition: transform var(--duration-fast) var(--ease-out-snap),
     background var(--duration-fast) var(--ease-out-snap);
 }
 
 .btn-secondary:active {
   transform: scale(0.97);
-  background: var(--color-surface-glass-strong);
+  background: var(--color-border);
 }
 
 .btn-primary:disabled,
@@ -122,17 +126,18 @@ a {
   pointer-events: none;
 }
 
-/* ---- Eyebrow/Label-Stil ---- */
+/* ---- Eyebrow/Label-Stil: dezent, kein Monospace-Code-Look mehr ---- */
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: var(--fs-caption);
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--color-text-tertiary);
 }
 
 /* Sichtbarer Fokusring für Tastatur-Nutzung */
 :focus-visible {
-  outline: 2px solid var(--color-success);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }

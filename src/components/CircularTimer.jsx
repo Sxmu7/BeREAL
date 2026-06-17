@@ -48,7 +48,7 @@ export default function CircularTimer({ totalSeconds, onComplete, size = 96 }) {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="var(--color-border-glass)"
+          stroke="var(--color-border)"
           strokeWidth="3"
         />
         <circle

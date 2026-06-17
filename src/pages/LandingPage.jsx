@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import CircleStage from '../components/CircleStage'
+import FloatingDots from '../components/FloatingDots'
+import ThemeToggle from '../components/ThemeToggle'
 import './LandingPage.css'
 
 const PREVIEW_STEPS = [
@@ -59,7 +61,7 @@ function StepContent({ step }) {
   }
 }
 
-export default function LandingPage() {
+export default function LandingPage({ theme, toggleTheme }) {
   const navigate = useNavigate()
   const [stepIndex, setStepIndex] = useState(0)
 
@@ -74,7 +76,11 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
-      <div className="landing__bg" />
+      <FloatingDots count={8} />
+
+      <div className="landing__theme-toggle">
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <div className="landing__content">
         <motion.div

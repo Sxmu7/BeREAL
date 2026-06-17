@@ -23,7 +23,8 @@
 .fullscreen-timer__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(11, 11, 15, 0.86);
+  background: var(--color-bg);
+  opacity: 0.92;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

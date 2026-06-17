@@ -1,55 +1,48 @@
 /* ============================================================
-   DareDrop – Design Tokens
-   Dunkles Nachtclub-Blauschwarz statt reinem Schwarz.
-   Magenta = Action/Dare. Cyan = Erfolg/Yes. Amber = Warnung/Punishment.
+   DareDrop – Design Tokens, Apple-Stil
+   Weiß / Space Grau / Schwarz, ein System-Blau als einziger Akzent.
+   Light Mode = Standard, Dark Mode über [data-theme="dark"].
    ============================================================ */
 
 :root {
-  /* --- Farben ---
-     Minimalistisch: fast monochrom, EIN gedämpfter Akzent statt
-     mehrerer lauter Farben gleichzeitig im Bild. Cyan/Amber nur noch
-     als reine Status-Farbe (Erfolg/Warnung), nicht als Deko. */
-  --color-bg: #0b0b0f;
-  --color-bg-elevated: #131318;
-  --color-surface-glass: rgba(255, 255, 255, 0.04);
-  --color-surface-glass-strong: rgba(255, 255, 255, 0.08);
-  --color-border-glass: rgba(255, 255, 255, 0.09);
-  --color-border-glass-strong: rgba(255, 255, 255, 0.16);
+  /* --- Light Mode (Standard) --- */
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f5f5f7; /* Apples Standard-Hellgrau */
+  --color-surface: #ffffff;
+  --color-surface-elevated: #fbfbfd;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.14);
 
-  --color-text-primary: #f2f1f4;
-  --color-text-secondary: rgba(242, 241, 244, 0.58);
-  --color-text-tertiary: rgba(242, 241, 244, 0.36);
+  --color-text-primary: #1d1d1f; /* Space Grau, Apples Standardtext */
+  --color-text-secondary: rgba(29, 29, 31, 0.62);
+  --color-text-tertiary: rgba(29, 29, 31, 0.42);
 
-  /* Gedämpftes Rot-Magenta statt Neon – einziger Signature-Akzent */
-  --color-dare: #c4435a;
-  --color-dare-dim: rgba(196, 67, 90, 0.12);
-  --color-dare-glow: rgba(196, 67, 90, 0.28);
+  --color-accent: #0071e3; /* Apple System-Blau, einziger Akzent */
+  --color-accent-dim: rgba(0, 113, 227, 0.1);
+  --color-accent-text: #ffffff;
 
-  /* Status-Farben: dezent, nur funktional verwendet */
-  --color-success: #6fae9b;
-  --color-success-dim: rgba(111, 174, 155, 0.12);
-  --color-success-glow: rgba(111, 174, 155, 0.22);
+  --color-success: #1d8a4c;
+  --color-success-dim: rgba(29, 138, 76, 0.1);
 
-  --color-warning: #c9a25b;
-  --color-warning-dim: rgba(201, 162, 91, 0.12);
+  --color-warning: #b9740a;
+  --color-warning-dim: rgba(185, 116, 10, 0.1);
 
-  --color-danger: #c4435a;
+  --color-danger: #d70015;
+  --color-danger-dim: rgba(215, 0, 21, 0.1);
 
-  /* Sehr dezenter Gradient, fast unsichtbar statt lautes Glow-Feld */
-  --gradient-stage: radial-gradient(
-    circle at 50% 30%,
-    rgba(196, 67, 90, 0.1) 0%,
-    rgba(11, 11, 15, 0) 55%
-  );
+  --color-dot: rgba(29, 29, 31, 0.12); /* schwebende Hintergrundpunkte */
 
-  /* --- Typografie --- */
-  --font-display: 'Archivo Black', 'Helvetica Neue', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'Space Mono', 'SF Mono', monospace;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.08);
 
-  --fs-hero: clamp(2.5rem, 10vw, 3.75rem);
-  --fs-display: clamp(2rem, 8vw, 3rem);
-  --fs-title: 1.5rem;
+  /* --- Typografie: native Systemschrift (SF Pro auf Apple-Geräten) --- */
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
+  --font-mono: 'SF Mono', 'Space Mono', monospace;
+
+  --fs-hero: clamp(2.5rem, 9vw, 3.5rem);
+  --fs-display: clamp(1.75rem, 6vw, 2.5rem);
+  --fs-title: 1.375rem;
   --fs-body: 1rem;
   --fs-small: 0.875rem;
   --fs-caption: 0.75rem;
@@ -64,16 +57,11 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* --- Radius --- */
-  --radius-sm: 12px;
-  --radius-md: 20px;
-  --radius-lg: 28px;
+  /* --- Radius: dezenter als zuvor --- */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
   --radius-full: 999px;
-
-  /* --- Schatten / Glow --- */
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-dare-glow: 0 2px 16px rgba(0, 0, 0, 0.3);
-  --shadow-success-glow: 0 2px 16px rgba(0, 0, 0, 0.3);
 
   /* --- Motion --- */
   --ease-out-snap: cubic-bezier(0.16, 1, 0.3, 1);
@@ -86,6 +74,38 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* --- Dark Mode --- */
+[data-theme='dark'] {
+  --color-bg: #000000;
+  --color-bg-secondary: #1d1d1f; /* Space Grau als Fläche statt Text */
+  --color-surface: #1c1c1e;
+  --color-surface-elevated: #242426;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: rgba(245, 245, 247, 0.62);
+  --color-text-tertiary: rgba(245, 245, 247, 0.42);
+
+  --color-accent: #0a84ff; /* Apples Dark-Mode-Blau, etwas heller */
+  --color-accent-dim: rgba(10, 132, 255, 0.16);
+  --color-accent-text: #ffffff;
+
+  --color-success: #30d158;
+  --color-success-dim: rgba(48, 209, 88, 0.14);
+
+  --color-warning: #ffd60a;
+  --color-warning-dim: rgba(255, 214, 10, 0.14);
+
+  --color-danger: #ff453a;
+  --color-danger-dim: rgba(255, 69, 58, 0.14);
+
+  --color-dot: rgba(245, 245, 247, 0.14);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -10,7 +10,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px dashed var(--color-border-glass);
+  border: 1px dashed var(--color-border);
 }
 
 .circle-stage__glow {
@@ -19,7 +19,7 @@
   border-radius: 50%;
   background: radial-gradient(circle at 50% 40%, var(--stage-glow) 0%, transparent 70%);
   filter: blur(4px);
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .circle-stage__content {
@@ -31,10 +31,9 @@
   width: 78%;
   height: 78%;
   border-radius: 50%;
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
   text-align: center;
   padding: var(--space-4);
 }

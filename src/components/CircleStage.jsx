@@ -13,7 +13,7 @@ export default function CircleStage({ children, size = 280, glowColor }) {
       style={{
         width: size,
         height: size,
-        '--stage-glow': glowColor || 'var(--color-dare-glow)'
+        '--stage-glow': glowColor || 'var(--color-accent-dim)'
       }}
     >
       <motion.div

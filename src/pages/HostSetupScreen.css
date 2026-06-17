@@ -10,8 +10,13 @@
   width: 100%;
 }
 
+.host-setup__top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .host-setup__back {
-  align-self: flex-start;
   color: var(--color-text-secondary);
   font-size: var(--fs-small);
   font-weight: 600;
@@ -20,7 +25,9 @@
 
 .host-setup__title {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: var(--fs-title);
+  letter-spacing: -0.01em;
   margin: var(--space-3) 0 var(--space-4);
 }
 
@@ -43,8 +50,8 @@
 
 .host-setup__text-input {
   width: 100%;
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
   color: var(--color-text-primary);
@@ -60,8 +67,8 @@
 
 .host-setup__number-input {
   width: 64px;
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: var(--space-2);
   color: var(--color-text-primary);

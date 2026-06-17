@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { usePlayer } from './lib/usePlayer'
+import { useTheme } from './lib/useTheme'
 import LandingPage from './pages/LandingPage'
 import NameScreen from './pages/NameScreen'
 import CharacterScreen from './pages/CharacterScreen'
@@ -12,13 +13,21 @@ import GameScreen from './pages/GameScreen'
 
 export default function App() {
   const { player, setName, setCharacter, resetCharacter } = usePlayer()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
       <Route
         path="/name"
-        element={<NameScreen player={player} setName={setName} />}
+        element={
+          <NameScreen
+            player={player}
+            setName={setName}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        }
       />
       <Route
         path="/character"
@@ -27,15 +36,35 @@ export default function App() {
             player={player}
             setCharacter={setCharacter}
             resetCharacter={resetCharacter}
+            theme={theme}
+            toggleTheme={toggleTheme}
           />
         }
       />
-      <Route path="/menu" element={<MainMenu player={player} />} />
-      <Route path="/rules" element={<RulesScreen />} />
-      <Route path="/host" element={<HostSetupScreen player={player} />} />
-      <Route path="/join" element={<JoinScreen />} />
-      <Route path="/lobby/:code" element={<LobbyScreen player={player} />} />
-      <Route path="/game/:code" element={<GameScreen player={player} />} />
+      <Route
+        path="/menu"
+        element={<MainMenu player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/rules"
+        element={<RulesScreen theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/host"
+        element={<HostSetupScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/join"
+        element={<JoinScreen theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/lobby/:code"
+        element={<LobbyScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/game/:code"
+        element={<GameScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
     </Routes>
   )
 }

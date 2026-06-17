@@ -9,8 +9,8 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--color-border-glass);
-  background: var(--color-surface-glass);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
 }
 
 .wheel-spin__segment {
@@ -31,8 +31,9 @@
   margin-left: -20px;
   margin-top: -20px;
   border-radius: 50%;
-  background: var(--color-surface-glass-strong);
-  border: 1px solid var(--color-border-glass-strong);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-card);
   font-size: 1.25rem;
 }
 
@@ -77,5 +78,6 @@
 
 .wheel-spin__result-name {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: 1.25rem;
 }

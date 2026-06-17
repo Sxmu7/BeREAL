@@ -17,6 +17,7 @@ import { getPunishmentLabel } from '../lib/challenges'
 import WheelSpin from '../components/WheelSpin'
 import FullscreenTimer from '../components/FullscreenTimer'
 import VideoProofRecorder from '../components/VideoProofRecorder'
+import ThemeToggle from '../components/ThemeToggle'
 import './GameScreen.css'
 
 const VOTING_SECONDS = 30
@@ -25,7 +26,7 @@ function getOwnPlayerId() {
   return localStorage.getItem('daredrop_player_id')
 }
 
-export default function GameScreen({ player }) {
+export default function GameScreen({ player, theme, toggleTheme }) {
   const { code } = useParams()
   const navigate = useNavigate()
   const playerId = useRef(getOwnPlayerId()).current
@@ -145,6 +146,7 @@ export default function GameScreen({ player }) {
     <div className="game-screen">
       <div className="game-screen__header">
         <span className="eyebrow">Runde {round.roundNumber}</span>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       <AnimatePresence mode="wait">

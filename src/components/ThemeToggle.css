@@ -1,0 +1,17 @@
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  font-size: 1.0625rem;
+  transition: transform var(--duration-fast) var(--ease-out-snap),
+    background var(--duration-fast) var(--ease-out-snap);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}

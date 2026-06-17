@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { getCharacterById } from '../lib/characters'
+import FloatingDots from '../components/FloatingDots'
+import ThemeToggle from '../components/ThemeToggle'
 import './MainMenu.css'
 
 const MENU_ITEMS = [
@@ -27,18 +29,21 @@ const MENU_ITEMS = [
   }
 ]
 
-export default function MainMenu({ player }) {
+export default function MainMenu({ player, theme, toggleTheme }) {
   const navigate = useNavigate()
   const character = getCharacterById(player.characterId)
 
   return (
     <div className="main-menu">
+      <FloatingDots count={6} />
+
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
         className="main-menu__header"
       >
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
         <div className="main-menu__player glass">
           <span className="main-menu__player-icon">
             {character?.icon || '🎮'}

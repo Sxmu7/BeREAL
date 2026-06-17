@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import SegmentedControl from '../components/SegmentedControl'
 import SettingRow from '../components/SettingRow'
+import ThemeToggle from '../components/ThemeToggle'
 import { createSession, generatePlayerId } from '../lib/sessions'
 import './HostSetupScreen.css'
 
@@ -33,7 +34,7 @@ const PUNISHMENT_OPTIONS = [
   { value: 'heavy', label: 'Heavy' }
 ]
 
-export default function HostSetupScreen({ player }) {
+export default function HostSetupScreen({ player, theme, toggleTheme }) {
   const navigate = useNavigate()
   const [sessionName, setSessionName] = useState(`${player.name || 'Spieler'}'s Session`)
   const [gameMode, setGameMode] = useState('party')
@@ -89,9 +90,12 @@ export default function HostSetupScreen({ player }) {
 
   return (
     <div className="host-setup">
-      <button className="host-setup__back" onClick={() => navigate('/menu')}>
-        ← Zurück
-      </button>
+      <div className="host-setup__top-row">
+        <button className="host-setup__back" onClick={() => navigate('/menu')}>
+          ← Zurück
+        </button>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <h1 className="host-setup__title">Session konfigurieren</h1>
 

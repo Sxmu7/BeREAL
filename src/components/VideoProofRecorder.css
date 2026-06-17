@@ -17,7 +17,7 @@
   width: 100%;
   flex: 1;
   border-radius: var(--radius-lg);
-  background: var(--color-bg-elevated);
+  background: var(--color-surface-elevated);
   object-fit: cover;
   max-height: 60vh;
 }
@@ -35,6 +35,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-small);
   font-weight: 700;
+  color: #ffffff;
 }
 
 .video-proof__rec-dot {

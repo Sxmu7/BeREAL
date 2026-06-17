@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import FloatingDots from '../components/FloatingDots'
+import ThemeToggle from '../components/ThemeToggle'
 import './NameScreen.css'
 
 const MAX_LENGTH = 16
 
-export default function NameScreen({ player, setName }) {
+export default function NameScreen({ player, setName, theme, toggleTheme }) {
   const navigate = useNavigate()
   const [value, setValue] = useState(player.name || '')
   const trimmed = value.trim()
@@ -19,9 +21,14 @@ export default function NameScreen({ player, setName }) {
 
   return (
     <div className="name-screen">
-      <button className="name-screen__back" onClick={() => navigate('/')}>
-        ← Zurück
-      </button>
+      <FloatingDots count={5} />
+
+      <div className="name-screen__top-row">
+        <button className="name-screen__back" onClick={() => navigate('/')}>
+          ← Zurück
+        </button>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <div className="name-screen__content">
         <motion.div

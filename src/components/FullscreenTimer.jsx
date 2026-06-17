@@ -84,7 +84,7 @@ export default function FullscreenTimer({ totalSeconds, onComplete, label }) {
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="var(--color-border-glass)"
+            stroke="var(--color-border)"
             strokeWidth={isMinimized ? 3 : 4}
           />
 

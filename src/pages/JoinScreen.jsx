@@ -4,9 +4,10 @@ import { motion } from 'framer-motion'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import QrScanner from '../components/QrScanner'
+import ThemeToggle from '../components/ThemeToggle'
 import './JoinScreen.css'
 
-export default function JoinScreen() {
+export default function JoinScreen({ theme, toggleTheme }) {
   const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [isChecking, setIsChecking] = useState(false)
@@ -47,9 +48,12 @@ export default function JoinScreen() {
 
   return (
     <div className="join-screen">
-      <button className="join-screen__back" onClick={() => navigate('/menu')}>
-        ← Zurück
-      </button>
+      <div className="join-screen__top-row">
+        <button className="join-screen__back" onClick={() => navigate('/menu')}>
+          ← Zurück
+        </button>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <div className="join-screen__content">
         <motion.div

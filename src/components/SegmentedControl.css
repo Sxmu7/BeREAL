@@ -2,8 +2,8 @@
   display: flex;
   gap: 4px;
   padding: 4px;
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
 }
 
@@ -20,6 +20,6 @@
 }
 
 .segmented__option--active {
-  background: var(--color-surface-glass-strong);
-  color: var(--color-text-primary);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
 }

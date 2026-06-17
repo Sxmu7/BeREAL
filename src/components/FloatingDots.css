@@ -1,0 +1,13 @@
+.floating-dots {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floating-dots__dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-dot);
+}

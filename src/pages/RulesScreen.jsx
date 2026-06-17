@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import ThemeToggle from '../components/ThemeToggle'
 import './RulesScreen.css'
 
 const RULES = [
@@ -25,14 +26,17 @@ const RULES = [
   }
 ]
 
-export default function RulesScreen() {
+export default function RulesScreen({ theme, toggleTheme }) {
   const navigate = useNavigate()
 
   return (
     <div className="rules-screen">
-      <button className="rules-screen__back" onClick={() => navigate(-1)}>
-        ← Zurück
-      </button>
+      <div className="rules-screen__top-row">
+        <button className="rules-screen__back" onClick={() => navigate(-1)}>
+          ← Zurück
+        </button>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
 
       <h1 className="rules-screen__title">Rules</h1>
 
