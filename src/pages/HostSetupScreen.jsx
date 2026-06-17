@@ -5,6 +5,7 @@ import SegmentedControl from '../components/SegmentedControl'
 import SettingRow from '../components/SettingRow'
 import ThemeToggle from '../components/ThemeToggle'
 import { createSession, generatePlayerId } from '../lib/sessions'
+import { rememberLastSession } from '../lib/lastSession'
 import './HostSetupScreen.css'
 
 const FREQUENCY_OPTIONS = [
@@ -64,6 +65,8 @@ export default function HostSetupScreen({ player, theme, toggleTheme }) {
         hostCharacterId: player.characterId,
         sessionName
       })
+
+      rememberLastSession(code)
 
       navigate(`/lobby/${code}`, {
         state: {

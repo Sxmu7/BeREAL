@@ -1,0 +1,36 @@
+.party-event-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-dim);
+  border: 1px solid var(--color-warning);
+  text-align: center;
+}
+
+.party-event-banner__tag {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-warning);
+}
+
+.party-event-banner__icon {
+  font-size: 1.75rem;
+  margin-top: var(--space-1);
+}
+
+.party-event-banner__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.party-event-banner__description {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+}

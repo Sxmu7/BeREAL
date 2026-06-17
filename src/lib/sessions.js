@@ -1,5 +1,6 @@
 import {
   doc,
+  getDoc,
   setDoc,
   updateDoc,
   onSnapshot,
@@ -145,6 +146,19 @@ export async function deleteSession(sessionCode) {
  * zurück. `onMissing` wird aufgerufen, wenn die Session nicht (mehr)
  * existiert (z.B. Code falsch eingegeben, oder Host hat beendet).
  */
+/**
+ * Einmaliger Abruf einer Session ohne Live-Subscription. Wird für den
+ * "Letztes Spiel fortsetzen"-Check beim App-Start gebraucht, wo wir
+ * nur kurz prüfen wollen, ob die gespeicherte Session noch existiert,
+ * ohne dafür einen dauerhaften Listener zu öffnen.
+ */
+export async function getSessionOnce(sessionCode) {
+  const ref = doc(db, 'sessions', sessionCode)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) return null
+  return { code: snap.id, ...snap.data() }
+}
+
 export function subscribeToSession(sessionCode, onUpdate, onMissing) {
   const ref = doc(db, 'sessions', sessionCode)
   return onSnapshot(

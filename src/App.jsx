@@ -10,6 +10,8 @@ import HostSetupScreen from './pages/HostSetupScreen'
 import JoinScreen from './pages/JoinScreen'
 import LobbyScreen from './pages/LobbyScreen'
 import GameScreen from './pages/GameScreen'
+import ProfileScreen from './pages/ProfileScreen'
+import RecapScreen from './pages/RecapScreen'
 
 export default function App() {
   const { player, setName, setCharacter, resetCharacter } = usePlayer()
@@ -17,7 +19,10 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage theme={theme} toggleTheme={toggleTheme} />} />
+      <Route
+        path="/"
+        element={<LandingPage player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
       <Route
         path="/name"
         element={
@@ -64,6 +69,14 @@ export default function App() {
       <Route
         path="/game/:code"
         element={<GameScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/profile"
+        element={<ProfileScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+      />
+      <Route
+        path="/recap/:code"
+        element={<RecapScreen theme={theme} toggleTheme={toggleTheme} />}
       />
     </Routes>
   )

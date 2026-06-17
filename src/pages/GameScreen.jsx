@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { subscribeToSession } from '../lib/sessions'
+import { subscribeToSession, endSession } from '../lib/sessions'
 import {
   startNewRound,
   advanceRoundPhase,
+  advanceToSpinning,
   setRoundDecision,
   submitProof,
   castVote,
@@ -18,6 +19,12 @@ import WheelSpin from '../components/WheelSpin'
 import FullscreenTimer from '../components/FullscreenTimer'
 import VideoProofRecorder from '../components/VideoProofRecorder'
 import ThemeToggle from '../components/ThemeToggle'
+import RoundCountdown from '../components/RoundCountdown'
+import LiveRanking from '../components/LiveRanking'
+import PartyEventBanner from '../components/PartyEventBanner'
+import Confetti from '../components/Confetti'
+import { clearLastSession } from '../lib/lastSession'
+import { playSuccessSound, playFailSound, playCardSound, vibrate } from '../lib/sounds'
 import './GameScreen.css'
 
 const VOTING_SECONDS = 30
@@ -32,6 +39,7 @@ export default function GameScreen({ player, theme, toggleTheme }) {
   const playerId = useRef(getOwnPlayerId()).current
   const [session, setSession] = useState(null)
   const hasFinalizedRef = useRef(false)
+  const lastSoundedRoundRef = useRef(null)
 
   useEffect(() => {
     const unsubscribe = subscribeToSession(
@@ -41,6 +49,27 @@ export default function GameScreen({ player, theme, toggleTheme }) {
     )
     return unsubscribe
   }, [code, navigate])
+
+  // Spielt einmalig pro Runde den passenden Sound/Vibration, sobald
+  // das Ergebnis feststeht (Brief: "Erfolgs Sound", "Vibration bei
+  // wichtigen Events"). Der Ref verhindert Mehrfachauslösung bei
+  // erneuten Firestore-Updates derselben Runde.
+  useEffect(() => {
+    if (!session?.currentRound) return
+    const round = session.currentRound
+    if (round.phase !== 'result' || !round.outcome) return
+    const soundKey = `${round.roundNumber}-${round.outcome}`
+    if (lastSoundedRoundRef.current === soundKey) return
+    lastSoundedRoundRef.current = soundKey
+
+    if (round.outcome === 'success') {
+      playSuccessSound()
+      vibrate([60, 40, 60])
+    } else {
+      playFailSound()
+      vibrate(150)
+    }
+  }, [session])
 
   // Host startet die erste Runde, sobald die Session aktiv ist und
   // noch keine Runde läuft.
@@ -80,8 +109,16 @@ export default function GameScreen({ player, theme, toggleTheme }) {
     }
   }
 
+  function handleCountdownDone() {
+    if (isHost) {
+      advanceToSpinning(code).catch(console.error)
+    }
+  }
+
   async function handleDecision(decision) {
     if (!isSelected) return
+    playCardSound()
+    vibrate(40)
     await setRoundDecision(code, decision)
   }
 
@@ -91,6 +128,8 @@ export default function GameScreen({ player, theme, toggleTheme }) {
 
   async function handleVote(vote) {
     if (isSelected || hasVoted) return
+    playCardSound()
+    vibrate(40)
     const updatedVotes = await castVote(code, round.votes || {}, playerId, vote)
     checkAndFinalize(updatedVotes, false)
   }
@@ -107,7 +146,8 @@ export default function GameScreen({ player, theme, toggleTheme }) {
         outcome,
         players: session.players,
         stats: session.stats || {},
-        selectedPlayerId: round.selectedPlayerId
+        selectedPlayerId: round.selectedPlayerId,
+        pointsMultiplier: round.partyEvent?.effect === 'double_points' ? 2 : 1
       }).catch(console.error)
     }
   }
@@ -119,6 +159,13 @@ export default function GameScreen({ player, theme, toggleTheme }) {
     checkAndFinalize(round.votes || {}, true)
   }
 
+  async function handleAllDrinkContinue() {
+    // Beim "Alle trinken"-Event gibt es keine Challenge zu bewerten –
+    // direkt zur nächsten Runde, ohne Sieg/Niederlage zu verbuchen.
+    if (!isHost) return
+    await advanceRoundPhase(code, 'result')
+  }
+
   async function handleNextRound() {
     if (!isHost) return
     hasFinalizedRef.current = false
@@ -127,6 +174,32 @@ export default function GameScreen({ player, theme, toggleTheme }) {
       difficulty: session.settings.difficulty,
       roundNumber: (round.roundNumber || 1) + 1,
       previousSelectedPlayerId: round.selectedPlayerId
+    })
+  }
+
+  async function handleEndGame() {
+    // Beendet die Session offiziell (status: 'ended'), damit das
+    // "Letztes Spiel fortsetzen"-Banner auf der Landing Page danach
+    // nicht mehr auftaucht – nur der Host darf das auslösen, alle
+    // anderen verlassen einfach lokal. Die aktuellen Session-Daten
+    // geben wir per Navigations-State an den Recap-Screen weiter,
+    // statt sie dort erneut zu laden (vermeidet eine Race Condition,
+    // falls Firestore den 'ended'-Status noch nicht überall propagiert hat).
+    if (isHost) {
+      await endSession(code).catch(console.error)
+    }
+    clearLastSession()
+    navigate(`/recap/${code}`, {
+      state: {
+        sessionSnapshot: {
+          sessionName: session.sessionName,
+          players: session.players,
+          stats: session.stats || {},
+          roundNumber: round.roundNumber || 1,
+          createdAtMs: session.createdAt?.toMillis?.() || null
+        },
+        ownPlayerId: playerId
+      }
     })
   }
 
@@ -146,10 +219,27 @@ export default function GameScreen({ player, theme, toggleTheme }) {
     <div className="game-screen">
       <div className="game-screen__header">
         <span className="eyebrow">Runde {round.roundNumber}</span>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        <div className="game-screen__header-actions">
+          {round.phase !== 'countdown' && round.phase !== 'result' && (
+            <LiveRanking players={session.players} stats={session.stats} />
+          )}
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
+        {round.phase === 'countdown' && (
+          <motion.div
+            key="countdown"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="game-screen__phase game-screen__phase--centered"
+          >
+            <RoundCountdown players={session.players} onDone={handleCountdownDone} />
+          </motion.div>
+        )}
+
         {round.phase === 'spinning' && (
           <motion.div
             key="spinning"
@@ -174,33 +264,45 @@ export default function GameScreen({ player, theme, toggleTheme }) {
             exit={{ opacity: 0 }}
             className="game-screen__phase"
           >
-            <div className="game-screen__challenge-card glass">
-              <span className="eyebrow">
-                {getCharacterById(selectedPlayer?.characterId)?.icon} {selectedPlayer?.name}{' '}
-                ist dran
-              </span>
-              <p className="game-screen__challenge-text">{round.challengeText}</p>
-              <p className="game-screen__punishment-hint">
-                Bei Ablehnung: {punishmentLabel}
-              </p>
-            </div>
+            <PartyEventBanner event={round.partyEvent} />
 
-            {isSelected ? (
-              <div className="game-screen__decision-actions">
-                <button
-                  className="btn-secondary"
-                  onClick={() => handleDecision('punishment')}
-                >
-                  Strafe nehmen
+            {round.partyEvent?.effect === 'all_drink' ? (
+              isHost && (
+                <button className="btn-primary" onClick={handleAllDrinkContinue}>
+                  Weiter zur nächsten Runde
                 </button>
-                <button className="btn-primary" onClick={() => handleDecision('accepted')}>
-                  Annehmen
-                </button>
-              </div>
+              )
             ) : (
-              <p className="game-screen__waiting-text">
-                Warte auf {selectedPlayer?.name}…
-              </p>
+              <>
+                <div className="game-screen__challenge-card glass">
+                  <span className="eyebrow">
+                    {getCharacterById(selectedPlayer?.characterId)?.icon} {selectedPlayer?.name}{' '}
+                    ist dran
+                  </span>
+                  <p className="game-screen__challenge-text">{round.challengeText}</p>
+                  <p className="game-screen__punishment-hint">
+                    Bei Ablehnung: {punishmentLabel}
+                  </p>
+                </div>
+
+                {isSelected ? (
+                  <div className="game-screen__decision-actions">
+                    <button
+                      className="btn-secondary"
+                      onClick={() => handleDecision('punishment')}
+                    >
+                      Strafe nehmen
+                    </button>
+                    <button className="btn-primary" onClick={() => handleDecision('accepted')}>
+                      Annehmen
+                    </button>
+                  </div>
+                ) : (
+                  <p className="game-screen__waiting-text">
+                    Warte auf {selectedPlayer?.name}…
+                  </p>
+                )}
+              </>
             )}
           </motion.div>
         )}
@@ -307,6 +409,8 @@ export default function GameScreen({ player, theme, toggleTheme }) {
             exit={{ opacity: 0 }}
             className="game-screen__phase game-screen__phase--centered"
           >
+            {round.outcome === 'success' && <Confetti />}
+
             <motion.div
               className="game-screen__result-card glass"
               initial={{ y: 12 }}
@@ -319,16 +423,22 @@ export default function GameScreen({ player, theme, toggleTheme }) {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 16 }}
               >
-                {round.outcome === 'success' ? '🏆' : '🍺'}
+                {round.partyEvent?.effect === 'all_drink'
+                  ? '🍻'
+                  : round.outcome === 'success'
+                  ? '🏆'
+                  : '🍺'}
               </motion.span>
               <p className="game-screen__result-title">
-                {round.outcome === 'success'
+                {round.partyEvent?.effect === 'all_drink'
+                  ? 'Alle haben getrunken! 🍻'
+                  : round.outcome === 'success'
                   ? `${selectedPlayer?.name} hat's geschafft!`
                   : round.outcome === 'punished'
                   ? `${selectedPlayer?.name} nimmt die Strafe.`
                   : `${selectedPlayer?.name} hat's nicht geschafft.`}
               </p>
-              {round.outcome !== 'success' && (
+              {round.outcome !== 'success' && round.partyEvent?.effect !== 'all_drink' && (
                 <p className="game-screen__punishment-hint">{punishmentLabel}</p>
               )}
             </motion.div>
@@ -371,9 +481,14 @@ export default function GameScreen({ player, theme, toggleTheme }) {
             </motion.div>
 
             {isHost && (
-              <button className="btn-primary" onClick={handleNextRound}>
-                Nächste Runde
-              </button>
+              <div className="game-screen__result-actions">
+                <button className="btn-primary" onClick={handleNextRound}>
+                  Nächste Runde
+                </button>
+                <button className="game-screen__end-game" onClick={handleEndGame}>
+                  Spiel beenden
+                </button>
+              </div>
             )}
           </motion.div>
         )}

@@ -1,6 +1,7 @@
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from './firebase'
 import { pickRandomChallenge, pickRandomPlayer } from './challenges'
+import { maybePickPartyEvent } from './partyEvents'
 
 /**
  * Erweiterung der Firestore-Struktur um die aktive Runde:
@@ -9,7 +10,7 @@ import { pickRandomChallenge, pickRandomPlayer } from './challenges'
  *   ...
  *   currentRound: {
  *     roundNumber: number
- *     phase: 'spinning' | 'challenge' | 'recording' | 'voting' | 'result'
+ *     phase: 'countdown' | 'spinning' | 'challenge' | 'recording' | 'voting' | 'result'
  *     selectedPlayerId: string
  *     challengeText: string
  *     difficulty: string
@@ -17,6 +18,7 @@ import { pickRandomChallenge, pickRandomPlayer } from './challenges'
  *     proofUrl: string | null
  *     votes: { [playerId]: 'yes' | 'no' }
  *     outcome: 'success' | 'failed' | 'punished' | null
+ *     partyEvent: { key, title, icon, description, effect } | null
  *     startedAt: serverTimestamp
  *   } | null
  *   stats: {
@@ -34,13 +36,22 @@ export function ensurePlayerStats(stats, playerId) {
 
 /**
  * Startet eine neue Runde: wählt zufällig einen Spieler und eine
- * Challenge passend zur eingestellten Schwierigkeit. Phase startet
- * bei 'spinning', damit alle Geräte die gleiche Wheel-Animation zeigen
- * (Server bestimmt das Ergebnis, das Wheel ist rein visuell).
+ * Challenge passend zur eingestellten Schwierigkeit. Gelegentlich
+ * wird statt einer normalen Runde ein Party-Event ausgelost (Brief:
+ * "Selten aber überraschend") – Spieler und Challenge werden trotzdem
+ * bestimmt, damit z.B. "Doppelte Punkte" einen konkreten Kontext hat.
+ *
+ * Standardmäßig läuft zuerst eine kurze 'countdown'-Phase (Brief:
+ * "Runden-Spannung" – Spielerbilder einblenden, dann 3...2...1...),
+ * bevor zu 'spinning' gewechselt wird. Der ausgewählte Spieler und
+ * die Challenge stehen dabei serverseitig schon fest (damit alle
+ * Geräte am Ende dasselbe Wheel-Ergebnis zeigen), werden aber erst
+ * nach dem Countdown sichtbar gemacht, indem advanceToSpinning den
+ * Phasenwechsel auslöst.
  */
 export async function startNewRound(
   sessionCode,
-  { players, difficulty, roundNumber, previousSelectedPlayerId }
+  { players, difficulty, roundNumber, previousSelectedPlayerId, skipCountdown = false }
 ) {
   // Der zuletzt ausgewählte Spieler wird ausgeschlossen, damit nicht
   // wiederholt dieselbe Person dran ist – bei kleinen Gruppen würde
@@ -49,12 +60,13 @@ export async function startNewRound(
   const excludeIds = previousSelectedPlayerId ? [previousSelectedPlayerId] : []
   const selected = pickRandomPlayer(players, excludeIds)
   const challengeText = pickRandomChallenge(difficulty)
+  const partyEvent = maybePickPartyEvent(roundNumber)
 
   const ref = doc(db, 'sessions', sessionCode)
   await updateDoc(ref, {
     currentRound: {
       roundNumber,
-      phase: 'spinning',
+      phase: skipCountdown ? 'spinning' : 'countdown',
       selectedPlayerId: selected.id,
       challengeText,
       difficulty,
@@ -62,9 +74,20 @@ export async function startNewRound(
       proofUrl: null,
       votes: {},
       outcome: null,
+      partyEvent: partyEvent || null,
       startedAt: serverTimestamp()
     }
   })
+}
+
+/**
+ * Wechselt von der 'countdown'-Phase zu 'spinning'. Wird vom Host
+ * aufgerufen, sobald die lokale Countdown-Animation (RoundCountdown)
+ * durchgelaufen ist.
+ */
+export async function advanceToSpinning(sessionCode) {
+  const ref = doc(db, 'sessions', sessionCode)
+  await updateDoc(ref, { 'currentRound.phase': 'spinning' })
 }
 
 export async function advanceRoundPhase(sessionCode, phase) {
@@ -115,14 +138,17 @@ export function tallyVotes(votes, eligibleVoterIds, force = false) {
   return yesCount >= noCount ? 'success' : 'failed'
 }
 
-export async function finalizeRound(sessionCode, { outcome, players, stats, selectedPlayerId }) {
+export async function finalizeRound(
+  sessionCode,
+  { outcome, players, stats, selectedPlayerId, pointsMultiplier = 1 }
+) {
   const updatedStats = { ...stats }
   const current = ensurePlayerStats(updatedStats, selectedPlayerId)
 
   if (outcome === 'success') {
     updatedStats[selectedPlayerId] = {
       ...current,
-      wins: current.wins + 1,
+      wins: current.wins + pointsMultiplier,
       completed: current.completed + 1
     }
   } else if (outcome === 'failed') {

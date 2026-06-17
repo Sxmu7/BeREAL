@@ -58,12 +58,22 @@ Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden. Da 
 | Video-Proof-Aufnahme & Upload | ✅ fertig |
 | Spectator-Mode | ✅ fertig |
 | Voting & Mehrheitsentscheid | ✅ fertig |
-| Battle Rounds (alle bekommen gleiche Challenge) | ⏳ offen |
-| Party-Recap am Session-Ende | ⏳ offen |
+| Battle Rounds (alle bekommen gleiche Challenge) | ⏳ offen (Party-Event "Jeder gegen Jeden" zeigt nur an, vergibt aber noch keine echte Battle-Round-Logik) |
+| Party-Recap am Session-Ende | ✅ fertig |
 | Voting-Timer (30s) mit Auto-Auswertung | ✅ fertig |
 | Punktestand/Scoreboard nach jeder Runde | ✅ fertig |
 | Vollbild-Timer mit Zeichenanimation + rote Warnfarbe | ✅ fertig |
 | Push-Notifications (FCM) | 🔧 vorbereitet, braucht deine Console-Einrichtung |
+| Letztes Spiel fortsetzen | ✅ fertig |
+| Wiederkehrer-Begrüßung mit Namen | ✅ fertig |
+| Spielerprofil & lebenslange lokale Statistiken | ✅ fertig |
+| Awards-System (MVP, Alkoholiker, Mutigster, Glückspilz, Chaos-Master) | ✅ fertig |
+| Party-Replay ("Euer Abend in Zahlen") | ✅ fertig |
+| Runden-Spannung (Spielerbilder + 3-2-1-Countdown) | ✅ fertig |
+| Live-Ranking während des Spiels | ✅ fertig |
+| Party-Events (zufällige Sonderrunden) | ✅ fertig (3 von 5 Effekten vollständig wirksam, siehe unten) |
+| Sound- & Haptik-Grundgerüst | ✅ fertig (synthetische Sounds, kein Audio-Dateien-Download nötig) |
+| Konfetti bei Erfolg | ✅ fertig |
 
 ## Video-Proof ohne Firebase Storage (kein Blaze-Plan nötig)
 
@@ -120,3 +130,27 @@ Sessions brauchen aktuell **keine** Firestore-Security-Rules-Einschränkung test
 Alle Farben/Schriften/Abstände sind zentral in `src/styles/tokens.css` als CSS-Variablen definiert, getrennt nach Light Mode (Standardwerte in `:root`) und Dark Mode (Überschreibungen in `[data-theme='dark']`). Komponenten verwenden ausschließlich die Variablennamen (`var(--color-bg)`, `var(--color-text-primary)`, etc.), nie feste Farbwerte – dadurch funktioniert der Theme-Wechsel automatisch überall, ohne dass einzelne Komponenten Light/Dark-Sonderfälle behandeln müssen. Ausnahmen sind bewusst: Elemente, die immer auf einem echten Kamera-Live-Bild liegen (QR-Scanner-Overlay, Aufnahme-Badge beim Video-Proof), behalten feste helle/dunkle Werte, weil sie unabhängig vom App-Theme auf dunklem Kamerabild sitzen.
 
 Signature-Element ist die kreisförmige "Stage" (`src/components/CircleStage.jsx`), die sich durch Landing Page, Wheel und Lobby zieht.
+
+## UX-Überarbeitung: Profil, Awards, Party-Replay, Spannung, Events, Sound
+
+Großes Update mit mehreren neuen Systemen, die zusammen das "professionelle Party-App"-Gefühl aus dem Brief unterstützen sollen.
+
+**Letztes Spiel fortsetzen** (`src/lib/lastSession.js`): Der Code der zuletzt betretenen/erstellten Session wird in `localStorage` gemerkt. Beim Öffnen der Landing Page wird einmalig geprüft, ob diese Session noch existiert und nicht beendet ist – falls ja, erscheint ein Banner mit "▶ Spiel fortsetzen" / "✕ Neues Spiel starten". Damit das Banner nach einem regulär beendeten Spiel auch wieder verschwindet, gibt es jetzt im Result-Screen einen neuen "Spiel beenden"-Button für den Host (`endSession` setzt `status: 'ended'` in Firestore), der vorher komplett fehlte.
+
+**Wiederkehrer-Begrüßung:** Die Landing Page zeigt bei vorhandenem gespeichertem Namen "🍻 Schön, dass du wieder da bist, [Name]" statt des Standard-Taglines, und der Start-Button führt direkt ins Hauptmenü statt erneut zur Namenseingabe.
+
+**Lokale Statistiken** (`src/lib/localStats.js`) sind bewusst getrennt von den Firestore-`stats`, die nur innerhalb einer einzelnen Session existieren und fürs Live-Scoreboard gebraucht werden. Die lokalen Statistiken sind lebenslang (über alle Sessions hinweg) und werden im neuen `/profile`-Screen angezeigt: Spiele gespielt, Challenges geschafft/verloren, verteilte/getrunkene Schlücke, Siege, MVP-Auszeichnungen. Im Hauptmenü gibt es dafür jetzt einen kleinen "Statistiken"-Eintrag neben "Spielregeln", wie im Brief beschrieben ("darunter kleiner").
+
+**Awards** (`src/lib/awards.js`) werden aus den Session-`stats` aller Spieler berechnet: MVP (meiste Siege), Alkoholiker des Abends (meiste Strafen), Mutigster Spieler (meiste angenommene Challenges), Glückspilz (höchste Erfolgsquote), Chaos-Master (meiste Battle-Round-Siege). Der "Verräter"-Award aus dem Brief fehlt bewusst, da dafür getrackt werden müsste, wer wie abgestimmt hat – aktuell wird nur das Endergebnis der Abstimmung gespeichert, nicht die einzelnen Stimmen pro Person. Lässt sich nachrüsten, sobald das gewünscht ist.
+
+**Party-Replay** (`/recap/:code`, `src/pages/RecapScreen.jsx`): Neuer Abschluss-Screen "🍻 Euer Abend in Zahlen" mit Spieldauer, Spieleranzahl, Rundenzahl, Gesamt-Challenges, Gewinner und allen Awards. Schreibt beim ersten Aufruf einmalig die lokalen Statistiken fort (geschützt gegen Doppelzählung bei Seiten-Reload). Die Session-Daten werden per Navigations-State vom GameScreen übergeben statt erneut aus Firestore geladen, um eine Race Condition direkt nach `endSession` zu vermeiden.
+
+**Runden-Spannung** (`src/components/RoundCountdown.jsx`): Neue `'countdown'`-Rundenphase zwischen Ergebnis und Wheel-Spin. Zeigt zuerst kurz alle Spielerbilder, dann läuft ein 3-2-1-Countdown (mit Sound + Vibration pro Zahl), bevor das Wheel zu drehen beginnt. Server-seitig steht der nächste Spieler/Challenge dabei schon fest (für synchrone Ergebnisse), wird aber erst nach dem Countdown für alle sichtbar.
+
+**Live-Ranking** (`src/components/LiveRanking.jsx`): Kompakter Button im Spiel-Header (zeigt den aktuellen Spitzenreiter), der per Tap eine kleine Rangliste mit Medaillen ausklappt. Bewusst nicht permanent sichtbar, um den Bildschirm nicht zu überladen.
+
+**Party-Events** (`src/lib/partyEvents.js`): Ab Runde 2 besteht eine ~18%-Chance, dass statt einer normalen Challenge ein Sonderereignis ausgelost wird, angezeigt über einen auffälligen "⚠️ PARTY EVENT"-Banner. Von den fünf Event-Typen sind drei vollständig wirksam: **Alle trinken** (überspringt die Challenge komplett, direkter "Weiter"-Button für den Host), **Doppelte Punkte** (verdoppelt bei Erfolg die vergebenen Punkte über `pointsMultiplier` in `finalizeRound`), **Der Letzte trinkt** (wird angezeigt, Auswertung "wer war zuletzt fertig" ist aktuell manuell/sozial zu handhaben). **Reverse Round** und **Jeder gegen Jeden** werden angezeigt, greifen aber noch nicht automatisch in die Spielerauswahl-Logik ein – eine echte Battle-Round-Mechanik (alle bekommen dieselbe Challenge parallel) würde eine grundlegend andere Rundenstruktur brauchen als das aktuelle "eine Person pro Runde"-Modell und ist als eigenes, größeres Feature zu verstehen.
+
+**Sound & Haptik** (`src/lib/sounds.js`): Töne werden synthetisch über die Web Audio API erzeugt (Sinus-/Sägezahn-/Rechteck-Wellen für Karten-, Erfolgs-, Fehler- und Countdown-Sounds) statt aus externen Audio-Dateien geladen – funktioniert ohne zusätzliche Assets oder Ladezeit, was auf einer Party mit wechselndem Empfang praktisch ist. Wer "echte" aufgenommene Sounds möchte, kann die `playTone()`-Aufrufe in `sounds.js` durch `new Audio('/sounds/x.mp3').play()` ersetzen. Vibration läuft über die Vibration-API (nur Android Chrome, iOS Safari unterstützt das aktuell nicht – Aufrufe sind aber mit Feature-Check abgesichert und tun auf iOS einfach nichts). Ein Ein/Aus-Schalter dafür liegt im `/profile`-Screen.
+
+**Konfetti** (`src/components/Confetti.jsx`): Leichtgewichtiger, rein CSS/Framer-Motion-basierter Effekt (keine externe Bibliothek), läuft bei jedem geschafften Challenge-Erfolg im Result-Screen und beim Öffnen des Party-Replay-Screens.

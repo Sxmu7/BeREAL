@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import CircleStage from '../components/CircleStage'
 import FloatingDots from '../components/FloatingDots'
 import ThemeToggle from '../components/ThemeToggle'
+import { getLastSessionCode, clearLastSession } from '../lib/lastSession'
+import { getSessionOnce } from '../lib/sessions'
 import './LandingPage.css'
 
 const PREVIEW_STEPS = [
@@ -61,9 +63,10 @@ function StepContent({ step }) {
   }
 }
 
-export default function LandingPage({ theme, toggleTheme }) {
+export default function LandingPage({ player, theme, toggleTheme }) {
   const navigate = useNavigate()
   const [stepIndex, setStepIndex] = useState(0)
+  const [resumableSession, setResumableSession] = useState(undefined) // undefined = noch am Prüfen
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -71,6 +74,50 @@ export default function LandingPage({ theme, toggleTheme }) {
     }, 2200)
     return () => clearInterval(interval)
   }, [])
+
+  // Beim Laden einmalig prüfen, ob es eine fortsetzbare Session gibt.
+  // "Letztes Spiel fortsetzen" – falls die App versehentlich geschlossen
+  // wurde, soll man nicht von Null anfangen müssen. Wir zeigen das nur
+  // an, wenn die Session noch existiert und nicht bereits beendet ist;
+  // sonst würde nach jeder regulär abgeschlossenen Party dauerhaft ein
+  // Banner auftauchen.
+  useEffect(() => {
+    const lastCode = getLastSessionCode()
+    if (!lastCode) {
+      setResumableSession(null)
+      return
+    }
+    getSessionOnce(lastCode)
+      .then((data) => {
+        if (data && data.status !== 'ended') {
+          setResumableSession(data)
+        } else {
+          clearLastSession()
+          setResumableSession(null)
+        }
+      })
+      .catch(() => setResumableSession(null))
+  }, [])
+
+  function handleResume() {
+    if (!resumableSession) return
+    const path =
+      resumableSession.status === 'active'
+        ? `/game/${resumableSession.code}`
+        : `/lobby/${resumableSession.code}`
+    navigate(path)
+  }
+
+  function handleDismissResume() {
+    clearLastSession()
+    setResumableSession(null)
+  }
+
+  function handleStart() {
+    // Wer schon einen Namen gespeichert hat, muss ihn nicht erneut
+    // eingeben – direkt ins Hauptmenü statt zur Namenseingabe.
+    navigate(player?.name ? '/menu' : '/name')
+  }
 
   const currentStep = PREVIEW_STEPS[stepIndex]
 
@@ -91,9 +138,33 @@ export default function LandingPage({ theme, toggleTheme }) {
         >
           <h1 className="landing__title">DareDrop</h1>
           <p className="landing__tagline">
-            Accept the dare. Or take the drink.
+            {player?.name
+              ? `🍻 Schön, dass du wieder da bist, ${player.name}`
+              : 'Accept the dare. Or take the drink.'}
           </p>
         </motion.div>
+
+        {resumableSession && (
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="landing__resume glass"
+          >
+            <p className="landing__resume-text">
+              Es wurde ein laufendes Spiel gefunden
+              {resumableSession.sessionName ? `: „${resumableSession.sessionName}“` : '.'}
+            </p>
+            <div className="landing__resume-actions">
+              <button className="btn-primary" onClick={handleResume}>
+                ▶ Spiel fortsetzen
+              </button>
+              <button className="landing__resume-dismiss" onClick={handleDismissResume}>
+                ✕ Neues Spiel starten
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
@@ -134,7 +205,7 @@ export default function LandingPage({ theme, toggleTheme }) {
           transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
           className="landing__actions"
         >
-          <button className="btn-primary" onClick={() => navigate('/name')}>
+          <button className="btn-primary" onClick={handleStart}>
             Start
           </button>
           <button className="btn-secondary" onClick={() => navigate('/rules')}>

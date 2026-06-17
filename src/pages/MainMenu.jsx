@@ -5,7 +5,7 @@ import FloatingDots from '../components/FloatingDots'
 import ThemeToggle from '../components/ThemeToggle'
 import './MainMenu.css'
 
-const MENU_ITEMS = [
+const PRIMARY_ITEMS = [
   {
     key: 'host',
     title: 'Host Game',
@@ -19,13 +19,21 @@ const MENU_ITEMS = [
     subtitle: 'Mit Lobby-Code beitreten',
     icon: '🔗',
     path: '/join'
-  },
+  }
+]
+
+const SECONDARY_ITEMS = [
   {
     key: 'rules',
-    title: 'Rules',
-    subtitle: 'So funktioniert DareDrop',
-    icon: '📜',
+    title: 'Spielregeln',
+    icon: '📖',
     path: '/rules'
+  },
+  {
+    key: 'profile',
+    title: 'Statistiken',
+    icon: '🏆',
+    path: '/profile'
   }
 ]
 
@@ -62,7 +70,7 @@ export default function MainMenu({ player, theme, toggleTheme }) {
       </div>
 
       <div className="main-menu__cards">
-        {MENU_ITEMS.map((item, i) => (
+        {PRIMARY_ITEMS.map((item, i) => (
           <motion.button
             key={item.key}
             className="menu-card glass"
@@ -78,6 +86,23 @@ export default function MainMenu({ player, theme, toggleTheme }) {
               <span className="menu-card__subtitle">{item.subtitle}</span>
             </span>
             <span className="menu-card__arrow">→</span>
+          </motion.button>
+        ))}
+      </div>
+
+      <div className="main-menu__secondary">
+        {SECONDARY_ITEMS.map((item, i) => (
+          <motion.button
+            key={item.key}
+            className="menu-secondary-item"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.28 + i * 0.06, ease: 'easeOut' }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => navigate(item.path)}
+          >
+            <span className="menu-secondary-item__icon">{item.icon}</span>
+            <span className="menu-secondary-item__title">{item.title}</span>
           </motion.button>
         ))}
       </div>

@@ -5,6 +5,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import QrScanner from '../components/QrScanner'
 import ThemeToggle from '../components/ThemeToggle'
+import { rememberLastSession } from '../lib/lastSession'
 import './JoinScreen.css'
 
 export default function JoinScreen({ theme, toggleTheme }) {
@@ -32,6 +33,7 @@ export default function JoinScreen({ theme, toggleTheme }) {
         setIsChecking(false)
         return
       }
+      rememberLastSession(trimmed)
       navigate(`/lobby/${trimmed}`)
     } catch (err) {
       console.error(err)
