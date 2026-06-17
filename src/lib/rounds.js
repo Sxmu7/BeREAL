@@ -38,8 +38,16 @@ export function ensurePlayerStats(stats, playerId) {
  * bei 'spinning', damit alle Geräte die gleiche Wheel-Animation zeigen
  * (Server bestimmt das Ergebnis, das Wheel ist rein visuell).
  */
-export async function startNewRound(sessionCode, { players, difficulty, roundNumber }) {
-  const selected = pickRandomPlayer(players)
+export async function startNewRound(
+  sessionCode,
+  { players, difficulty, roundNumber, previousSelectedPlayerId }
+) {
+  // Der zuletzt ausgewählte Spieler wird ausgeschlossen, damit nicht
+  // wiederholt dieselbe Person dran ist – bei kleinen Gruppen würde
+  // reiner Zufall ohne diesen Ausschluss schnell wie ein Bug wirken,
+  // auch wenn es technisch korrekter Zufall wäre.
+  const excludeIds = previousSelectedPlayerId ? [previousSelectedPlayerId] : []
+  const selected = pickRandomPlayer(players, excludeIds)
   const challengeText = pickRandomChallenge(difficulty)
 
   const ref = doc(db, 'sessions', sessionCode)
@@ -91,11 +99,16 @@ export async function castVote(sessionCode, currentVotes, voterId, vote) {
 
 /**
  * Ermittelt Mehrheitsentscheid. Gibt null zurück, wenn noch nicht
- * alle stimmberechtigten Spieler abgestimmt haben.
+ * alle stimmberechtigten Spieler abgestimmt haben – außer
+ * `force` ist true (z.B. weil die Abstimmzeit abgelaufen ist),
+ * dann wird mit den bisher abgegebenen Stimmen entschieden.
+ * Niemand abgestimmt + force → 'failed' (im Zweifel keine Anerkennung).
  */
-export function tallyVotes(votes, eligibleVoterIds) {
+export function tallyVotes(votes, eligibleVoterIds, force = false) {
   const cast = eligibleVoterIds.filter((id) => votes[id])
-  if (cast.length < eligibleVoterIds.length) return null
+  if (cast.length < eligibleVoterIds.length && !force) return null
+
+  if (cast.length === 0) return 'failed'
 
   const yesCount = cast.filter((id) => votes[id] === 'yes').length
   const noCount = cast.length - yesCount

@@ -9,14 +9,17 @@ import {
   submitProof,
   castVote,
   tallyVotes,
-  finalizeRound
+  finalizeRound,
+  ensurePlayerStats
 } from '../lib/rounds'
 import { getCharacterById } from '../lib/characters'
 import { getPunishmentLabel } from '../lib/challenges'
 import WheelSpin from '../components/WheelSpin'
-import CircularTimer from '../components/CircularTimer'
+import FullscreenTimer from '../components/FullscreenTimer'
 import VideoProofRecorder from '../components/VideoProofRecorder'
 import './GameScreen.css'
+
+const VOTING_SECONDS = 30
 
 function getOwnPlayerId() {
   return localStorage.getItem('daredrop_player_id')
@@ -88,24 +91,31 @@ export default function GameScreen({ player }) {
   async function handleVote(vote) {
     if (isSelected || hasVoted) return
     const updatedVotes = await castVote(code, round.votes || {}, playerId, vote)
+    checkAndFinalize(updatedVotes, false)
+  }
 
-    // Wer auch immer gerade abstimmt, prüft, ob jetzt alle abgestimmt
-    // haben, und löst dann (einmalig) die Auswertung aus. Das ist
-    // robuster als "nur der Host darf das", falls der Host selbst
-    // mitstimmt und zuletzt dran ist.
+  function checkAndFinalize(votes, force) {
     const outcome = tallyVotes(
-      updatedVotes,
-      eligibleVoters.map((p) => p.id)
+      votes,
+      eligibleVoters.map((p) => p.id),
+      force
     )
     if (outcome && !hasFinalizedRef.current) {
       hasFinalizedRef.current = true
-      await finalizeRound(code, {
+      finalizeRound(code, {
         outcome,
         players: session.players,
         stats: session.stats || {},
         selectedPlayerId: round.selectedPlayerId
-      })
+      }).catch(console.error)
     }
+  }
+
+  function handleVotingTimeout() {
+    // Wer auch immer als erstes den Timer ablaufen sieht, erzwingt die
+    // Auswertung mit den bisher abgegebenen Stimmen. hasFinalizedRef
+    // verhindert, dass mehrere Geräte das doppelt auslösen.
+    checkAndFinalize(round.votes || {}, true)
   }
 
   async function handleNextRound() {
@@ -114,7 +124,8 @@ export default function GameScreen({ player }) {
     await startNewRound(code, {
       players: session.players,
       difficulty: session.settings.difficulty,
-      roundNumber: (round.roundNumber || 1) + 1
+      roundNumber: (round.roundNumber || 1) + 1,
+      previousSelectedPlayerId: round.selectedPlayerId
     })
   }
 
@@ -134,15 +145,6 @@ export default function GameScreen({ player }) {
     <div className="game-screen">
       <div className="game-screen__header">
         <span className="eyebrow">Runde {round.roundNumber}</span>
-        {round.phase === 'challenge' && (
-          <CircularTimer
-            totalSeconds={session.settings.challengeTimer}
-            size={56}
-            onComplete={() => {
-              if (isSelected) handleDecision('punishment')
-            }}
-          />
-        )}
       </div>
 
       <AnimatePresence mode="wait">
@@ -239,24 +241,56 @@ export default function GameScreen({ player }) {
               />
             )}
 
+            <div className="game-screen__vote-progress">
+              <span className="eyebrow">
+                {Object.keys(round.votes || {}).length} von {eligibleVoters.length} haben
+                abgestimmt
+              </span>
+              <div className="game-screen__vote-progress-bar">
+                <motion.div
+                  className="game-screen__vote-progress-fill"
+                  animate={{
+                    width: `${
+                      eligibleVoters.length > 0
+                        ? (Object.keys(round.votes || {}).length / eligibleVoters.length) * 100
+                        : 0
+                    }%`
+                  }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+
             {isSelected ? (
               <p className="game-screen__waiting-text">
                 Die anderen stimmen ab, ob du es geschafft hast…
               </p>
             ) : hasVoted ? (
-              <p className="game-screen__waiting-text">
+              <motion.p
+                className="game-screen__waiting-text"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
                 Stimme abgegeben. Warte auf die anderen…
-              </p>
+              </motion.p>
             ) : (
               <>
                 <p className="game-screen__vote-question">Challenge geschafft?</p>
                 <div className="game-screen__vote-actions">
-                  <button className="btn-secondary" onClick={() => handleVote('no')}>
+                  <motion.button
+                    className="btn-secondary"
+                    whileTap={{ scale: 0.94 }}
+                    onClick={() => handleVote('no')}
+                  >
                     Nein
-                  </button>
-                  <button className="btn-primary" onClick={() => handleVote('yes')}>
+                  </motion.button>
+                  <motion.button
+                    className="btn-primary"
+                    whileTap={{ scale: 0.94 }}
+                    onClick={() => handleVote('yes')}
+                  >
                     Ja
-                  </button>
+                  </motion.button>
                 </div>
               </>
             )}
@@ -271,10 +305,20 @@ export default function GameScreen({ player }) {
             exit={{ opacity: 0 }}
             className="game-screen__phase game-screen__phase--centered"
           >
-            <div className="game-screen__result-card glass">
-              <span className="game-screen__result-icon">
+            <motion.div
+              className="game-screen__result-card glass"
+              initial={{ y: 12 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <motion.span
+                className="game-screen__result-icon"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 16 }}
+              >
                 {round.outcome === 'success' ? '🏆' : '🍺'}
-              </span>
+              </motion.span>
               <p className="game-screen__result-title">
                 {round.outcome === 'success'
                   ? `${selectedPlayer?.name} hat's geschafft!`
@@ -285,7 +329,44 @@ export default function GameScreen({ player }) {
               {round.outcome !== 'success' && (
                 <p className="game-screen__punishment-hint">{punishmentLabel}</p>
               )}
-            </div>
+            </motion.div>
+
+            <motion.div
+              className="game-screen__scoreboard glass"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.35 }}
+            >
+              <span className="eyebrow">Punktestand</span>
+              <div className="game-screen__scoreboard-list">
+                {[...session.players]
+                  .sort(
+                    (a, b) =>
+                      ensurePlayerStats(session.stats, b.id).wins -
+                      ensurePlayerStats(session.stats, a.id).wins
+                  )
+                  .map((p, i) => {
+                    const s = ensurePlayerStats(session.stats, p.id)
+                    const character = getCharacterById(p.characterId)
+                    return (
+                      <motion.div
+                        key={p.id}
+                        className="game-screen__scoreboard-row"
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 + i * 0.05, duration: 0.25 }}
+                      >
+                        <span className="game-screen__scoreboard-rank">{i + 1}</span>
+                        <span className="game-screen__scoreboard-icon">
+                          {character?.icon || '🎮'}
+                        </span>
+                        <span className="game-screen__scoreboard-name">{p.name}</span>
+                        <span className="game-screen__scoreboard-score">{s.wins} 🏆</span>
+                      </motion.div>
+                    )
+                  })}
+              </div>
+            </motion.div>
 
             {isHost && (
               <button className="btn-primary" onClick={handleNextRound}>
@@ -295,6 +376,24 @@ export default function GameScreen({ player }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {round.phase === 'challenge' && (
+        <FullscreenTimer
+          totalSeconds={session.settings.challengeTimer}
+          label={isSelected ? 'Deine Entscheidungszeit' : `${selectedPlayer?.name} entscheidet`}
+          onComplete={() => {
+            if (isSelected) handleDecision('punishment')
+          }}
+        />
+      )}
+
+      {round.phase === 'voting' && (
+        <FullscreenTimer
+          totalSeconds={VOTING_SECONDS}
+          label="Zeit zum Abstimmen"
+          onComplete={handleVotingTimeout}
+        />
+      )}
     </div>
   )
 }

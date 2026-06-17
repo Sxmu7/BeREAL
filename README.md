@@ -60,6 +60,9 @@ Wie bei deinen anderen Projekten: GitHub-Repo anlegen, mit Vercel verbinden. Da 
 | Voting & Mehrheitsentscheid | ✅ fertig |
 | Battle Rounds (alle bekommen gleiche Challenge) | ⏳ offen |
 | Party-Recap am Session-Ende | ⏳ offen |
+| Voting-Timer (30s) mit Auto-Auswertung | ✅ fertig |
+| Punktestand/Scoreboard nach jeder Runde | ✅ fertig |
+| Vollbild-Timer mit Zeichenanimation + rote Warnfarbe | ✅ fertig |
 | Push-Notifications (FCM) | 🔧 vorbereitet, braucht deine Console-Einrichtung |
 
 ## Video-Proof ohne Firebase Storage (kein Blaze-Plan nötig)
@@ -81,6 +84,18 @@ Die erste Fassung war zu bunt (Magenta/Cyan/Amber gleichzeitig im Bild, je Chara
 ## QR-Code für Lobby-Beitritt
 
 Lobby zeigt jetzt optional einen QR-Code (Button "📷 QR-Code zeigen" neben dem Lobby-Code). Bewusst wird **nur der reine 5-stellige Code** im QR kodiert, keine vollständige URL – sonst würde jede beliebige Kamera-App beim Scannen die Vercel-Domain offenlegen. Im Join-Screen kann man über "📷 QR-Code scannen" die eigene Kamera nutzen; die App erkennt automatisch, sobald ein gültiger Code im Bild ist, und tritt direkt bei. Beide Komponenten (`QrCodeDisplay`, `QrScanner`) laufen rein clientseitig, ohne externen QR-Dienst.
+
+## Timer & Voting-Verbesserungen
+
+Jeder Timer (Challenge-Entscheidung, Abstimmung) zeigt jetzt beim Start kurz ein Vollbild-Moment: ein Kreis zeichnet sich groß und zentral auf (`FullscreenTimer.jsx`), danach zieht er sich auf eine kompakte Position oben rechts zusammen, damit die Annahme-/Voting-Buttons darunter weiter bedienbar bleiben. Bei wenig Restzeit (≤10s) färbt sich die Zeitanzeige rot und pulsiert leicht.
+
+Die Abstimmung hat jetzt ein eigenes 30-Sekunden-Zeitlimit. Läuft die Zeit ab, ohne dass alle abgestimmt haben, wird automatisch mit den bis dahin abgegebenen Stimmen ausgewertet (niemand abgestimmt → zählt als nicht geschafft). Während der Abstimmung zeigt eine Fortschrittsleiste live, wie viele der stimmberechtigten Spieler schon abgestimmt haben.
+
+Der Ergebnis-Screen nach jeder Runde zeigt jetzt zusätzlich ein animiertes Scoreboard mit dem aktuellen Punktestand aller Spieler (sortiert nach Siegen), nicht nur das Resultat der gerade gespielten Runde.
+
+**Bugfix Wheel-Animation:** Die Drehanimation des Wheels hatte kein explizites `initial`-Prop für die Rotation, wodurch Framer Motion in manchen Fällen direkt zum Endwert sprang statt sichtbar zu drehen. Behoben, plus die Animation insgesamt deutlicher gemacht (6 Umdrehungen statt 4, etwas länger).
+
+**Bugfix Spieler-Wiederholung:** Die Zufallsauswahl des nächsten Spielers schloss den zuvor ausgewählten Spieler nicht aus, wodurch bei kleinen Gruppen oft direkt wieder dieselbe Person dran war. Jetzt wird der vorherige Spieler von der nächsten Auswahl ausgeschlossen (außer es gibt nur einen Spieler).
 
 ## Firestore-Struktur (Lobby/Session)
 
