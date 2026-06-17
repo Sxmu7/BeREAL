@@ -12,14 +12,16 @@ export default function WheelSpin({ players, selectedPlayerId, onSpinComplete })
   const [hasLanded, setHasLanded] = useState(false)
   const selectedIndex = players.findIndex((p) => p.id === selectedPlayerId)
   const segmentAngle = 360 / players.length
-  // Mehrere volle Umdrehungen + Ziel-Segment nach oben drehen
-  const targetRotation = 360 * 4 + (360 - selectedIndex * segmentAngle)
+  const SPIN_DURATION = 3.2
+  // Mehr Umdrehungen für einen klar sichtbaren Dreh-Effekt, plus
+  // Ziel-Segment nach oben (zum Pointer) drehen.
+  const targetRotation = 360 * 6 + (360 - selectedIndex * segmentAngle)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setHasLanded(true)
       onSpinComplete?.()
-    }, 2600)
+    }, SPIN_DURATION * 1000)
     return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -28,8 +30,9 @@ export default function WheelSpin({ players, selectedPlayerId, onSpinComplete })
     <div className="wheel-spin">
       <motion.div
         className="wheel-spin__ring"
+        initial={{ rotate: 0 }}
         animate={{ rotate: targetRotation }}
-        transition={{ duration: 2.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: SPIN_DURATION, ease: [0.12, 0.74, 0.18, 1] }}
       >
         {players.map((p, i) => {
           const angle = segmentAngle * i
