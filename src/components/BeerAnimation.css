@@ -1,6 +1,6 @@
 .beer-anim {
   width: 100%;
-  max-width: 320px;
+  max-width: 300px;
   margin: 0 auto;
 }
 
@@ -12,5 +12,5 @@
 
 .beer-anim__glass {
   fill: white;
-  opacity: 0.1;
+  opacity: 0.09;
 }

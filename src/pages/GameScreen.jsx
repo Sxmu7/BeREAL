@@ -18,7 +18,6 @@ import { getPunishmentLabel } from '../lib/challenges'
 import WheelSpin from '../components/WheelSpin'
 import FullscreenTimer from '../components/FullscreenTimer'
 import VideoProofRecorder from '../components/VideoProofRecorder'
-import ThemeToggle from '../components/ThemeToggle'
 import RoundCountdown from '../components/RoundCountdown'
 import LiveRanking from '../components/LiveRanking'
 import PartyEventBanner from '../components/PartyEventBanner'
@@ -33,7 +32,7 @@ function getOwnPlayerId() {
   return localStorage.getItem('daredrop_player_id')
 }
 
-export default function GameScreen({ player, theme, toggleTheme }) {
+export default function GameScreen({ player }) {
   const { code } = useParams()
   const navigate = useNavigate()
   const playerId = useRef(getOwnPlayerId()).current

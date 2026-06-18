@@ -5,7 +5,6 @@ import { calculateAwards } from '../lib/awards'
 import { recordGameResult } from '../lib/localStats'
 import { ensurePlayerStats } from '../lib/rounds'
 import { getCharacterById } from '../lib/characters'
-import ThemeToggle from '../components/ThemeToggle'
 import Confetti from '../components/Confetti'
 import './RecapScreen.css'
 
@@ -18,7 +17,7 @@ function formatDuration(ms) {
   return `${hours} Std ${minutes} Min`
 }
 
-export default function RecapScreen({ theme, toggleTheme }) {
+export default function RecapScreen({}) {
   const { code } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
@@ -85,7 +84,6 @@ export default function RecapScreen({ theme, toggleTheme }) {
       <Confetti count={32} />
       <div className="recap-screen__top-row">
         <span className="eyebrow">Party-Replay</span>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       <motion.h1

@@ -18,7 +18,7 @@ const DIFFICULTY_OPTIONS = [
   { value: 'chaos',  label: 'Chaos' }
 ]
 
-export default function HostSetupScreen({ player, theme, toggleTheme }) {
+export default function HostSetupScreen({ player }) {
   const navigate = useNavigate()
   const [sessionName, setSessionName] = useState(`${player.name || 'Party'} Eskalation`)
   const [mode, setMode] = useState('party')

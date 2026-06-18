@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { assignCharacterByName } from './characters'
 
 const STORAGE_KEY = 'daredrop_player'
 
@@ -7,27 +8,22 @@ function readStoredPlayer() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return { name: '', characterId: null }
     const parsed = JSON.parse(raw)
-    return {
-      name: parsed.name || '',
-      characterId: parsed.characterId || null
-    }
+    // Falls kein characterId gespeichert, jetzt automatisch zuweisen
+    const characterId = parsed.characterId || (parsed.name ? assignCharacterByName(parsed.name).id : null)
+    return { name: parsed.name || '', characterId }
   } catch {
     return { name: '', characterId: null }
   }
 }
 
-/**
- * Verwaltet den lokalen Spieler-Zustand (Name + gewählter Charakter).
- * Der Name ist dauerhaft (über Sessions hinweg), der Charakter wird
- * pro Session neu gewählt (siehe resetCharacter), wie im Brief gefordert:
- * "Character selection resets every new session. Names remain custom."
- */
 export function usePlayer() {
   const [player, setPlayer] = useState(readStoredPlayer)
 
   const setName = useCallback((name) => {
     setPlayer((prev) => {
-      const next = { ...prev, name }
+      // Charakter automatisch aus dem Namen ableiten – kein manuelles Auswählen mehr
+      const character = assignCharacterByName(name)
+      const next = { ...prev, name, characterId: character.id }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
       return next
     })
@@ -49,11 +45,6 @@ export function usePlayer() {
     })
   }, [])
 
-  /**
-   * Löscht den Spieler komplett — Name, Charakter, Player-ID und
-   * alle anderen App-Daten aus localStorage. Danach ist die App
-   * im Zustand wie beim allerersten Besuch.
-   */
   const resetPlayer = useCallback(() => {
     const keysToRemove = [
       STORAGE_KEY,

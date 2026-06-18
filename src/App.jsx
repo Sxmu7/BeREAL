@@ -1,9 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { usePlayer } from './lib/usePlayer'
-import { useTheme } from './lib/useTheme'
 import LandingPage from './pages/LandingPage'
 import NameScreen from './pages/NameScreen'
-import CharacterScreen from './pages/CharacterScreen'
 import MainMenu from './pages/MainMenu'
 import RulesScreen from './pages/RulesScreen'
 import HostSetupScreen from './pages/HostSetupScreen'
@@ -15,13 +13,13 @@ import RecapScreen from './pages/RecapScreen'
 
 export default function App() {
   const { player, setName, setCharacter, resetCharacter, resetPlayer } = usePlayer()
-  const { theme, toggleTheme } = useTheme()
+  const {} = useTheme()
 
   return (
     <Routes>
       <Route
         path="/"
-        element={<LandingPage player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<LandingPage player={player} />}
       />
       <Route
         path="/name"
@@ -29,54 +27,40 @@ export default function App() {
           <NameScreen
             player={player}
             setName={setName}
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
-        }
-      />
-      <Route
-        path="/character"
-        element={
-          <CharacterScreen
-            player={player}
-            setCharacter={setCharacter}
-            resetCharacter={resetCharacter}
-            theme={theme}
-            toggleTheme={toggleTheme}
           />
         }
       />
       <Route
         path="/menu"
-        element={<MainMenu player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<MainMenu player={player} />}
       />
       <Route
         path="/rules"
-        element={<RulesScreen theme={theme} toggleTheme={toggleTheme} />}
+        element={<RulesScreen />}
       />
       <Route
         path="/host"
-        element={<HostSetupScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<HostSetupScreen player={player} />}
       />
       <Route
         path="/join"
-        element={<JoinScreen theme={theme} toggleTheme={toggleTheme} />}
+        element={<JoinScreen />}
       />
       <Route
         path="/lobby/:code"
-        element={<LobbyScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<LobbyScreen player={player} />}
       />
       <Route
         path="/game/:code"
-        element={<GameScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<GameScreen player={player} />}
       />
       <Route
         path="/profile"
-        element={<ProfileScreen player={player} resetPlayer={resetPlayer} theme={theme} toggleTheme={toggleTheme} />}
+        element={<ProfileScreen player={player} resetPlayer={resetPlayer} />}
       />
       <Route
         path="/recap/:code"
-        element={<RecapScreen theme={theme} toggleTheme={toggleTheme} />}
+        element={<RecapScreen />}
       />
     </Routes>
   )

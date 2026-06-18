@@ -6,7 +6,7 @@ import { getSessionOnce } from '../lib/sessions'
 import { useState, useEffect } from 'react'
 import './MainMenu.css'
 
-export default function MainMenu({ player, theme, toggleTheme }) {
+export default function MainMenu({ player }) {
   const navigate = useNavigate()
   const character = getCharacterById(player.characterId)
   const [lastSession, setLastSession] = useState(null)

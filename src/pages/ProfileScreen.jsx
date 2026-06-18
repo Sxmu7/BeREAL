@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { readLocalStats, resetLocalStats } from '../lib/localStats'
 import { isSoundEnabled, setSoundEnabled, playCardSound } from '../lib/sounds'
-import ThemeToggle from '../components/ThemeToggle'
 import './ProfileScreen.css'
 
 function StatCard({ icon, label, value, delay }) {
@@ -21,7 +20,7 @@ function StatCard({ icon, label, value, delay }) {
   )
 }
 
-export default function ProfileScreen({ player, resetPlayer, theme, toggleTheme }) {
+export default function ProfileScreen({ player, resetPlayer }) {
   const navigate = useNavigate()
   const [stats, setStats] = useState(readLocalStats)
   const [confirmingReset, setConfirmingReset] = useState(false)
@@ -54,7 +53,6 @@ export default function ProfileScreen({ player, resetPlayer, theme, toggleTheme 
         <button className="profile-screen__back" onClick={() => navigate('/menu')}>
           ← Zurück
         </button>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       <div className="profile-screen__header">

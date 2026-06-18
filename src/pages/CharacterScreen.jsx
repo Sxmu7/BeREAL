@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CHARACTERS, getCharacterById } from '../lib/characters'
-import ThemeToggle from '../components/ThemeToggle'
 import './CharacterScreen.css'
 
-export default function CharacterScreen({ player, setCharacter, theme, toggleTheme }) {
+export default function CharacterScreen({ player, setCharacter }) {
   const navigate = useNavigate()
   const selected = getCharacterById(player.characterId)
 
@@ -23,7 +22,6 @@ export default function CharacterScreen({ player, setCharacter, theme, toggleThe
         <button className="character-screen__back" onClick={() => navigate('/name')}>
           ← Zurück
         </button>
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       <div className="character-screen__header">

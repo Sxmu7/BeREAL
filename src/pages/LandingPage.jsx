@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: '🎮', label: 'Multiplayer' },
 ]
 
-export default function LandingPage({ player, theme, toggleTheme }) {
+export default function LandingPage({ player }) {
   const navigate = useNavigate()
   const [phase, setPhase] = useState('intro')
   const [name, setName] = useState(player?.name || '')
@@ -41,7 +41,7 @@ export default function LandingPage({ player, theme, toggleTheme }) {
       navigate('/name', { state: { prefill: trimmed } })
       return
     }
-    navigate(player?.characterId ? '/menu' : '/character')
+    navigate('/menu')
   }
 
   const canContinue = isReturning || name.trim().length >= 2

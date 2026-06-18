@@ -24,7 +24,7 @@ function getOrCreatePlayerId() {
   return id
 }
 
-export default function LobbyScreen({ player, theme, toggleTheme }) {
+export default function LobbyScreen({ player }) {
   const { code } = useParams()
   const navigate = useNavigate()
   const location = useLocation()

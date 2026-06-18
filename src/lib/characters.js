@@ -15,3 +15,17 @@ export const CHARACTERS = [
 export function getCharacterById(id) {
   return CHARACTERS.find((c) => c.id === id) || null
 }
+
+/**
+ * Weist einem Spieler anhand seines Namens deterministisch einen
+ * Charakter zu. Der gleiche Name bekommt immer das gleiche Icon —
+ * kein manuelles Auswählen nötig, aber stabil über Reload-Grenzen.
+ */
+export function assignCharacterByName(name) {
+  if (!name) return CHARACTERS[0]
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) & 0xffffffff
+  }
+  return CHARACTERS[Math.abs(hash) % CHARACTERS.length]
+}
