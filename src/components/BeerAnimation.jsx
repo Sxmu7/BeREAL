@@ -70,7 +70,8 @@ export default function BeerAnimation({ onComplete }) {
           </radialGradient>
         </defs>
 
-        {/* Kein Hintergrund-Rect — SVG ist transparent, Landing-Hintergrund scheint durch */}
+        {/* Hintergrund exakt gleiche Farbe wie Landing-Page — kein Absetzen */}
+        <rect width="512" height="512" fill="#0d0f14"/>
 
         {/* Glow-Ellipse unter dem Glas, wächst mit der Füllung */}
         <ellipse
