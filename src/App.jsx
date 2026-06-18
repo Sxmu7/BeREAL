@@ -13,7 +13,6 @@ import RecapScreen from './pages/RecapScreen'
 
 export default function App() {
   const { player, setName, setCharacter, resetCharacter, resetPlayer } = usePlayer()
-  const {} = useTheme()
 
   return (
     <Routes>
