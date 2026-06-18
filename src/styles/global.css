@@ -5,8 +5,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   background: var(--color-bg);
@@ -14,14 +13,9 @@ body {
   font-family: var(--font-body);
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
-  transition: background var(--duration-base) var(--ease-out-snap),
-    color var(--duration-base) var(--ease-out-snap);
 }
 
-body {
-  min-height: 100vh;
-  min-height: 100dvh;
-}
+body { min-height: 100vh; min-height: 100dvh; }
 
 #root {
   min-height: 100vh;
@@ -42,60 +36,48 @@ button {
   user-select: none;
 }
 
-input {
-  font-family: inherit;
-  color: inherit;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
+input { font-family: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
 
 ::selection {
   background: var(--color-accent);
   color: white;
 }
 
-/* ---- Wiederverwendbare Karte: klare Fläche + Schatten statt Glas ---- */
+/* === CARD === */
 .glass {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  transition: background var(--duration-base) var(--ease-out-snap),
-    border-color var(--duration-base) var(--ease-out-snap),
-    box-shadow var(--duration-base) var(--ease-out-snap);
 }
 
 .glass-strong {
   background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-strong);
-  box-shadow: var(--shadow-card-hover);
+  border-radius: var(--radius-md);
 }
 
-/* ---- Primärer Button: Apple-Systemblau ---- */
+/* === BUTTONS === */
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  padding: 16px var(--space-6);
+  padding: 17px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--color-accent);
-  color: var(--color-accent-text);
+  background: var(--gradient-accent);
+  color: #ffffff;
   font-size: var(--fs-body);
-  font-weight: 600;
-  letter-spacing: -0.005em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
   transition: transform var(--duration-fast) var(--ease-out-snap),
-    opacity var(--duration-fast) var(--ease-out-snap);
+              opacity var(--duration-fast) var(--ease-out-snap);
 }
-
-.btn-primary:active {
-  transform: scale(0.97);
-  opacity: 0.85;
-}
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
 
 .btn-secondary {
   display: inline-flex;
@@ -103,40 +85,69 @@ a {
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  padding: 16px var(--space-6);
+  padding: 17px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-strong);
   color: var(--color-text-primary);
   font-size: var(--fs-body);
   font-weight: 600;
-  letter-spacing: -0.005em;
   transition: transform var(--duration-fast) var(--ease-out-snap),
-    background var(--duration-fast) var(--ease-out-snap);
+              background var(--duration-fast) var(--ease-out-snap);
 }
+.btn-secondary:active { transform: scale(0.97); background: var(--color-surface-high); }
+.btn-secondary:disabled { opacity: 0.4; pointer-events: none; }
 
-.btn-secondary:active {
-  transform: scale(0.97);
-  background: var(--color-border);
-}
-
-.btn-primary:disabled,
-.btn-secondary:disabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-/* ---- Eyebrow/Label-Stil: dezent, kein Monospace-Code-Look mehr ---- */
+/* === EYEBROW === */
 .eyebrow {
-  font-family: var(--font-body);
   font-size: var(--fs-caption);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-tertiary);
 }
 
-/* Sichtbarer Fokusring für Tastatur-Nutzung */
+/* === AVATAR BUBBLE === */
+.avatar-bubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  background: var(--gradient-avatar-1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.avatar-bubble--lg {
+  width: 64px;
+  height: 64px;
+  font-size: 1.75rem;
+}
+
+/* === CODE DIGITS === */
+.code-digits {
+  display: flex;
+  gap: var(--space-2);
+}
+.code-digit {
+  width: 44px;
+  height: 52px;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* === FOCUS === */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;

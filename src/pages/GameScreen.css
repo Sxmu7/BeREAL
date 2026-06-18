@@ -2,31 +2,31 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   min-height: 100dvh;
-  padding: calc(var(--safe-top) + var(--space-5)) var(--space-5)
-    calc(var(--safe-bottom) + var(--space-6));
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
+  padding: calc(var(--safe-top) + var(--space-5)) var(--space-5)
+           calc(var(--safe-bottom) + var(--space-5));
   position: relative;
 }
 
 .game-screen--centered {
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 .game-screen__loading {
   color: var(--color-text-secondary);
-  font-size: var(--fs-body);
+  font-size: var(--fs-small);
 }
 
+/* Header */
 .game-screen__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .game-screen__header-actions {
@@ -35,88 +35,114 @@
   gap: var(--space-2);
 }
 
+/* Phasen */
 .game-screen__phase {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
-  justify-content: center;
+  gap: var(--space-4);
+  align-items: stretch;
 }
 
 .game-screen__phase--centered {
   position: relative;
   align-items: center;
+  justify-content: center;
 }
 
-.game-screen__challenge-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-5);
-  text-align: center;
-}
-
-.game-screen__challenge-text {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.375rem;
-  line-height: 1.25;
-  margin: 0;
-}
-
-.game-screen__punishment-hint {
-  font-size: var(--fs-small);
-  color: var(--color-text-tertiary);
-  margin: 0;
-}
-
-.game-screen__decision-actions {
-  display: flex;
-  gap: var(--space-3);
-}
-
-.game-screen__waiting-text {
-  text-align: center;
-  color: var(--color-text-secondary);
-  font-size: var(--fs-body);
-  margin: 0;
-}
-
-.game-screen__spectator {
+/* Challenge-Phase nach Mockup:
+   Avatar oben zentriert → Progress-Bar → große Challenge-Schrift → Buttons */
+.game-screen__challenge-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-3);
 }
 
-.game-screen__spectator-icon {
-  font-size: 2.5rem;
+.game-screen__challenge-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gradient-avatar-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.35);
 }
 
-.game-screen__spectator-text {
+.game-screen__challenge-player-name {
+  font-size: var(--fs-small);
+  font-weight: 600;
   color: var(--color-text-secondary);
+}
+
+.game-screen__challenge-progress {
+  width: 80px;
+  height: 3px;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-full);
+}
+
+.game-screen__challenge-text {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin: var(--space-5) 0;
+}
+
+.game-screen__punishment-hint {
+  font-size: var(--fs-small);
+  color: var(--color-text-tertiary);
   text-align: center;
   margin: 0;
 }
 
+.game-screen__challenge-card {
+  /* Kein eigenes Card-Layout mehr: Challenge ist freiliegender Text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.game-screen__decision-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.game-screen__waiting-text {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Recording */
+.game-screen__spectator {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+.game-screen__spectator-icon { font-size: 3rem; }
+.game-screen__spectator-text {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+}
+
+/* Voting */
 .game-screen__proof-video {
   width: 100%;
   border-radius: var(--radius-lg);
   background: var(--color-surface-elevated);
   max-height: 50vh;
-}
-
-.game-screen__vote-question {
-  text-align: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.25rem;
-  margin: 0;
-}
-
-.game-screen__vote-actions {
-  display: flex;
-  gap: var(--space-3);
 }
 
 .game-screen__vote-progress {
@@ -131,22 +157,40 @@
   max-width: 220px;
   height: 6px;
   border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
+  background: var(--color-surface-elevated);
   overflow: hidden;
 }
 
 .game-screen__vote-progress-fill {
   height: 100%;
   border-radius: var(--radius-full);
-  background: var(--color-success);
+  background: var(--gradient-accent);
 }
 
+.game-screen__vote-question {
+  text-align: center;
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.game-screen__vote-actions {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* Result */
 .game-screen__result-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-7) var(--space-5);
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
   text-align: center;
 }
 
@@ -156,25 +200,24 @@
 }
 
 .game-screen__result-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   margin: 0;
 }
 
+/* Scoreboard */
 .game-screen__scoreboard {
-  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
 }
 
-.game-screen__scoreboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
+.game-screen__scoreboard-list { display: flex; flex-direction: column; gap: var(--space-2); }
 
 .game-screen__scoreboard-row {
   display: flex;
@@ -188,13 +231,9 @@
   font-size: var(--fs-caption);
   color: var(--color-text-tertiary);
   width: 16px;
-  flex-shrink: 0;
 }
 
-.game-screen__scoreboard-icon {
-  font-size: 1.125rem;
-  flex-shrink: 0;
-}
+.game-screen__scoreboard-icon { font-size: 1.125rem; }
 
 .game-screen__scoreboard-name {
   flex: 1;
@@ -209,11 +248,6 @@
   font-family: var(--font-mono);
   font-size: var(--fs-small);
   color: var(--color-text-secondary);
-  flex-shrink: 0;
-}
-
-.game-screen__phase--centered > .btn-primary {
-  margin-top: var(--space-5);
 }
 
 .game-screen__result-actions {
@@ -221,12 +255,75 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-top: var(--space-5);
+  margin-top: var(--space-4);
 }
 
 .game-screen__end-game {
   font-size: var(--fs-small);
   font-weight: 600;
   color: var(--color-text-tertiary);
-  padding: var(--space-2) 0;
+  padding: var(--space-2);
+  text-align: center;
+}
+
+.game-screen__phase--centered > .btn-primary {
+  margin-top: var(--space-5);
+}
+
+.game-screen__back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+}
+
+/* Result-Hero nach Mockup */
+.game-screen__result-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-screen__result-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.game-screen__result-circle--success {
+  background: var(--gradient-accent);
+  box-shadow: 0 0 40px rgba(99,102,241,0.5), 0 0 80px rgba(99,102,241,0.2);
+}
+
+.game-screen__result-circle--fail {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 0 40px rgba(239,68,68,0.4);
+}
+
+.game-screen__result-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.game-screen__result-points {
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
 }

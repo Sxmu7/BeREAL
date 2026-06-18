@@ -1,218 +1,129 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import CircleStage from '../components/CircleStage'
-import FloatingDots from '../components/FloatingDots'
-import ThemeToggle from '../components/ThemeToggle'
 import { getLastSessionCode, clearLastSession } from '../lib/lastSession'
 import { getSessionOnce } from '../lib/sessions'
 import './LandingPage.css'
 
-const PREVIEW_STEPS = [
-  { key: 'spin', label: 'Wheel Spin' },
-  { key: 'challenge', label: 'Challenge' },
-  { key: 'proof', label: 'Video Proof' },
-  { key: 'vote', label: 'Voting' },
-  { key: 'winner', label: 'Winner' }
-]
-
-function StepContent({ step }) {
-  switch (step) {
-    case 'spin':
-      return (
-        <>
-          <span className="preview-emoji">🔥</span>
-          <p className="preview-label">Samuel</p>
-        </>
-      )
-    case 'challenge':
-      return (
-        <>
-          <span className="eyebrow">Challenge</span>
-          <p className="preview-text">
-            Selfie mit jemandem in Sonnenbrille
-          </p>
-        </>
-      )
-    case 'proof':
-      return (
-        <>
-          <span className="preview-emoji">🎥</span>
-          <p className="preview-label">Aufnahme läuft…</p>
-        </>
-      )
-    case 'vote':
-      return (
-        <>
-          <span className="eyebrow">Geschafft?</span>
-          <div className="preview-vote-row">
-            <span className="preview-vote-option">Ja</span>
-            <span className="preview-vote-option">Nein</span>
-          </div>
-        </>
-      )
-    case 'winner':
-      return (
-        <>
-          <span className="preview-emoji">🏆</span>
-          <p className="preview-label">Samuel gewinnt</p>
-        </>
-      )
-    default:
-      return null
-  }
-}
-
 export default function LandingPage({ player, theme, toggleTheme }) {
   const navigate = useNavigate()
-  const [stepIndex, setStepIndex] = useState(0)
-  const [resumableSession, setResumableSession] = useState(undefined) // undefined = noch am Prüfen
+  const [name, setName] = useState(player?.name || '')
+  const [resumableSession, setResumableSession] = useState(undefined)
+  const isReturning = !!player?.name
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStepIndex((i) => (i + 1) % PREVIEW_STEPS.length)
-    }, 2200)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Beim Laden einmalig prüfen, ob es eine fortsetzbare Session gibt.
-  // "Letztes Spiel fortsetzen" – falls die App versehentlich geschlossen
-  // wurde, soll man nicht von Null anfangen müssen. Wir zeigen das nur
-  // an, wenn die Session noch existiert und nicht bereits beendet ist;
-  // sonst würde nach jeder regulär abgeschlossenen Party dauerhaft ein
-  // Banner auftauchen.
   useEffect(() => {
     const lastCode = getLastSessionCode()
-    if (!lastCode) {
-      setResumableSession(null)
-      return
-    }
+    if (!lastCode) { setResumableSession(null); return }
     getSessionOnce(lastCode)
       .then((data) => {
-        if (data && data.status !== 'ended') {
-          setResumableSession(data)
-        } else {
-          clearLastSession()
-          setResumableSession(null)
-        }
+        if (data && data.status !== 'ended') setResumableSession(data)
+        else { clearLastSession(); setResumableSession(null) }
       })
       .catch(() => setResumableSession(null))
   }, [])
 
   function handleResume() {
     if (!resumableSession) return
-    const path =
-      resumableSession.status === 'active'
-        ? `/game/${resumableSession.code}`
-        : `/lobby/${resumableSession.code}`
+    const path = resumableSession.status === 'active'
+      ? `/game/${resumableSession.code}`
+      : `/lobby/${resumableSession.code}`
     navigate(path)
   }
 
-  function handleDismissResume() {
-    clearLastSession()
-    setResumableSession(null)
+  function handleContinue() {
+    const trimmed = name.trim()
+    if (!trimmed && !isReturning) return
+    if (trimmed && trimmed !== player?.name) {
+      // Name hat sich geändert → durch NameScreen leiten damit er gespeichert wird
+      navigate('/name', { state: { prefill: trimmed } })
+      return
+    }
+    navigate(player?.characterId ? '/menu' : '/character')
   }
 
-  function handleStart() {
-    // Wer schon einen Namen gespeichert hat, muss ihn nicht erneut
-    // eingeben – direkt ins Hauptmenü statt zur Namenseingabe.
-    navigate(player?.name ? '/menu' : '/name')
-  }
-
-  const currentStep = PREVIEW_STEPS[stepIndex]
+  const canContinue = isReturning || name.trim().length >= 2
 
   return (
     <div className="landing">
-      <FloatingDots count={8} />
+      {/* Radial-Glow im Hintergrund */}
+      <div className="landing__glow" />
 
-      <div className="landing__theme-toggle">
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
-      </div>
+      <motion.div
+        className="landing__inner"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      >
+        {/* Logo */}
+        <div className="landing__logo">
+          <span className="landing__logo-icon">🥃</span>
+        </div>
 
-      <div className="landing__content">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="landing__hero"
-        >
-          <h1 className="landing__title">DareDrop</h1>
-          <p className="landing__tagline">
-            {player?.name
-              ? `🍻 Schön, dass du wieder da bist, ${player.name}`
-              : 'Accept the dare. Or take the drink.'}
-          </p>
-        </motion.div>
+        <h1 className="landing__title">
+          {isReturning ? `Hallo, ${player.name} 👋` : 'Willkommen'}
+        </h1>
+        <p className="landing__tagline">
+          {isReturning ? 'Bereit für die nächste Runde?' : 'Bereit für eine legendäre Nacht?'}
+        </p>
 
-        {resumableSession && (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="landing__resume glass"
-          >
-            <p className="landing__resume-text">
-              Es wurde ein laufendes Spiel gefunden
-              {resumableSession.sessionName ? `: „${resumableSession.sessionName}“` : '.'}
-            </p>
-            <div className="landing__resume-actions">
-              <button className="btn-primary" onClick={handleResume}>
-                ▶ Spiel fortsetzen
-              </button>
-              <button className="landing__resume-dismiss" onClick={handleDismissResume}>
-                ✕ Neues Spiel starten
-              </button>
-            </div>
-          </motion.div>
+        {/* Resume-Banner */}
+        <AnimatePresence>
+          {resumableSession && (
+            <motion.div
+              className="landing__resume"
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="landing__resume-content">
+                <span className="landing__resume-icon">🎮</span>
+                <div>
+                  <p className="landing__resume-title">Letztes Spiel</p>
+                  <p className="landing__resume-sub">
+                    {resumableSession.sessionName || 'Session gefunden'} · Fortsetzen?
+                  </p>
+                </div>
+              </div>
+              <div className="landing__resume-actions">
+                <button className="btn-primary" onClick={handleResume}>
+                  ▶ Fortsetzen
+                </button>
+                <button className="landing__resume-dismiss" onClick={() => { clearLastSession(); setResumableSession(null) }}>
+                  Ignorieren
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Namens-Eingabe: nur anzeigen wenn kein Name gespeichert */}
+        {!isReturning && (
+          <div className="landing__input-wrap glass">
+            <span className="landing__input-icon">👤</span>
+            <input
+              className="landing__input"
+              type="text"
+              placeholder="Dein Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && canContinue && handleContinue()}
+              maxLength={16}
+              autoComplete="off"
+            />
+          </div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
-          className="landing__stage-wrap"
+        <button
+          className="btn-primary landing__cta"
+          onClick={handleContinue}
+          disabled={!canContinue}
         >
-          <CircleStage size={240}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep.key}
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="preview-step"
-              >
-                <StepContent step={currentStep.key} />
-              </motion.div>
-            </AnimatePresence>
-          </CircleStage>
+          Weiter
+        </button>
 
-          <div className="landing__dots">
-            {PREVIEW_STEPS.map((s, i) => (
-              <span
-                key={s.key}
-                className={
-                  i === stepIndex ? 'landing__dot landing__dot--active' : 'landing__dot'
-                }
-              />
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
-          className="landing__actions"
-        >
-          <button className="btn-primary" onClick={handleStart}>
-            Start
-          </button>
-          <button className="btn-secondary" onClick={() => navigate('/rules')}>
-            Rules
-          </button>
-        </motion.div>
-      </div>
+        <p className="landing__disclaimer">Trink verantwortungsvoll.</p>
+      </motion.div>
     </div>
   )
 }

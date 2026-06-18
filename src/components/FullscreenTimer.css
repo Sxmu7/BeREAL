@@ -9,17 +9,6 @@
   gap: var(--space-5);
 }
 
-.fullscreen-timer--mini {
-  inset: auto;
-  top: calc(var(--safe-top) + var(--space-5));
-  right: var(--space-5);
-  left: auto;
-  bottom: auto;
-  width: auto;
-  height: auto;
-  pointer-events: none;
-}
-
 .fullscreen-timer__backdrop {
   position: absolute;
   inset: 0;
@@ -32,6 +21,18 @@
 .fullscreen-timer__label {
   position: relative;
   z-index: 1;
+}
+
+/* Mini-Modus: rechts oben, nicht-blockierend */
+.fullscreen-timer--mini {
+  inset: auto;
+  top: calc(var(--safe-top) + var(--space-5));
+  right: var(--space-5);
+  left: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  pointer-events: none;
 }
 
 .fullscreen-timer__ring-wrap {
@@ -57,13 +58,4 @@
 
 .fullscreen-timer__time--urgent {
   color: var(--color-danger);
-}
-
-.fullscreen-timer__skip {
-  position: relative;
-  z-index: 1;
-  font-size: var(--fs-small);
-  font-weight: 600;
-  color: var(--color-text-tertiary);
-  padding: var(--space-2) var(--space-4);
 }

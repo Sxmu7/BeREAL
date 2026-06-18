@@ -218,12 +218,18 @@ export default function GameScreen({ player, theme, toggleTheme }) {
   return (
     <div className="game-screen">
       <div className="game-screen__header">
+        <button
+          className="game-screen__back-btn"
+          onClick={() => navigate('/menu')}
+          aria-label="Verlassen"
+        >
+          ‹
+        </button>
         <span className="eyebrow">Runde {round.roundNumber}</span>
         <div className="game-screen__header-actions">
           {round.phase !== 'countdown' && round.phase !== 'result' && (
             <LiveRanking players={session.players} stats={session.stats} />
           )}
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
       </div>
 
@@ -274,16 +280,23 @@ export default function GameScreen({ player, theme, toggleTheme }) {
               )
             ) : (
               <>
-                <div className="game-screen__challenge-card glass">
-                  <span className="eyebrow">
-                    {getCharacterById(selectedPlayer?.characterId)?.icon} {selectedPlayer?.name}{' '}
-                    ist dran
+                {/* Avatar + Name wie im Mockup: groß, zentriert, oben */}
+                <div className="game-screen__challenge-header">
+                  <div className="game-screen__challenge-avatar">
+                    {getCharacterById(selectedPlayer?.characterId)?.icon || '🎮'}
+                  </div>
+                  <span className="game-screen__challenge-player-name">
+                    {selectedPlayer?.name}
                   </span>
-                  <p className="game-screen__challenge-text">{round.challengeText}</p>
-                  <p className="game-screen__punishment-hint">
-                    Bei Ablehnung: {punishmentLabel}
-                  </p>
+                  <div className="game-screen__challenge-progress" />
                 </div>
+
+                {/* Challenge-Text: groß, fett, freistehend */}
+                <p className="game-screen__challenge-text">{round.challengeText}</p>
+
+                <p className="game-screen__punishment-hint">
+                  Bei Ablehnung: {punishmentLabel}
+                </p>
 
                 {isSelected ? (
                   <div className="game-screen__decision-actions">
@@ -411,40 +424,43 @@ export default function GameScreen({ player, theme, toggleTheme }) {
           >
             {round.outcome === 'success' && <Confetti />}
 
+            {/* Großes zentriertes Result-Icon nach Mockup */}
             <motion.div
-              className="game-screen__result-card glass"
-              initial={{ y: 12 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="game-screen__result-hero"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 16, delay: 0.05 }}
             >
-              <motion.span
-                className="game-screen__result-icon"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 16 }}
-              >
-                {round.partyEvent?.effect === 'all_drink'
-                  ? '🍻'
-                  : round.outcome === 'success'
-                  ? '🏆'
-                  : '🍺'}
-              </motion.span>
+              <div className={`game-screen__result-circle ${round.outcome === 'success' ? 'game-screen__result-circle--success' : 'game-screen__result-circle--fail'}`}>
+                {round.partyEvent?.effect === 'all_drink' ? '🍻' : round.outcome === 'success' ? '✓' : '✕'}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="game-screen__result-text"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <p className="game-screen__result-title">
                 {round.partyEvent?.effect === 'all_drink'
                   ? 'Alle haben getrunken! 🍻'
                   : round.outcome === 'success'
-                  ? `${selectedPlayer?.name} hat's geschafft!`
+                  ? `${selectedPlayer?.name} hat geschafft! 🎉`
                   : round.outcome === 'punished'
                   ? `${selectedPlayer?.name} nimmt die Strafe.`
                   : `${selectedPlayer?.name} hat's nicht geschafft.`}
               </p>
+              {round.outcome === 'success' && (
+                <p className="game-screen__result-points">+50 Punkte</p>
+              )}
               {round.outcome !== 'success' && round.partyEvent?.effect !== 'all_drink' && (
                 <p className="game-screen__punishment-hint">{punishmentLabel}</p>
               )}
             </motion.div>
 
             <motion.div
-              className="game-screen__scoreboard glass"
+              className="game-screen__scoreboard"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.35 }}

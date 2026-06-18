@@ -59,7 +59,7 @@
   gap: var(--space-2);
   padding: var(--space-5) var(--space-2);
   border-radius: var(--radius-md);
-  background: var(--color-bg-secondary);
+  background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   transition: border-color var(--duration-fast) var(--ease-out-snap),
     background var(--duration-fast) var(--ease-out-snap),
@@ -68,7 +68,7 @@
 
 .character-card--selected {
   border-color: var(--color-accent);
-  background: var(--color-accent-dim);
+  background: rgba(99,102,241,0.18);
 }
 
 .character-card__icon {

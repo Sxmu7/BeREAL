@@ -1,74 +1,38 @@
-.live-ranking {
-  position: relative;
-}
+.live-ranking { position: relative; }
 
 .live-ranking__toggle {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2) var(--space-3);
+  gap: 5px;
+  padding: 6px var(--space-3);
   border-radius: var(--radius-full);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
   font-size: var(--fs-caption);
   font-weight: 600;
   color: var(--color-text-secondary);
   max-width: 120px;
 }
-
-.live-ranking__toggle-medal {
-  font-size: 0.875rem;
-  flex-shrink: 0;
-}
-
-.live-ranking__toggle-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+.live-ranking__toggle-medal { font-size: 0.875rem; flex-shrink: 0; }
+.live-ranking__toggle-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .live-ranking__panel {
   position: absolute;
   top: calc(100% + var(--space-2));
   right: 0;
   z-index: 10;
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-3);
   min-width: 180px;
 }
-
-.live-ranking__row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.live-ranking__rank {
-  font-size: var(--fs-caption);
-  font-family: var(--font-mono);
-  width: 20px;
-  flex-shrink: 0;
-}
-
-.live-ranking__icon {
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.live-ranking__name {
-  flex: 1;
-  font-size: var(--fs-small);
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.live-ranking__score {
-  font-family: var(--font-mono);
-  font-size: var(--fs-small);
-  color: var(--color-text-secondary);
-  flex-shrink: 0;
-}
+.live-ranking__row { display: flex; align-items: center; gap: var(--space-2); }
+.live-ranking__rank { font-size: var(--fs-caption); width: 20px; flex-shrink: 0; }
+.live-ranking__icon { font-size: 1rem; flex-shrink: 0; }
+.live-ranking__name { flex: 1; font-size: var(--fs-small); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-ranking__score { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--color-text-secondary); }

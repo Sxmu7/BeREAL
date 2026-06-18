@@ -1,111 +1,159 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { getCharacterById } from '../lib/characters'
-import FloatingDots from '../components/FloatingDots'
-import ThemeToggle from '../components/ThemeToggle'
+import { getLastSessionCode } from '../lib/lastSession'
+import { getSessionOnce } from '../lib/sessions'
+import { useState, useEffect } from 'react'
 import './MainMenu.css'
-
-const PRIMARY_ITEMS = [
-  {
-    key: 'host',
-    title: 'Host Game',
-    subtitle: 'Session erstellen & Regeln festlegen',
-    icon: '🎛️',
-    path: '/host'
-  },
-  {
-    key: 'join',
-    title: 'Join Game',
-    subtitle: 'Mit Lobby-Code beitreten',
-    icon: '🔗',
-    path: '/join'
-  }
-]
-
-const SECONDARY_ITEMS = [
-  {
-    key: 'rules',
-    title: 'Spielregeln',
-    icon: '📖',
-    path: '/rules'
-  },
-  {
-    key: 'profile',
-    title: 'Statistiken',
-    icon: '🏆',
-    path: '/profile'
-  }
-]
 
 export default function MainMenu({ player, theme, toggleTheme }) {
   const navigate = useNavigate()
   const character = getCharacterById(player.characterId)
+  const [lastSession, setLastSession] = useState(null)
+
+  useEffect(() => {
+    const code = getLastSessionCode()
+    if (!code) return
+    getSessionOnce(code).then((s) => {
+      if (s && s.status !== 'ended') setLastSession(s)
+    }).catch(() => {})
+  }, [])
+
+  const greeting = getGreeting()
+
+  function getGreeting() {
+    const h = new Date().getHours()
+    if (h < 12) return 'Guten Morgen'
+    if (h < 18) return 'Hallo'
+    return 'Hey'
+  }
 
   return (
-    <div className="main-menu">
-      <FloatingDots count={6} />
-
+    <div className="home">
+      {/* Header */}
       <motion.div
+        className="home__header"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="main-menu__header"
+        transition={{ duration: 0.35 }}
       >
-        <ThemeToggle theme={theme} onToggle={toggleTheme} />
-        <div className="main-menu__player glass">
-          <span className="main-menu__player-icon">
-            {character?.icon || '🎮'}
-          </span>
-          <div>
-            <p className="main-menu__player-name">{player.name || 'Spieler'}</p>
-            <p className="main-menu__player-char">
-              {character?.name || 'Kein Charakter'}
-            </p>
-          </div>
+        <div>
+          <h1 className="home__greeting">
+            {greeting}, {player.name || 'Spieler'} 👋
+          </h1>
+          <p className="home__sub">Was möchtest du tun?</p>
         </div>
+        <button
+          className="home__avatar avatar-bubble"
+          onClick={() => navigate('/profile')}
+          style={{ background: 'var(--gradient-avatar-1)' }}
+        >
+          {character?.icon || '🎮'}
+        </button>
       </motion.div>
 
-      <div className="main-menu__title-wrap">
-        <h1 className="main-menu__title">DareDrop</h1>
-      </div>
-
-      <div className="main-menu__cards">
-        {PRIMARY_ITEMS.map((item, i) => (
+      {/* Haupt-Aktionen */}
+      <div className="home__actions">
+        {[
+          {
+            key: 'host',
+            icon: '➕',
+            gradient: 'var(--gradient-accent)',
+            title: 'Spiel erstellen',
+            sub: 'Erstelle dein eigenes Spiel',
+            path: '/host',
+            delay: 0.08
+          },
+          {
+            key: 'join',
+            icon: '👥',
+            gradient: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+            title: 'Spiel beitreten',
+            sub: 'Tritt einem Spiel bei',
+            path: '/join',
+            delay: 0.14
+          }
+        ].map((item) => (
           <motion.button
             key={item.key}
-            className="menu-card glass"
-            initial={{ opacity: 0, y: 20 }}
+            className="home__action-card glass"
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 + i * 0.07, ease: 'easeOut' }}
+            transition={{ duration: 0.35, delay: item.delay }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate(item.path)}
           >
-            <span className="menu-card__icon">{item.icon}</span>
-            <span className="menu-card__text">
-              <span className="menu-card__title">{item.title}</span>
-              <span className="menu-card__subtitle">{item.subtitle}</span>
-            </span>
-            <span className="menu-card__arrow">→</span>
+            <div className="home__action-icon" style={{ background: item.gradient }}>
+              <span>{item.icon}</span>
+            </div>
+            <div className="home__action-text">
+              <span className="home__action-title">{item.title}</span>
+              <span className="home__action-sub">{item.sub}</span>
+            </div>
+            <span className="home__action-arrow">›</span>
           </motion.button>
         ))}
       </div>
 
-      <div className="main-menu__secondary">
-        {SECONDARY_ITEMS.map((item, i) => (
-          <motion.button
-            key={item.key}
-            className="menu-secondary-item"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.28 + i * 0.06, ease: 'easeOut' }}
-            whileTap={{ scale: 0.96 }}
+      {/* Letztes Spiel */}
+      {lastSession && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22 }}
+        >
+          <p className="home__section-title">Letztes Spiel</p>
+          <button
+            className="home__last-session glass"
+            onClick={() => navigate(
+              lastSession.status === 'active'
+                ? `/game/${lastSession.code}`
+                : `/lobby/${lastSession.code}`
+            )}
+          >
+            <div className="home__last-avatars">
+              {(lastSession.players || []).slice(0, 3).map((p, i) => (
+                <span
+                  key={p.id}
+                  className="home__last-avatar"
+                  style={{ zIndex: 3 - i, marginLeft: i > 0 ? -12 : 0 }}
+                >
+                  {getCharacterById(p.characterId)?.icon || '🎮'}
+                </span>
+              ))}
+            </div>
+            <div className="home__last-info">
+              <span className="home__last-name">{lastSession.sessionName || 'Spiel'}</span>
+              <span className="home__last-meta">
+                {lastSession.players?.length || 0} Spieler
+              </span>
+            </div>
+            <span className="home__action-arrow">›</span>
+          </button>
+        </motion.div>
+      )}
+
+      {/* Sekundäre Links */}
+      <motion.div
+        className="home__secondary"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.28 }}
+      >
+        {[
+          { icon: '📖', label: 'Regeln', path: '/rules' },
+          { icon: '🏆', label: 'Statistiken', path: '/profile' }
+        ].map((item) => (
+          <button
+            key={item.path}
+            className="home__secondary-btn"
             onClick={() => navigate(item.path)}
           >
-            <span className="menu-secondary-item__icon">{item.icon}</span>
-            <span className="menu-secondary-item__title">{item.title}</span>
-          </motion.button>
+            <span>{item.icon}</span>
+            <span>{item.label}</span>
+          </button>
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }

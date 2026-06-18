@@ -1,16 +1,9 @@
-.wheel-spin {
-  position: relative;
-  width: min(300px, 80vw);
-  height: min(300px, 80vw);
-  margin: 0 auto;
-}
-
 .wheel-spin__ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
 }
 
 .wheel-spin__segment {
@@ -31,53 +24,15 @@
   margin-left: -20px;
   margin-top: -20px;
   border-radius: 50%;
-  background: var(--color-surface);
+  background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-strong);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   font-size: 1.25rem;
-}
-
-.wheel-spin__pointer {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 12px solid var(--color-text-secondary);
-  z-index: 2;
-}
-
-.wheel-spin__center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 58%;
-  height: 58%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--space-3);
-}
-
-.wheel-spin__result {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.wheel-spin__result-icon {
-  font-size: 2.5rem;
 }
 
 .wheel-spin__result-name {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.25rem;
+  color: var(--color-text-primary);
 }

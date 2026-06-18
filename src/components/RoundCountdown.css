@@ -1,42 +1,15 @@
-.round-countdown {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
-}
-
-.round-countdown__players {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.round-countdown__avatars {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  max-width: 320px;
-}
-
+.round-countdown { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 240px; }
+.round-countdown__players { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+.round-countdown__avatars { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); max-width: 320px; }
 .round-countdown__avatar {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  border-radius: 50%;
-  background: var(--color-surface);
+  width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; border-radius: 50%;
+  background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-strong);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.2);
 }
-
 .round-countdown__number {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 5rem;
-  color: var(--color-accent);
+  font-family: var(--font-display); font-weight: 800; font-size: 6rem;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
