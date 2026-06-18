@@ -52,7 +52,6 @@ export default function LandingPage({ player }) {
       <div className="landing__bg-glow-1" />
       <div className="landing__bg-glow-2" />
       <div className="landing__bg-glow-3" />
-      <div className="landing__grid" />
 
       <AnimatePresence mode="wait">
         {phase === 'intro' && (

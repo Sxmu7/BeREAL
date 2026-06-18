@@ -153,3 +153,50 @@
 .create-game__footer {
   padding: var(--space-4) var(--space-5) calc(var(--safe-bottom) + var(--space-5));
 }
+
+/* Pill-Row für Häufigkeit */
+.create-game__pill-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
+
+.create-game__pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-3) var(--space-2);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast);
+}
+
+.create-game__pill--active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+}
+
+.create-game__pill-main {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.create-game__pill--active .create-game__pill-main {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.create-game__pill-sub {
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary);
+}
+
+/* Modus-Icon */
+.create-game__mode-icon {
+  font-size: 1.25rem;
+  margin-bottom: 2px;
+}

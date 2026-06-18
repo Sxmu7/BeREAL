@@ -40,17 +40,6 @@
   pointer-events: none;
 }
 
-/* Grid-Muster im Hintergrund */
-.landing__grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 80%);
-}
 
 /* Intro-Phase */
 .landing__intro {
