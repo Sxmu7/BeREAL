@@ -21,10 +21,11 @@ function StatCard({ icon, label, value, delay }) {
   )
 }
 
-export default function ProfileScreen({ player, theme, toggleTheme }) {
+export default function ProfileScreen({ player, resetPlayer, theme, toggleTheme }) {
   const navigate = useNavigate()
   const [stats, setStats] = useState(readLocalStats)
   const [confirmingReset, setConfirmingReset] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const [soundOn, setSoundOn] = useState(isSoundEnabled)
 
   function handleResetConfirmed() {
@@ -32,11 +33,16 @@ export default function ProfileScreen({ player, theme, toggleTheme }) {
     setConfirmingReset(false)
   }
 
+  function handleDeleteConfirmed() {
+    resetPlayer()
+    navigate('/', { replace: true })
+  }
+
   function handleToggleSound() {
     const next = !soundOn
     setSoundEnabled(next)
     setSoundOn(next)
-    if (next) playCardSound() // kurzes Feedback, dass es jetzt wieder an ist
+    if (next) playCardSound()
   }
 
   const winRate =
@@ -126,6 +132,38 @@ export default function ProfileScreen({ player, theme, toggleTheme }) {
         ) : (
           <button className="profile-screen__reset" onClick={() => setConfirmingReset(true)}>
             Statistiken zurücksetzen
+          </button>
+        )}
+      </div>
+
+      {/* ── Konto löschen ── */}
+      <div className="profile-screen__delete-wrap">
+        {confirmingDelete ? (
+          <div className="profile-screen__confirm profile-screen__confirm--danger">
+            <p className="profile-screen__confirm-text">
+              Konto wirklich löschen? Dein Name, Charakter und alle Statistiken werden unwiderruflich gelöscht.
+            </p>
+            <div className="profile-screen__confirm-actions">
+              <button
+                className="profile-screen__cancel"
+                onClick={() => setConfirmingDelete(false)}
+              >
+                Abbrechen
+              </button>
+              <button
+                className="profile-screen__confirm-btn profile-screen__confirm-btn--danger"
+                onClick={handleDeleteConfirmed}
+              >
+                Löschen
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            className="profile-screen__delete-btn"
+            onClick={() => setConfirmingDelete(true)}
+          >
+            🗑 Benutzer löschen
           </button>
         )}
       </div>

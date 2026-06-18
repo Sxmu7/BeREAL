@@ -14,7 +14,7 @@ import ProfileScreen from './pages/ProfileScreen'
 import RecapScreen from './pages/RecapScreen'
 
 export default function App() {
-  const { player, setName, setCharacter, resetCharacter } = usePlayer()
+  const { player, setName, setCharacter, resetCharacter, resetPlayer } = usePlayer()
   const { theme, toggleTheme } = useTheme()
 
   return (
@@ -72,7 +72,7 @@ export default function App() {
       />
       <Route
         path="/profile"
-        element={<ProfileScreen player={player} theme={theme} toggleTheme={toggleTheme} />}
+        element={<ProfileScreen player={player} resetPlayer={resetPlayer} theme={theme} toggleTheme={toggleTheme} />}
       />
       <Route
         path="/recap/:code"

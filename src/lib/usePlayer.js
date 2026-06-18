@@ -49,5 +49,25 @@ export function usePlayer() {
     })
   }, [])
 
-  return { player, setName, setCharacter, resetCharacter }
+  /**
+   * Löscht den Spieler komplett — Name, Charakter, Player-ID und
+   * alle anderen App-Daten aus localStorage. Danach ist die App
+   * im Zustand wie beim allerersten Besuch.
+   */
+  const resetPlayer = useCallback(() => {
+    const keysToRemove = [
+      STORAGE_KEY,
+      'daredrop_player_id',
+      'daredrop_local_stats',
+      'daredrop_last_session',
+      'daredrop_theme',
+      'daredrop_sound_enabled',
+    ]
+    keysToRemove.forEach((k) => {
+      try { localStorage.removeItem(k) } catch { }
+    })
+    setPlayer({ name: '', characterId: null })
+  }, [])
+
+  return { player, setName, setCharacter, resetCharacter, resetPlayer }
 }
