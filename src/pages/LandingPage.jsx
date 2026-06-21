@@ -12,7 +12,7 @@ const FEATURES = [
   { icon: '🎮', label: 'Multiplayer' },
 ]
 
-export default function LandingPage({ player }) {
+export default function LandingPage({ player, setName: setPlayerName }) {
   const navigate = useNavigate()
   const [phase, setPhase] = useState('intro')
   const [name, setName] = useState(player?.name || '')
@@ -38,8 +38,7 @@ export default function LandingPage({ player }) {
     const trimmed = name.trim()
     if (!trimmed && !isReturning) return
     if (trimmed && trimmed !== player?.name) {
-      navigate('/name', { state: { prefill: trimmed } })
-      return
+      setPlayerName(trimmed)
     }
     navigate('/menu')
   }
@@ -160,13 +159,18 @@ export default function LandingPage({ player }) {
                     type="text"
                     placeholder="Dein Name"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value.slice(0, 16))}
                     onKeyDown={(e) => e.key === 'Enter' && canContinue && handleContinue()}
                     maxLength={16}
                     autoComplete="off"
                     autoFocus
                   />
+                  <span className="landing__input-counter">{name.trim().length}/16</span>
                 </div>
+              )}
+
+              {!isReturning && name.length > 0 && !canContinue && (
+                <p className="landing__input-hint">Mindestens 2 Zeichen</p>
               )}
 
               <button

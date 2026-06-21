@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { usePlayer } from './lib/usePlayer'
 import LandingPage from './pages/LandingPage'
-import NameScreen from './pages/NameScreen'
 import MainMenu from './pages/MainMenu'
 import RulesScreen from './pages/RulesScreen'
 import HostSetupScreen from './pages/HostSetupScreen'
@@ -18,16 +17,7 @@ export default function App() {
     <Routes>
       <Route
         path="/"
-        element={<LandingPage player={player} />}
-      />
-      <Route
-        path="/name"
-        element={
-          <NameScreen
-            player={player}
-            setName={setName}
-          />
-        }
+        element={<LandingPage player={player} setName={setName} />}
       />
       <Route
         path="/menu"

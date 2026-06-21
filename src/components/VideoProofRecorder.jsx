@@ -2,13 +2,29 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import './VideoProofRecorder.css'
 
 const MIN_SECONDS = 5
-const MAX_SECONDS = 12 // etwas unter den 15s aus dem Brief, damit die Dateigröße sicherer unter dem Firestore-Limit bleibt
-const FIRESTORE_DOC_LIMIT_BYTES = 1_048_576 // 1 MB, hartes Firestore-Limit pro Dokument
-const SAFE_VIDEO_BYTES_BUDGET = 700_000 // Sicherheitspuffer für den Rest des Dokuments (Settings, Spieler, Votes, Base64-Overhead ~33%)
-const TARGET_VIDEO_BITRATE = 250_000 // niedrige Bitrate, damit 12s Video unter dem Budget bleiben
+const MAX_SECONDS = 20 // deutlich länger als zuvor (war 12s), näher an "richtigen" Videos
+
+// Firestore erlaubt max. 1 MB pro Dokument. Videos werden als Base64
+// direkt im currentRound-Feld gespeichert (kein Firebase Storage, um
+// den kostenpflichtigen Blaze-Plan zu vermeiden). Base64 hat ~33%
+// Overhead gegenüber den Rohdaten (4 kodierte Byte pro 3 Roh-Byte).
+//
+// Rechnung: (1 MB − Dokument-Overhead) ÷ 1.33 = max. Rohvideo-Budget,
+// davon nochmal 10% Sicherheitsmarge für Firestore-internen Overhead
+// beim tatsächlichen Schreiben. Der bisherige Puffer (700 KB direkt
+// als Limit) war unnötig konservativ – der Rest des Dokuments
+// (Spielerliste, Settings, Votes, Timestamps) braucht real nur
+// 5-15 KB, nicht die ursprünglich angenommenen ~300 KB.
+const FIRESTORE_DOC_LIMIT_BYTES = 1_048_576
+const DOC_OVERHEAD_BYTES = 8_000 // gemessen: reales currentRound+players+settings+stats liegt bei ~2 KB; 8 KB ist das Vierfache als Sicherheitsmarge für Wachstum (mehr Spieler, längere Challenge-Texte)
+const SAFE_VIDEO_BYTES_BUDGET = Math.floor(
+  ((FIRESTORE_DOC_LIMIT_BYTES - DOC_OVERHEAD_BYTES) * 3) / 4 * 0.92
+) // ≈ 701 KB Rohvideo-Budget
+
+const TARGET_VIDEO_BITRATE = 250_000 // bei 20s ≈ 610 KB, sicher innerhalb des Budgets
 
 /**
- * Nimmt ein kurzes Beweisvideo auf (5–12s) und speichert es als
+ * Nimmt ein kurzes Beweisvideo auf (5–20s) und speichert es als
  * Base64-String direkt im Firestore-Dokument (currentRound.proofData),
  * statt in Firebase Storage. Das vermeidet den Blaze-Plan, den Storage
  * inzwischen für neue Projekte voraussetzt – auf Kosten der Qualität:
@@ -39,8 +55,8 @@ export default function VideoProofRecorder({ onUploaded }) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: 'environment',
-            width: { ideal: 480 },
-            height: { ideal: 854 }
+            width: { ideal: 540 },
+            height: { ideal: 960 }
           },
           audio: true
         })

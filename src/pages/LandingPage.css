@@ -226,6 +226,21 @@
 }
 .landing__input::placeholder { color: rgba(255,255,255,0.25); font-weight: 400; }
 
+.landing__input-counter {
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.25);
+  font-variant-numeric: tabular-nums;
+}
+
+.landing__input-hint {
+  margin: -4px 0 0;
+  font-size: 0.75rem;
+  color: rgba(245, 158, 11, 0.8);
+  text-align: center;
+}
+
 /* ── CTA-Button ── */
 .landing__cta {
   width: 100%;

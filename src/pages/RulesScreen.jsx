@@ -13,7 +13,7 @@ const RULES = [
   },
   {
     title: 'Beweisvideo',
-    text: 'Bei Annahme: kurzes Video aufnehmen (5–15 Sekunden) als Beweis.'
+    text: 'Bei Annahme: kurzes Video aufnehmen (5–20 Sekunden) als Beweis.'
   },
   {
     title: 'Abstimmung',
