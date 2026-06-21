@@ -200,3 +200,52 @@
   font-size: 1.25rem;
   margin-bottom: 2px;
 }
+
+/* Location-Modus: 2-Spalten-Grid mit größeren Karten */
+.create-game__location-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2);
+}
+
+.create-game__location {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: var(--space-3) var(--space-3);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-align: left;
+  transition: all var(--duration-fast);
+}
+
+.create-game__location--active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-dim);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.15);
+}
+
+.create-game__location-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.create-game__location-label {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.create-game__location--active .create-game__location-label {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.create-game__location-desc {
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.3;
+}

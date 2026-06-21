@@ -51,7 +51,7 @@ export function ensurePlayerStats(stats, playerId) {
  */
 export async function startNewRound(
   sessionCode,
-  { players, difficulty, roundNumber, previousSelectedPlayerId, skipCountdown = false }
+  { players, difficulty, locationMode, roundNumber, previousSelectedPlayerId, skipCountdown = false }
 ) {
   // Der zuletzt ausgewählte Spieler wird ausgeschlossen, damit nicht
   // wiederholt dieselbe Person dran ist – bei kleinen Gruppen würde
@@ -59,7 +59,7 @@ export async function startNewRound(
   // auch wenn es technisch korrekter Zufall wäre.
   const excludeIds = previousSelectedPlayerId ? [previousSelectedPlayerId] : []
   const selected = pickRandomPlayer(players, excludeIds)
-  const challengeText = pickRandomChallenge(difficulty)
+  const challengeText = pickRandomChallenge(difficulty, locationMode)
   const partyEvent = maybePickPartyEvent(roundNumber)
 
   const ref = doc(db, 'sessions', sessionCode)

@@ -205,3 +205,10 @@
 }
 
 .lobby__player--ghost { opacity: 0.5; }
+
+.lobby__location-tag {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.01em;
+}

@@ -7,6 +7,7 @@ import {
 } from '../lib/sessions'
 import { getCharacterById } from '../lib/characters'
 import QrCodeDisplay from '../components/QrCodeDisplay'
+import { getLocationMode } from '../lib/challenges'
 import './LobbyScreen.css'
 
 const AVATAR_GRADIENTS = [
@@ -83,7 +84,14 @@ export default function LobbyScreen({ player }) {
         <button className="lobby__back" onClick={() => navigate('/menu')}>‹</button>
         <div className="lobby__header-center">
           <h1 className="lobby__title">{session.sessionName}</h1>
-          <span className="eyebrow">Lobby</span>
+          {session.settings?.locationMode ? (
+            <span className="lobby__location-tag">
+              {getLocationMode(session.settings.locationMode).icon}{' '}
+              {getLocationMode(session.settings.locationMode).label}
+            </span>
+          ) : (
+            <span className="eyebrow">Lobby</span>
+          )}
         </div>
         <button className="lobby__menu-btn" onClick={() => setShowQr(v => !v)}>···</button>
       </div>

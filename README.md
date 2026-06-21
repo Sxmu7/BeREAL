@@ -154,3 +154,17 @@ Großes Update mit mehreren neuen Systemen, die zusammen das "professionelle Par
 **Sound & Haptik** (`src/lib/sounds.js`): Töne werden synthetisch über die Web Audio API erzeugt (Sinus-/Sägezahn-/Rechteck-Wellen für Karten-, Erfolgs-, Fehler- und Countdown-Sounds) statt aus externen Audio-Dateien geladen – funktioniert ohne zusätzliche Assets oder Ladezeit, was auf einer Party mit wechselndem Empfang praktisch ist. Wer "echte" aufgenommene Sounds möchte, kann die `playTone()`-Aufrufe in `sounds.js` durch `new Audio('/sounds/x.mp3').play()` ersetzen. Vibration läuft über die Vibration-API (nur Android Chrome, iOS Safari unterstützt das aktuell nicht – Aufrufe sind aber mit Feature-Check abgesichert und tun auf iOS einfach nichts). Ein Ein/Aus-Schalter dafür liegt im `/profile`-Screen.
 
 **Konfetti** (`src/components/Confetti.jsx`): Leichtgewichtiger, rein CSS/Framer-Motion-basierter Effekt (keine externe Bibliothek), läuft bei jedem geschafften Challenge-Erfolg im Result-Screen und beim Öffnen des Party-Replay-Screens.
+
+## Location-Modus (Bar / Festival / Hostel / Hausparty / Urlaub)
+
+Beim Erstellen einer Session wählt der Host jetzt zusätzlich, wo gespielt wird. Das ist keine reine Beschriftung, sondern bestimmt einen komplett eigenen Challenge-Pool pro Schwierigkeitsgrad (`src/lib/challenges.js`, `CHALLENGES_BY_LOCATION`):
+
+- **🍸 Bar-Modus** — Bestellungen, Barkeeper, Leute an der Bar
+- **🎪 Festival-Modus** — Crowd, Tanzen, Fremde aus der Menge
+- **🎒 Hostel-Modus** — Mitreisende, Gemeinschaftsraum, Reise-Geschichten
+- **🏠 Hausparty-Modus** — Klassische Gruppenspiele in vertrauter Runde (Standard/Fallback)
+- **🏖️ Urlaub-Modus** — Strand/Pool, Locals, Sightseeing
+
+Jeder Modus hat 5 Challenges pro Schwierigkeitsgrad (Easy/Medium/Hard/Chaos), insgesamt 100 themenspezifische Aufgaben statt eines generischen Einheits-Pools. `pickRandomChallenge(difficulty, locationMode)` wählt aus dem passenden Pool; fehlt ein `locationMode` (z.B. bei alten Sessions ohne dieses Feld), wird automatisch auf den Hausparty-Pool zurückgefallen, damit nichts crasht.
+
+Der gewählte Modus wird in `session.settings.locationMode` gespeichert und in der Lobby als kleiner Tag unter dem Session-Namen angezeigt, damit alle Mitspieler vor Spielstart sehen, worauf sie sich einlassen.

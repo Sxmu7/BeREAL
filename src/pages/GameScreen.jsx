@@ -79,6 +79,7 @@ export default function GameScreen({ player }) {
       startNewRound(code, {
         players: session.players,
         difficulty: session.settings.difficulty,
+        locationMode: session.settings.locationMode,
         roundNumber: 1
       }).catch(console.error)
     }
@@ -171,6 +172,7 @@ export default function GameScreen({ player }) {
     await startNewRound(code, {
       players: session.players,
       difficulty: session.settings.difficulty,
+      locationMode: session.settings.locationMode,
       roundNumber: (round.roundNumber || 1) + 1,
       previousSelectedPlayerId: round.selectedPlayerId
     })

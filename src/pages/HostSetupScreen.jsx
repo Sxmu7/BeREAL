@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { createSession, generatePlayerId } from '../lib/sessions'
 import { rememberLastSession } from '../lib/lastSession'
+import { LOCATION_MODES } from '../lib/challenges'
 import './HostSetupScreen.css'
 
 const MODES = [
@@ -43,6 +44,7 @@ const PUNISHMENT_OPTIONS = [
 export default function HostSetupScreen({ player }) {
   const navigate = useNavigate()
   const [sessionName, setSessionName] = useState(`${player.name || 'Party'} Night`)
+  const [locationMode, setLocationMode] = useState('houseparty')
   const [mode, setMode] = useState('party')
   const [difficulty, setDifficulty] = useState('medium')
   const [frequency, setFrequency] = useState(5)
@@ -76,6 +78,7 @@ export default function HostSetupScreen({ player }) {
             challengeIntervalMinutes: frequency,
             challengeTimer: timer,
             difficulty,
+            locationMode,
             battleRoundEvery: 5,
             punishmentLevel: mode === 'chaos' ? 'heavy' : punishment
           }
@@ -108,6 +111,29 @@ export default function HostSetupScreen({ player }) {
             onChange={(e) => setSessionName(e.target.value.slice(0, 32))}
             placeholder="Samstag Eskalation"
           />
+        </motion.div>
+
+        {/* Location-Modus: bestimmt komplett andere Challenge-Pools */}
+        <motion.div className="create-game__field"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+          <label className="create-game__label">Wo seid ihr unterwegs?</label>
+          <div className="create-game__location-grid">
+            {LOCATION_MODES.map((loc) => (
+              <button
+                key={loc.id}
+                className={
+                  locationMode === loc.id
+                    ? 'create-game__location create-game__location--active'
+                    : 'create-game__location'
+                }
+                onClick={() => setLocationMode(loc.id)}
+              >
+                <span className="create-game__location-icon">{loc.icon}</span>
+                <span className="create-game__location-label">{loc.label}</span>
+                <span className="create-game__location-desc">{loc.desc}</span>
+              </button>
+            ))}
+          </div>
         </motion.div>
 
         {/* Modus */}
