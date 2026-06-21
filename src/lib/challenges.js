@@ -138,7 +138,7 @@ export const CHALLENGES_BY_LOCATION = {
       'Lass dir von der Gruppe ein Kompliment auf Video geben.',
       'Tausch für 2 Runden deinen Sitzplatz mit einem zufällig gewählten Spieler.',
       'Mach eine Mini-Performance (Tanz, Gesang, Schauspiel) für die Gruppe.',
-      'Verrate dein peinlichstes Party-Erlebnis – die Gruppe stimmt ab, ob sie's glaubt.'
+      "Verrate dein peinlichstes Party-Erlebnis – die Gruppe stimmt ab, ob sie's glaubt."
     ],
     chaos: [
       'Die Gruppe entscheidet per Mehrheit, wer als Nächstes bestraft wird.',
@@ -161,7 +161,7 @@ export const CHALLENGES_BY_LOCATION = {
     medium: [
       'Frag jemand Fremdes am Pool/Strand nach einem Insider-Tipp für die Gegend.',
       'Mach ein Urlaubsfoto mit einem kompletten Fremden.',
-      'Bestell etwas auf Landessprache (oder versuch's zumindest).',
+      "Bestell etwas auf Landessprache (oder versuch's zumindest).",
       'Finde jemanden, der schon mal an deinem Heimatort war.',
       'Tausch für eine Stunde deine Sonnenbrille mit jemandem aus der Gruppe.'
     ],
