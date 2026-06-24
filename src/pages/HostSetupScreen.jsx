@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { createSession, generatePlayerId } from '../lib/sessions'
+import { createSession, generatePlayerId, updateSessionSettings } from '../lib/sessions'
 import { rememberLastSession } from '../lib/lastSession'
 import { LOCATION_MODES } from '../lib/challenges'
 import './HostSetupScreen.css'
@@ -67,26 +67,29 @@ export default function HostSetupScreen({ player }) {
         hostId = generatePlayerId()
         localStorage.setItem('daredrop_player_id', hostId)
       }
+      const settings = {
+        gameMode: mode === 'chaos' ? 'party' : mode,
+        challengeFrequency: frequency <= 3 ? 'chaos' : frequency <= 5 ? 'party' : 'chill',
+        challengeIntervalMinutes: frequency,
+        challengeTimer: timer,
+        difficulty,
+        locationMode,
+        language,
+        battleRoundEvery: 5,
+        punishmentLevel: mode === 'chaos' ? 'heavy' : punishment
+      }
       const code = await createSession({
         hostId,
         hostName: player.name || 'Host',
         hostCharacterId: player.characterId,
         sessionName: sessionName.trim()
       })
+      // Settings sofort in Firestore schreiben — kein Race Condition via LobbyScreen
+      await updateSessionSettings(code, settings)
       rememberLastSession(code)
       navigate(`/lobby/${code}`, {
         state: {
-          initialSettings: {
-            gameMode: mode === 'chaos' ? 'party' : mode,
-            challengeFrequency: frequency <= 3 ? 'chaos' : frequency <= 5 ? 'party' : 'chill',
-            challengeIntervalMinutes: frequency,
-            challengeTimer: timer,
-            difficulty,
-            locationMode,
-            language,
-            battleRoundEvery: 5,
-            punishmentLevel: mode === 'chaos' ? 'heavy' : punishment
-          }
+          initialSettings: settings  // LobbyScreen-Fallback, falls nötig
         }
       })
     } catch (err) {
