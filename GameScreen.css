@@ -1,0 +1,588 @@
+/* ── GameScreen ─────────────────────────────────────────────────────────────── */
+.game-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  padding: calc(var(--safe-top) + var(--space-5)) var(--space-5)
+    calc(var(--safe-bottom) + var(--space-5));
+  position: relative;
+}
+
+.game-screen--centered {
+  align-items: center;
+  justify-content: center;
+}
+
+.game-screen__loading {
+  color: var(--color-text-secondary);
+  font-size: var(--fs-small);
+}
+
+/* ── Header ── */
+.game-screen__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.game-screen__back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+}
+
+.game-screen__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── Round badge ── */
+.game-screen__round-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 13px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.game-screen__round-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFE500;
+  animation: round-pulse 2s ease-in-out infinite;
+}
+
+@keyframes round-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+.game-screen__round-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Sip counter ── */
+.game-screen__sip-counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(255,59,59,0.08);
+  border: 1px solid rgba(255,59,59,0.2);
+  border-radius: var(--radius-full);
+}
+
+.game-screen__sip-counter-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: rgba(255,59,59,0.9);
+  font-family: var(--font-mono);
+}
+
+/* ── Streak badge ── */
+.game-screen__streak {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(255,229,0,0.1);
+  border: 1px solid rgba(255,229,0,0.25);
+  border-radius: var(--radius-full);
+  animation: streak-pop 0.4s var(--ease-spring);
+}
+
+@keyframes streak-pop {
+  0% { transform: scale(0.7); }
+  100% { transform: scale(1); }
+}
+
+.game-screen__streak-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #FFE500;
+  font-family: var(--font-mono);
+}
+
+/* ── Phases ── */
+.game-screen__phase {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.game-screen__phase--centered {
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Challenge Phase ── */
+.game-screen__challenge-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.game-screen__challenge-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gradient-avatar-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 0 0 2px rgba(255,229,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.game-screen__challenge-player-name {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.game-screen__challenge-progress {
+  width: 60px;
+  height: 2px;
+  background: rgba(255,229,0,0.4);
+  border-radius: var(--radius-full);
+}
+
+/* ── Challenge Card ── */
+.game-screen__challenge-card {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  overflow: hidden;
+}
+
+/* Top accent line */
+.game-screen__challenge-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: #FFE500;
+  opacity: 0.7;
+}
+
+.game-screen__challenge-location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255,229,0,0.08);
+  border: 1px solid rgba(255,229,0,0.2);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #FFE500;
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.03em;
+}
+
+.game-screen__challenge-text {
+  font-size: 1.625rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+}
+
+.game-screen__challenge-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.game-screen__challenge-difficulty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-screen__challenge-diff-label {
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.game-screen__challenge-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.game-screen__challenge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
+}
+
+.game-screen__challenge-dot--active {
+  background: #FFE500;
+}
+
+.game-screen__punishment-hint {
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Decision Buttons ── */
+.game-screen__decision-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.game-screen__btn-refuse {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px var(--space-4);
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid rgba(255,59,59,0.35);
+  color: #FF3B3B;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  transition: transform var(--duration-fast), background var(--duration-fast);
+}
+
+.game-screen__btn-refuse:active {
+  transform: scale(0.97);
+  background: rgba(255,59,59,0.08);
+}
+
+.game-screen__btn-accept {
+  flex: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px var(--space-5);
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  border: none;
+  color: #000000;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(255,255,255,0.15);
+  transition: transform var(--duration-fast), opacity var(--duration-fast);
+}
+
+.game-screen__btn-accept:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.game-screen__waiting-text {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* ── Spectator Mini-Dare ── */
+.game-screen__spectator-dare {
+  background: rgba(255,229,0,0.05);
+  border: 1px solid rgba(255,229,0,0.15);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.game-screen__spectator-dare-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #FFE500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.game-screen__spectator-dare-text {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.game-screen__spectator-dare-skip {
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  font-weight: 600;
+  text-align: right;
+  padding: 0;
+  margin-top: 2px;
+}
+
+/* ── Recording ── */
+.game-screen__spectator {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.game-screen__spectator-icon { font-size: 3rem; }
+
+.game-screen__spectator-text {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+}
+
+/* ── Voting ── */
+.game-screen__proof-video {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-elevated);
+  max-height: 50vh;
+}
+
+.game-screen__vote-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.game-screen__vote-progress-bar {
+  width: 100%;
+  max-width: 220px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-elevated);
+  overflow: hidden;
+}
+
+.game-screen__vote-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: #FFE500;
+}
+
+.game-screen__vote-question {
+  text-align: center;
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.game-screen__vote-actions {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.game-screen__vote-no {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px var(--space-4);
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid rgba(255,59,59,0.3);
+  color: #FF3B3B;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  transition: transform var(--duration-fast);
+}
+
+.game-screen__vote-no:active { transform: scale(0.97); }
+
+.game-screen__vote-yes {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 17px var(--space-4);
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  border: none;
+  color: #000000;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  transition: transform var(--duration-fast);
+}
+
+.game-screen__vote-yes:active { transform: scale(0.97); }
+
+/* ── Result ── */
+.game-screen__result-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-screen__result-circle {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.75rem;
+  font-weight: 700;
+}
+
+.game-screen__result-circle--success {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 0 50px rgba(255,255,255,0.25), 0 0 100px rgba(255,255,255,0.08);
+}
+
+.game-screen__result-circle--fail {
+  background: rgba(255,59,59,0.15);
+  border: 1px solid rgba(255,59,59,0.35);
+  color: #FF3B3B;
+  box-shadow: 0 0 40px rgba(255,59,59,0.2);
+}
+
+.game-screen__result-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.game-screen__result-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.game-screen__result-points {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #FFE500;
+  margin: 0;
+}
+
+/* ── Scoreboard ── */
+.game-screen__scoreboard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.game-screen__scoreboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.game-screen__scoreboard-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.game-screen__scoreboard-row--first {
+  background: rgba(255,229,0,0.06);
+  border: 1px solid rgba(255,229,0,0.15);
+}
+
+.game-screen__scoreboard-rank {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  width: 22px;
+  text-align: center;
+}
+
+.game-screen__scoreboard-icon { font-size: 1.125rem; }
+
+.game-screen__scoreboard-name {
+  flex: 1;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-screen__scoreboard-score {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+/* ── Result actions ── */
+.game-screen__result-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.game-screen__end-game {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  padding: var(--space-2);
+  text-align: center;
+}
+
+.game-screen__result-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+
+.game-screen__phase--centered > .btn-primary {
+  margin-top: var(--space-5);
+}
