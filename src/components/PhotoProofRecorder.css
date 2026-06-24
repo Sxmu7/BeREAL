@@ -1,0 +1,50 @@
+.photo-proof {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  flex: 1;
+}
+
+.photo-proof--error {
+  align-items: center;
+  justify-content: center;
+  color: var(--color-danger);
+  font-size: var(--fs-small);
+  text-align: center;
+}
+
+.photo-proof__preview {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-elevated);
+  object-fit: cover;
+  max-height: 55vh;
+  border: 1px solid var(--color-border);
+}
+
+.photo-proof__preview--uploading {
+  opacity: 0.6;
+}
+
+.photo-proof__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.photo-proof__status {
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+  width: 100%;
+}
+
+.photo-proof__size {
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  margin: 0;
+}
