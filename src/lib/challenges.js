@@ -1,10 +1,6 @@
 // ============================================================
 // Challenge-Pool nach Location-Modus + Schwierigkeitsgrad.
-// Jeder Modus hat einen komplett eigenen Aufgaben-Charakter, damit
-// die Challenges zur tatsächlichen Umgebung passen (eine Bar-Aufgabe
-// "Bestell etwas auf eine lustige Art" ergibt am Hostel keinen Sinn,
-// eine Festival-Aufgabe "Finde jemanden mit Glitzer im Gesicht" ergibt
-// auf der Hausparty keinen Sinn).
+// Massiv erweiterter Pool — 20+ Challenges pro Bucket.
 // ============================================================
 
 export const LOCATION_MODES = [
@@ -21,172 +17,481 @@ export function getLocationMode(id) {
 
 export const CHALLENGES_BY_LOCATION = {
 
-  // ── BAR ──
+  // ════════════════════════════════════════════════════════
+  // 🍸 BAR
+  // ════════════════════════════════════════════════════════
   bar: {
     easy: [
       'Bestell einen Drink mit einem Fantasienamen.',
       'Frag den Barkeeper nach seinem besten Trick.',
       'Finde jemanden, der das gleiche trinkt wie du.',
       'Stoß mit drei verschiedenen Personen an.',
-      'Tausch deinen Barhocker für eine Runde.'
+      'Tausch deinen Barhocker für eine Runde.',
+      'Mach ein Foto mit dem Barkeeper.',
+      'Finde jemanden an der Bar mit einer Sonnenbrille.',
+      'Sag dem Barkeeper, dass er heute besonders gut aussieht.',
+      'Bestell deinen nächsten Drink auf Englisch.',
+      'Finde jemanden an der Bar, der Geburtstag hat oder hatte.',
+      'Mach 20 Sekunden lang den "Matrix"-Slow-Motion-Move.',
+      'Zeig dem Spieler links deinen Kontostand — oder erfinde einen.',
+      'Finde jemanden mit Kreditkarte und frag ihn, was sein Lieblingsdrink ist.',
+      'Tausch für 2 Minuten den Platz mit dem Spieler rechts von dir.',
+      'Ruf "Cheers!" und schau, wer mitanstößt.',
+      'Benutze das nächste Mal wenn du was sagst drei mal das Wort "episch".',
+      'Lass den Barkeeper dein Getränk raten.',
+      'Bestell etwas für eine fremde Person an der Bar — was du magst.',
+      'Finde jemanden der eine Uhr trägt und frag ihn wie spät es ist.',
+      'Zeig dein Handy-Hintergrundbild dem Barkeeper.',
     ],
     medium: [
       'Bestell auf eine Art, die dich zum Lachen bringt.',
       'Frag eine fremde Person an der Bar nach einer Drink-Empfehlung.',
       'Bring den Barkeeper zum Lächeln – ohne ein Wort zu sagen.',
       'Finde jemanden mit einem Cocktail und beschreib, wie er wohl schmeckt.',
-      'Lass dir von jemand Fremdem dein Lieblingsgetränk vorschlagen.'
+      'Lass dir von jemand Fremdem dein Lieblingsgetränk vorschlagen.',
+      'Stell dich einer fremden Gruppe vor und sag, du bist der/die berühmteste Person aus deiner Stadt.',
+      'Frag drei verschiedene Leute an der Bar nach ihrer Lieblingsbar.',
+      'Beschreib deinen Drink so, als wärst du ein Sommelier.',
+      'Finde jemanden, der allein sitzt, und sag ihm ein echtes Kompliment.',
+      'Mach mit einer fremden Person an der Bar einen Handshake aus.',
+      'Sag dem Barkeeper einen Witz und schau ob er lacht.',
+      'Finde jemanden mit einem Cocktailschirm in seinem Drink.',
+      'Imitiere den Barkeeper für 30 Sekunden.',
+      'Frag drei Fremde nach ihrem Lieblings-Film.',
+      'Erkläre einem Fremden, was dein Drink über deine Persönlichkeit sagt.',
+      'Stell dich einer Gruppe Fremder mit einem falschen Beruf vor.',
+      'Lass die Gruppe entscheiden, was du als Nächstes bestellst.',
+      'Frag den Barkeeper nach dem ältesten Gast, den er je hatte.',
+      'Such dir jemanden aus und überzeuge ihn, deinen Drink zu probieren.',
+      'Erkläre dem Spieler rechts, wie er seinen Drink korrekt trinken soll.',
     ],
     hard: [
       'Bring einen Fremden dazu, mit dir auf Video "Cheers" zu sagen.',
       'Frag den Barkeeper nach der peinlichsten Bestellung des Abends.',
       'Lass dir von einer fremden Person ein Kompliment auf Video geben.',
       'Tausch für eine Runde deinen Platz mit jemand Fremdem an der Bar.',
-      'Erzähl der Bar-Crowd einen Witz und filme die Reaktion.'
+      'Erzähl der Bar-Crowd einen Witz und filme die Reaktion.',
+      'Finde jemanden Fremdes und überzeuge ihn, in die Gruppe aufgenommen zu werden.',
+      'Bestell auf eine Sprache die du nicht sprichst — frag vorher einen Fremden wie.',
+      'Mach eine 30-Sekunden Standup-Performance an der Bar.',
+      'Bring 5 Fremde dazu, gleichzeitig anzustoßen.',
+      'Frag eine fremde Person: "Was ist dein größtes Geheimnis?" und film die Reaktion.',
+      'Überzeuge den Barkeeper, dir einen Gratis-Drink zu machen — mit Charme, nicht mit Geld.',
+      'Finde jemanden mit einem teuren Getränk und frag ihn, ob du einen Schluck haben kannst.',
+      'Stell dich 5 Fremden einzeln vor, jedes Mal mit einem anderen erfundenen Namen.',
+      'Tausch für 5 Minuten dein Handy mit dem Spieler links — du darfst nichts anschauen.',
+      'Bring eine fremde Person dazu, ihr peinlichstes Bar-Erlebnis zu erzählen.',
+      'Setz dich für 2 Minuten allein an die Bar und streich alle anderen.',
+      'Lass einen Fremden entscheiden, was du als Nächstes trinkst.',
+      'Mach ein Selfie mit drei verschiedenen Fremden.',
+      'Frag 5 Fremde: "Wer bist du wirklich?" und film die Antworten.',
+      'Übernimm für 1 Minute den Barhocker eines Fremden — mit seiner Erlaubnis.',
     ],
     chaos: [
       'Lass den Barkeeper deinen nächsten Drink aussuchen – Augen zu.',
       'Eine fremde Person an der Bar entscheidet, wer als Nächstes bestraft wird.',
       'Tausch für 2 Runden deinen Namen mit der Person neben dir an der Bar.',
       'Lass die Gruppe entscheiden: dein nächster Drink wird mit etwas gemischt.',
-      'Frag drei Fremde nacheinander nach ihrem peinlichsten Bar-Moment.'
-    ]
+      'Frag drei Fremde nacheinander nach ihrem peinlichsten Bar-Moment.',
+      'Steh für 3 Minuten auf deinem Stuhl — wer kommentiert, trinkt.',
+      'Übernimm für 1 Minute die Rolle des Barkeepers und nimm Bestellungen auf.',
+      'Alle Mitspieler geben dir eine Aufgabe — du führst die schwerste aus.',
+      'Bestell laut einen Drink, den es nicht gibt und überzeuge den Barkeeper, ihn zu erfinden.',
+      'Wer als Letzter einen Fremden zum Lachen bringt, trinkt doppelt.',
+      'Vertausch heimlich die Getränke zweier Mitspieler — ohne dass sie es merken.',
+      'Bring die gesamte Gruppe dazu, gleichzeitig "Prost!" zu rufen.',
+      'Ruf laut "Wer ist hier Single?" — die erste Person die sich meldet, bekommt von dir ein Kompliment.',
+      'Lass einen zufälligen Fremden dein nächstes Dare bestimmen.',
+      'Alle stehen auf — wer sich als Letzter setzt, zahlt die nächste Runde.',
+      'Tausch für 3 Runden dein Getränk mit dem des Spielers gegenüber.',
+      'Überzeuge eine Fremde Gruppe dazu, einen einstudier­ten Gruppen-Toast mit euch zu machen.',
+      'Die Gruppe wählt: entweder du trinkst doppelt, oder du rufst laut deinen vollständigen Namen.',
+      'Lass drei Fremde abstimmen wer von euch der coolste in der Gruppe ist.',
+      'Wer zuerst sein Glas abstellt, trinkt noch einen.',
+    ],
   },
 
-  // ── FESTIVAL ──
+  // ════════════════════════════════════════════════════════
+  // 🎪 FESTIVAL
+  // ════════════════════════════════════════════════════════
   festival: {
     easy: [
       'Finde jemanden mit Glitzer im Gesicht.',
       'Tanze 15 Sekunden lang zur Musik um dich herum.',
       'Finde ein Outfit in deiner Lieblingsfarbe in der Crowd.',
       'Mach mit drei Fremden eine Gruppen-Pose.',
-      'Bring jemanden dazu, mit dir mitzusingen.'
+      'Bring jemanden dazu, mit dir mitzusingen.',
+      'Finde jemanden der einen Hut trägt.',
+      'Winke einem Fremden zu — warte auf die Reaktion.',
+      'Finde jemanden mit Festival-Wristband.',
+      'Mach ein Foto mit dem ersten Fremden der dir begegnet.',
+      'Sag einer fremden Person, dass du ihren Style liebst.',
+      'Tanz für 10 Sekunden mit geschlossenen Augen.',
+      'Finde jemanden, der denselben Lieblingskünstler hat wie du.',
+      'Bring eine fremde Person dazu dir beizubringen wie man "Cool" in ihrer Sprache sagt.',
+      'Finde jemanden der ein Tier-Kostüm oder -Accessoire trägt.',
+      'Mach die beste Air-Guitar-Performance für 15 Sekunden.',
+      'Sing die erste Zeile eines aktuellen Chart-Hits laut vor.',
+      'Finde jemanden mit einer gemalten Flagge auf der Wange.',
+      'Steh für 30 Sekunden so still wie möglich mitten in der Crowd.',
+      'Finde jemanden der ein Festival-Merchandise-Shirt trägt.',
+      'Zeig deinen besten "unbeeindruckten Festivalbesucher"-Gesichtsausdruck.',
     ],
     medium: [
       'Lerne den Tanzmove der Person neben dir und mach ihn nach.',
       'Finde jemanden mit Face-Paint und frag, wer es gemalt hat.',
       'Starte eine Welle mit mindestens 5 Leuten um dich herum.',
       'Tausch für eine Stunde Armbänder mit jemand Fremdem.',
-      'Bring eine fremde Gruppe dazu, mit dir zu jubeln.'
+      'Bring eine fremde Gruppe dazu, mit dir zu jubeln.',
+      'Finde jemanden der gerade neu auf dem Festival angekommen ist und erklär ihm die "wichtigsten Regeln".',
+      'Mach ein Boomerang-Video mit 5 Fremden.',
+      'Finde jemanden der den gleichen Künstler liebt wie du.',
+      'Bring eine fremde Person dazu, mit dir zu tanzen — 20 Sekunden mindestens.',
+      'Erkläre einer fremden Person die besten 3 Hacks fürs Festival.',
+      'Finde jemanden der vor dem Festival schon sehr müde aussieht.',
+      'Bring eine Gruppe Fremder dazu, zusammen ein Foto zu machen.',
+      'Improvisiere einen Rap über das Festival — 15 Sekunden, vor Fremden.',
+      'Finde jemanden der komplett anders aussieht als du und mach ein Duo-Selfie.',
+      'Bring 5 Fremde dazu, gleichzeitig ihre Hände zu heben.',
+      'Mach die beste "Ich bin ein alter Festival-Veteran"-Imitation.',
+      'Tausch deine Sonnenbrille für 10 Minuten mit einem Fremden.',
+      'Finde jemanden der ein Selfie-Stick benutzt und bitte um ein Foto.',
+      'Erkläre dem Spieler links was dein Outfit über dich sagt.',
+      'Bring eine Gruppe Fremder dazu mit dir einen Countdown zu machen.',
     ],
     hard: [
       'Bring eine komplett fremde Gruppe dazu, ein Foto mit dir zu machen.',
       'Lerne in 2 Minuten den Namen von 3 Fremden und stell sie der Gruppe vor.',
       'Starte einen Tanz-Circle und bring 5 Leute zum Mitmachen.',
       'Frag jemand Fremdes nach seinem besten Festival-Erlebnis – auf Video.',
-      'Bring die Crowd um dich herum dazu, deinen Namen zu rufen.'
+      'Bring die Crowd um dich herum dazu, deinen Namen zu rufen.',
+      'Führe ein Mini-Interview mit 3 Fremden durch: "Warum bist du hier?"',
+      'Bring jemanden dazu, dir spontan einen Spitznamen zu geben.',
+      'Organisiere einen spontanen Chor mit 5 Fremden für 10 Sekunden.',
+      'Überzeuge eine fremde Gruppe, euch für 5 Minuten zu joinen.',
+      'Finde jemanden mit dem coolsten Outfit und überzeuge ihn zu einem kurzen Catwalk.',
+      'Bring eine Reihe Fremder dazu, auf ein Zeichen von dir gleichzeitig zu jubeln.',
+      'Starte einen Trend: Erfinde eine Bewegung und bring 5 Fremde dazu, sie nachzumachen.',
+      'Filminteriew: Frag 5 Fremde "Was ist dein Festival-Lebensmotto?"',
+      'Bring die Person neben dir dazu, dich für 30 Sekunden auf den Schultern zu tragen.',
+      'Überzeuge einen Fremden, dir seinen Lieblingssong vorzusingen.',
+      'Finde den lautesten Schreier in der Nähe und übertriff ihn.',
+      'Bring 10 Fremde dazu, gleichzeitig zu klatschen.',
+      'Überzeuge eine Gruppe, dir einen Stimmungs-Lift zu geben: alle rufen "Du schaffst das!"',
+      'Sag auf Video einem Fremden, warum er der coolste Festivalgänger ist.',
+      'Bring jemanden dazu, dir seine Festival-Flagge oder sein Accessoire zu leihen.',
     ],
     chaos: [
       'Eine fremde Person aus der Crowd entscheidet, wer bestraft wird.',
       'Tausch für 2 Runden ein Kleidungsstück mit jemand Fremdem.',
       'Lass dir von der Gruppe um dich herum eine Mini-Choreo beibringen.',
       'Der lauteste Fremde in deiner Nähe wählt deine nächste Challenge.',
-      'Sammle High-Fives von 10 Fremden in 60 Sekunden.'
-    ]
+      'Sammle High-Fives von 10 Fremden in 60 Sekunden.',
+      'Alle Mitspieler stimmen ab — du machst den Move den die Mehrheit wählt.',
+      'Tausch für 10 Minuten deinen Platz mit dem Spieler gegenüber von dir.',
+      'Finde jemanden und überzeuge ihn, der Gruppe seinen besten Schrei zu geben.',
+      'Die Gruppe wählt einen Fremden — du musst ihn in 60 Sekunden als Freund gewinnen.',
+      'Lass die Crowd abstimmen: bist du ein "Main-Stage-Typ" oder ein "Hidden-Gem-Fan"?',
+      'Bring alle Mitspieler dazu, 30 Sekunden lang zu tanzen — wer aufhört, trinkt.',
+      'Die nächste fremde Person die an euch vorbeiläuft, entscheidet wer die Runde verliert.',
+      'Alle legen ihr Handy in die Mitte — wer es als Erster nimmt, trinkt doppelt.',
+      'Lass 3 Fremde per Abstimmung entscheiden, wer in der Gruppe am lustigsten ist.',
+      'Tausch für eine Runde alle deine Taschen-Inhalte mit dem Spieler links.',
+      'Bring die gesamte Gruppe dazu, 10 Sekunden lang gleichzeitig zu schweigen.',
+      'Wer als Letztes aufhört zu tanzen wenn die Musik stoppt, bestimmt das nächste Dare.',
+      'Alle Mitspieler wählen ein Wort — du baust daraus einen Satz und sagst ihn laut zu Fremden.',
+      'Lass einen Fremden entscheiden, welcher Mitspieler die nächste Strafe bekommt.',
+      'Übernimm für 2 Runden den Charakter-Namen des Spielers rechts von dir.',
+    ],
   },
 
-  // ── HOSTEL ──
+  // ════════════════════════════════════════════════════════
+  // 🎒 HOSTEL
+  // ════════════════════════════════════════════════════════
   hostel: {
     easy: [
       'Frag jemanden im Gemeinschaftsraum, woher er kommt.',
       'Finde jemanden, der aus einem anderen Land kommt als du.',
       'Tausch ein Reise-Tipp mit einem Fremden im Hostel.',
       'Finde jemanden mit dem gleichen Rucksack-Typ wie du.',
-      'Stell dich drei Leuten im Gemeinschaftsraum vor.'
+      'Stell dich drei Leuten im Gemeinschaftsraum vor.',
+      'Frage einen Fremden nach seinem Lieblingsreiseziel.',
+      'Find someone who has visited more than 10 countries.',
+      'Finde jemanden der auf dem Weg nach Hause ist.',
+      'Frag jemanden: "Was ist das Verrückteste, das dir auf Reisen passiert ist?"',
+      'Finde jemanden, der ein Buch liest oder ein E-Book dabei hat.',
+      'Zeig einem Fremden dein Lieblingsfoto aus dieser Reise.',
+      'Frag jemanden, was sein nächstes Reiseziel ist.',
+      'Finde jemanden der mehr als 3 Sprachen spricht.',
+      'Lerne "Hallo" in der Sprache der Person neben dir.',
+      'Frag drei Fremde nach einer Restaurantempfehlung vor Ort.',
+      'Finde jemanden der gerade erst angekommen ist.',
+      'Zeig einem Fremden deinen Reiseplan und frag nach Tipps.',
+      'Finde jemanden der ein Souvenir dabei hat und lass es dir zeigen.',
+      'Frag jemanden: "Was fehlt dir gerade am meisten von Zuhause?"',
+      'Finde jemanden der allein reist.',
     ],
     medium: [
       'Frag einen Fremden nach seinem besten Reise-Tipp und teil ihn mit der Gruppe.',
       'Lerne ein Wort in der Sprache eines Mitreisenden und benutz es.',
       'Finde jemanden, der schon am Ort war, wo du als Nächstes hinwillst.',
       'Bring jemanden aus einem anderen Zimmer dazu, mit euch anzustoßen.',
-      'Tausch für eine Stunde ein Kleidungsstück mit jemand aus deinem Dorm.'
+      'Tausch für eine Stunde ein Kleidungsstück mit jemand aus deinem Dorm.',
+      'Frag einen Fremden, ob er dir seinen Heimatort auf Google Maps zeigt.',
+      'Überzeuge jemanden aus einer anderen Gruppe, euch für 10 Minuten zu joinen.',
+      'Organisiere ein spontanes Mini-Quiz über Länder und Hauptstädte mit 3 Fremden.',
+      'Finde jemanden der Veganer ist und lass ihn das beste vegane Restaurant vor Ort empfehlen.',
+      'Bring jemanden dazu, dir beizubringen, wie man in seiner Sprache "Du bist cool" sagt.',
+      'Finde jemanden der schon mehr als 30 Länder bereist hat.',
+      'Überzeuge jemanden, dir seinen liebsten Reise-Hack zu verraten.',
+      'Frag 3 Fremde nach dem schlechtesten Hostel das sie je hatten.',
+      'Finde jemanden der gerade seinen Geburtstag auf Reisen feiert.',
+      'Überzeuge eine fremde Person, dir ihre beste lokale Restaurantempfehlung zu geben.',
+      'Bring jemanden dazu, mit dir ein Foto vom Hostel zu machen.',
+      'Finde jemanden der seinen Trip verlängert hat und frag warum.',
+      'Lerne in 5 Minuten 5 Wörter in einer fremden Sprache von einem Mitreisenden.',
+      'Frag 3 Fremde: "Was war dein schlimmster Reise-Fail?"',
+      'Organisiere ein spontanes Abendessen mit 2 Fremden aus dem Hostel.',
     ],
     hard: [
       'Frag einen Fremden im Hostel nach seiner verrücktesten Reise-Geschichte – auf Video.',
       'Bring jemanden aus einem anderen Land dazu, ein Wort in seiner Sprache zu lehren – auf Video.',
       'Organisier ein Mini-Spiel mit 3 Fremden aus dem Gemeinschaftsraum.',
       'Lass dir von einem Mitreisenden sein bestes Foto vom Trip zeigen und erklären.',
-      'Bring 3 Personen aus verschiedenen Ländern zusammen für ein Gruppenfoto.'
+      'Bring 3 Personen aus verschiedenen Ländern zusammen für ein Gruppenfoto.',
+      'Überzeuge 3 Fremde, dir die peinlichste Sache zu erzählen, die ihnen auf Reisen passiert ist.',
+      'Finde jemanden der allein reist und überzeuge ihn, heute Abend mit euch mitzukommen.',
+      'Organizer ein Hostel-Trivia mit 5 Fremden.',
+      'Bring jemanden dazu, dir beizubringen wie man in seiner Sprache flirtet — auf Video.',
+      'Finde jemanden, der gerade ein Problem mit seiner Reise hat, und löst es zusammen.',
+      'Organisiere eine Wett-Trinkreise durch den Gemeinschaftsraum mit 3 Fremden.',
+      'Bring einen Fremden dazu, dir seinen komplett geplanten Tagesablauf für morgen zu erzählen.',
+      'Finde jemanden aus einer komplett anderen Weltregion und lern 3 Dinge über seine Heimat.',
+      'Überzeuge 3 verschiedene Reisende, euch ein gemeinsames Selfie zu machen.',
+      'Finde jemanden der mindestens ein Jahr non-stop gereist ist.',
+      'Organisiere ein spontanes internationales Abendessen: jeder bringt einen lokalen Snack.',
+      'Bring 5 Fremde dazu, einen gemeinsamen Toast auf das Reisen zu machen.',
+      'Interviewe 3 Reisende auf Video: "Was hast du auf dieser Reise gelernt?"',
+      'Überzeuge jemanden, dir für eine Stunde seine Reisetagebuch-App zu zeigen.',
+      'Bringe jemanden dazu, mit der Gruppe eine spontane Stadtführung zu machen.',
     ],
     chaos: [
       'Eine fremde Person aus deinem Dorm entscheidet, wer bestraft wird.',
       'Tausch für den Rest des Abends deinen Vornamen mit jemand Fremdem.',
       'Lass dir spontan einen Spitznamen von jemand Fremdem geben – und benutz ihn.',
       'Der am weitesten gereiste Fremde im Raum wählt deine nächste Challenge.',
-      'Frag 3 Fremde nacheinander: "Was ist dein peinlichster Reise-Moment?"'
-    ]
+      'Frag 3 Fremde nacheinander: "Was ist dein peinlichster Reise-Moment?"',
+      'Alle Mitspieler tauschen für 10 Minuten ihre Reise-Pläne.',
+      'Die gesamte Gruppe muss sich 5 Minuten lang auf Englisch unterhalten.',
+      'Wer als Letzter eine Hauptstadt nennen kann, trinkt.',
+      'Lass einen Fremden entscheiden, was die Gruppe heute Abend unternimmt.',
+      'Alle zeigen das peinlichste Foto aus ihrer Kamerarolle — Fremde im Hostel wählen das Schlechteste.',
+      'Tausch für eine Runde dein Getränk mit dem eines Fremden.',
+      'Die Gruppe muss gemeinsam in 2 Minuten ein spontanes Abenteuer für morgen planen.',
+      'Überzeuge 5 Fremde, alle gleichzeitig "Prost!" auf verschiedenen Sprachen zu sagen.',
+      'Wer zuerst ein Selfie mit einem Fremden macht, ist safe — alle anderen trinken.',
+      'Alle Handys in die Mitte — wer als Erstes schaut, trinkt doppelt.',
+      'Lass einen Fremden per Losverfahren das Dare für den nächsten Mitspieler wählen.',
+      'Die Gruppe tauscht für 3 Runden die Sitzplätze nach einem Zufallsprinzip.',
+      'Bring alle im Gemeinschaftsraum dazu, gleichzeitig aufzustehen.',
+      'Wer als Letztes "Hostel-Alarm!" ruft, zahlt die nächste Runde.',
+      'Alle nennen gleichzeitig ein Reiseziel — wer dasselbe nennt wie ein anderer, trinkt.',
+    ],
   },
 
-  // ── HAUSPARTY ──
+  // ════════════════════════════════════════════════════════
+  // 🏠 HAUSPARTY
+  // ════════════════════════════════════════════════════════
   houseparty: {
     easy: [
       'Finde etwas Gelbes im Raum und bring es zur Gruppe.',
       'Mach eine Foto-Pose mit der Person rechts von dir.',
       'Bring jemanden zum Lachen, ohne zu sprechen.',
       'Tanze 10 Sekunden lang ohne Musik.',
-      'Finde jemanden mit dem gleichen Schuhwerk wie du.'
+      'Finde jemanden mit dem gleichen Schuhwerk wie du.',
+      'Sag dem Spieler links ein echtes Kompliment.',
+      'Mach das peinlichste Selfie das du kannst und zeig es herum.',
+      'Sag dreimal schnell hintereinander: "Brötchen, Brötchen, Brötchen".',
+      'Halte 30 Sekunden lang Augenkontakt mit dem Spieler gegenüber.',
+      'Zeig das älteste Foto auf deinem Handy.',
+      'Mach für 15 Sekunden Planke.',
+      'Erzähl einen schlechten Witz.',
+      'Sag jedem Mitspieler seinen Tier-Typ.',
+      'Mach für 20 Sekunden den Worm-Dance.',
+      'Zeig deine Notizen-App — lies den letzten Eintrag vor.',
+      'Nenn drei Dinge die du heute noch nicht gesagt hast.',
+      'Mach die beste Zeitlupe-Bewegung beim Öffnen einer Flasche.',
+      'Sag "no cap" in jedem Satz für die nächsten 2 Minuten.',
+      'Finde etwas im Raum das mit dem Buchstaben "S" anfängt.',
+      'Steh für die nächste Runde — kein Sitzen erlaubt.',
     ],
     medium: [
       'Singe die erste Zeile eines Songs vor der Gruppe.',
       'Tausch für eine Runde ein Kleidungsstück mit einem Mitspieler.',
       'Imitiere einen anderen Spieler, bis die Gruppe errät, wer es ist.',
       'Erzähl die peinlichste Geschichte, die dir gerade einfällt.',
-      'Bring jemanden dazu, mit dir auf einen Spruch anzustoßen, den du erfindest.'
+      'Bring jemanden dazu, mit dir auf einen Spruch anzustoßen, den du erfindest.',
+      'Zeig deinen Spotify-Wrapped oder deine zuletzt gehörte Playlist.',
+      'Lies deinen letzten WhatsApp-Chat-Verlauf der Gruppe vor.',
+      'Mach die beste Imitation eines berühmten Politikers.',
+      'Erkläre TikTok so als würdest du mit einer 80-jährigen Person sprechen.',
+      'Schreib die Namen aller Mitspieler auf — wer fehlt, trinkt.',
+      'Erfinde sofort einen Cocktail-Namen für jeden Mitspieler.',
+      'Erkläre in 30 Sekunden warum du der/die beste Mitspieler:in bist.',
+      'Sag jedem Mitspieler was du an ihm wirklich nervt — in Liebessprache verpackt.',
+      'Improvisiere eine 20-Sekunden Werbung für dich selbst.',
+      'Mach die beste Imitation des Spielers links von dir — die Gruppe rät wer.',
+      'Erkläre ChatGPT so als wärst du ein mittelalterlicher Bauer.',
+      'Ranking: Sortiere alle Mitspieler von "schlaf­endste Person auf einer Party" bis "letzter der geht".',
+      'Zeig dein peinlichstes Kamerollen-Foto von vor einem Jahr.',
+      'Nenn für jeden Mitspieler einen Superhelden der zu ihm passt.',
+      'Sag drei wahre Sätze und eine Lüge — die Gruppe rät welche die Lüge ist.',
     ],
     hard: [
       'Erzähl einem Mitspieler einen Witz und film die Reaktion.',
       'Lass dir von der Gruppe ein Kompliment auf Video geben.',
       'Tausch für 2 Runden deinen Sitzplatz mit einem zufällig gewählten Spieler.',
       'Mach eine Mini-Performance (Tanz, Gesang, Schauspiel) für die Gruppe.',
-      "Verrate dein peinlichstes Party-Erlebnis – die Gruppe stimmt ab, ob sie's glaubt."
+      'Verrate dein peinlichstes Party-Erlebnis – die Gruppe stimmt ab, ob sie\'s glaubt.',
+      'Zeig das peinlichste Bild deiner gesamten Kamerarolle — kein Auswählen, erstes Scrollen entscheidet.',
+      'Ruf auf Lautsprecher deine Eltern an und sag "Ich bin verliebt." Zeig die Antwort.',
+      'Lies den letzten Text vor, den du verschickt hast — komplett, ohne Auslassungen.',
+      'Sag allen Mitspielern offen: Wen würdest du niemals daten — und warum?',
+      'Schreib einer zufälligen Person in deinen Kontakten "Ich vermisse dich" und zeig die Antwort.',
+      'Teile die peinlichste Sache, die du je getan hast — kein Herumreden.',
+      'Ranking live: Sortiere alle Mitspieler von "attraktivsten" bis "am wenigsten attraktiven".',
+      'Zeig deine Screen-Time der letzten Woche.',
+      'Hinterlasse eine Sprachnachricht auf deiner eigenen Nummer — die Gruppe wählt den Inhalt.',
+      'Post ein Foto von dir mit dem Caption "glow-up incoming 🔥" — jetzt sofort.',
+      'Schick deinem Boss oder Lehrer: "Können wir mal reden? Ist wichtig." Zeig die Antwort.',
+      'Zeig der Gruppe deine zuletzt angesehenen YouTube-Videos.',
+      'Lass die Gruppe deinen nächsten Instagram-Post gestalten — und post ihn wirklich.',
+      'Ruf eine zufällige Nummer in deinen Kontakten an und sag: "Ich brauche deinen ehrlichsten Rat."',
+      'Teile deinen größten noch nicht erfüllten Lebenswunsch — in einem Satz, ehrlich.',
     ],
     chaos: [
       'Die Gruppe entscheidet per Mehrheit, wer als Nächstes bestraft wird.',
       'Tausch für 2 Runden deinen Charakter-Namen mit einem Mitspieler.',
       'Der Verlierer der letzten Runde wählt deine nächste Challenge.',
       'Gib dein Handy für 1 Minute an die Person rechts von dir.',
-      'Lass die Gruppe per Mehrheitsentscheid deine Strafe verdoppeln oder halbieren.'
-    ]
+      'Lass die Gruppe per Mehrheitsentscheid deine Strafe verdoppeln oder halbieren.',
+      'Alle Handys in die Mitte — wer als Erstes schaut, trinkt doppelt.',
+      'Wer als Letzter "Hausparty-Alarm!" ruft, trinkt.',
+      'Die Gruppe wählt per Abstimmung wer die peinlichste Person im Raum ist — die trinkt.',
+      'Alle stehen auf — wer als Letztes sitzt, trinkt.',
+      'Waterfall: Du fängst an zu trinken, alle folgen. Erst wenn du aufhörst, darf die nächste Person aufhören.',
+      'Most Likely: Wer würde am ehesten versehentlich die Polizei rufen? Meistgenannte Person trinkt.',
+      'Speed Round: Alle nennen einen Promi in 5 Sekunden — wer wiederholt, trinkt.',
+      'Verteile 5 Schlucke an wen du willst.',
+      'Wähle eine Regel für die nächsten 2 Runden — jeder der sie bricht, trinkt.',
+      'Die Gruppe tauscht die Sitzplätze reihum — wer zögert, trinkt.',
+      'Jeder flüstert dem Spieler rechts eine Aufgabe — alle führen sie gleichzeitig aus.',
+      'Du und der Spieler links trinkt zusammen für 3 Sekunden — wer früher aufhört, trinkt nochmal.',
+      'Alle nennen gleichzeitig eine Farbe — wer allein eine Farbe nennt, ist safe. Alle anderen trinken.',
+      'Bestimme: Wer muss bis zur nächsten Runde nichts sagen?',
+      'Finger auf der Nase: Letzter der es tut, trinkt.',
+    ],
   },
 
-  // ── URLAUB ──
+  // ════════════════════════════════════════════════════════
+  // 🏖️ URLAUB
+  // ════════════════════════════════════════════════════════
   vacation: {
     easy: [
       'Finde etwas in der Farbe des Meeres/Pools in der Nähe.',
       'Mach eine Urlaubs-Pose für ein Foto.',
       'Finde jemanden mit Sonnenbrille und frag nach einem Foto.',
       'Bau in 30 Sekunden etwas aus Sand oder was greifbar ist.',
-      'Bring jemanden dazu, "Prost auf den Urlaub" zu sagen.'
+      'Bring jemanden dazu, "Prost auf den Urlaub" zu sagen.',
+      'Finde jemanden der einen Sonnenbrand hat.',
+      'Zeig das beste Urlaubs-Foto das du bisher gemacht hast.',
+      'Finde jemanden der ein Buch am Strand oder Pool liest.',
+      'Mach das beste "ich bin im Urlaub"-Selfie.',
+      'Finde jemanden der einen farbigen Drink bestellt hat.',
+      'Sag drei Dinge die du heute noch erleben willst.',
+      'Find jemanden der schon in diesem Land war bevor.',
+      'Mach für 15 Sekunden den entspanntesten "Ich bin im Urlaub"-Move.',
+      'Finde jemanden der Local-Food gegessen hat heute.',
+      'Frag einen Fremden nach der besten Spot für Sunset.',
+      'Mach ein Foto mit dem blausten Himmel/Wasser im Hintergrund.',
+      'Finde jemanden der ohne Sonnencreme unterwegs ist.',
+      'Bring jemanden dazu, dir ein Wort in der lokalen Sprache beizubringen.',
+      'Finde etwas das typisch für dieses Land ist.',
+      'Zeig deinen Lieblingsmoment aus dem Urlaub bisher.',
     ],
     medium: [
       'Frag jemand Fremdes am Pool/Strand nach einem Insider-Tipp für die Gegend.',
       'Mach ein Urlaubsfoto mit einem kompletten Fremden.',
-      "Bestell etwas auf Landessprache (oder versuch's zumindest).",
+      'Bestell etwas auf Landessprache (oder versuch\'s zumindest).',
       'Finde jemanden, der schon mal an deinem Heimatort war.',
-      'Tausch für eine Stunde deine Sonnenbrille mit jemandem aus der Gruppe.'
+      'Tausch für eine Stunde deine Sonnenbrille mit jemandem aus der Gruppe.',
+      'Frag 3 Fremde nach dem besten lokalen Gericht das du probieren musst.',
+      'Überzeuge jemanden, mit euch schwimmen zu gehen.',
+      'Finde jemanden der einen ausgefallenen Hut trägt und frag woher er ist.',
+      'Mach ein "typisches Tourist"-Foto und eines das beweist du kein Tourist bist.',
+      'Bring jemanden dazu, dir die beste lokale Cocktail-Empfehlung zu geben.',
+      'Frag 3 Fremde: "Was ist das Unvergesslichste das du hier erlebt hast?"',
+      'Organisiere ein spontanes Strandspiel mit 2 Fremden.',
+      'Finde jemanden der die lokale Sprache fließend spricht und lern 5 Wörter.',
+      'Bring jemanden dazu, mit euch das Sonnenuntergang anzuschauen.',
+      'Finde jemanden der solo reist und überzeuge ihn, sich für 10 Minuten dazuzusetzen.',
+      'Frag einen Einheimischen nach dem geheimsten Spot in der Nähe.',
+      'Mach ein Zeitraffer-Selfie vom Pool/Strand.',
+      'Organisiere ein spontanes Sandburg-Battle mit der Gruppe.',
+      'Überzeuge 3 Fremde, mit euch einen Toast auf den Urlaub zu machen.',
+      'Finde jemanden der das gleiche Hotel/Airbnb-Ziel hat wie ihr.',
     ],
     hard: [
       'Frag einen Local nach seinem besten Geheimtipp – auf Video.',
       'Bring einen Fremden dazu, ein Wort in seiner Sprache zu lehren – auf Video.',
       'Organisier ein Spontan-Wettrennen (Pool, Strand, Flur) mit 2 Mitspielern.',
-      'Lass dir von einem Fremden ein Souvenir-Empfehlung geben und erklären, warum.',
-      'Mach mit einer fremden Reisegruppe ein gemeinsames Gruppenfoto.'
+      'Lass dir von einem Fremden eine Souvenir-Empfehlung geben und erklären, warum.',
+      'Mach mit einer fremden Reisegruppe ein gemeinsames Gruppenfoto.',
+      'Überzeuge einen Fremden, dir die lokale Geschichte eines Gebäudes zu erklären.',
+      'Bring eine fremde Gruppe dazu, ein spontanes Volleyball/Beachball-Spiel zu starten.',
+      'Finde jemanden der etwas über diesen Ort weiß das du noch nicht wusstest.',
+      'Interviewe 3 Locals: "Was sollen Touristen auf keinen Fall tun?"',
+      'Bring jemanden dazu, mit dir 10 Minuten lang nichts zu sagen — nur den Sonnenuntergang geniessen.',
+      'Überzeuge 5 Fremde, für 30 Sekunden gemeinsam zu posieren.',
+      'Finde jemanden der hier schon 3+ Mal war und lass dir die Top 3 Tipps geben.',
+      'Organisiere ein spontanes Quiz über das Land mit 3 Fremden.',
+      'Bring einen Fremden dazu, dir die besten lokalen Street-Food-Spots zu zeigen.',
+      'Überzeuge 3 Fremde, mit euch ein gemeinsames "Urlaubsselfie" zu machen.',
+      'Finde jemanden der hier arbeitet und frag nach dem besten Abend-Tipp.',
+      'Bring eine Gruppe dazu, gemeinsam ins Wasser zu springen — auf ein Zeichen.',
+      'Organisiere ein spontanes Kartenspiel mit Fremden.',
+      'Lass 3 verschiedene Locals abstimmen: Was ist das Beste an diesem Ort?',
+      'Bring jemanden dazu, mit euch einen lokalen Snack auszuprobieren.',
     ],
     chaos: [
       'Eine fremde Person am Pool/Strand entscheidet, wer bestraft wird.',
       'Tausch für 2 Runden deinen Namen mit der Person neben dir.',
       'Der Verlierer der letzten Runde wählt dein nächstes Urlaubsfoto-Motiv.',
       'Lass die Gruppe entscheiden, was du als Nächstes bestellst.',
-      'Frag 3 Fremde nacheinander nach ihrem besten Urlaubsmoment – auf Video.'
-    ]
-  }
+      'Frag 3 Fremde nacheinander nach ihrem besten Urlaubsmoment – auf Video.',
+      'Alle müssen für die nächsten 5 Minuten auf Englisch sprechen — wer Fehler macht, trinkt.',
+      'Wer als Letzter "Urlaubs-Alarm!" ruft, trinkt.',
+      'Die Gruppe tauscht die Sitzplätze nach einem Zufallsprinzip — wer meckert, trinkt.',
+      'Alle stehen auf — wer als Letztes sitzt, trinkt.',
+      'Most Likely: Wer vergisst am ehesten den Sonnenschutz? Meistgenannte Person trinkt.',
+      'Verteile 5 Schlucke an wen du willst.',
+      'Wähle eine Urlaubs-Regel für die nächsten 2 Runden — jeder der sie bricht, trinkt.',
+      'Speed Round: Alle nennen ein Urlaubsziel in 5 Sekunden — wer wiederholt, trinkt.',
+      'Wer als Letzter "Sonnencreme!" ruft, trinkt.',
+      'Alle Handys in die Mitte — wer als Erstes schaut, trinkt doppelt.',
+      'Finger auf die Nase: Letzter der es tut, trinkt.',
+      'Die Gruppe wählt: Du musst entweder ins Wasser springen oder trinkst doppelt.',
+      'Alle nennen gleichzeitig ein Tier das man hier antreffen könnte — wer dasselbe nennt wie ein anderer, trinkt.',
+      'Wer zuerst "Feierabend!" ruft, bestimmt das nächste Dare.',
+      'Waterfall auf Urlaubs-Art: Alle trinken bis die erste Person aufhört — dann darf die nächste aufhören.',
+    ],
+  },
 }
 
 /**
  * Wählt eine zufällige Challenge passend zu Location-Modus und
  * Schwierigkeit. Fällt auf den Hausparty-Pool zurück, falls ein
- * unbekannter Modus übergeben wird (z.B. bei alten gespeicherten
- * Sessions ohne locationMode-Feld).
+ * unbekannter Modus übergeben wird.
  */
 export function pickRandomChallenge(difficulty, locationMode = 'houseparty') {
   const locationPool = CHALLENGES_BY_LOCATION[locationMode] || CHALLENGES_BY_LOCATION.houseparty
@@ -200,14 +505,14 @@ export function pickRandomPlayer(players, excludeIds = []) {
   return pool[Math.floor(Math.random() * pool.length)]
 }
 
-// Strafen-Skalierung nach Getränk, wie im Brief beschrieben.
+// Strafen-Skalierung nach Getränk
 export const PUNISHMENT_BY_DRINK = {
   beer: { mild: '1 Schluck', medium: '2 Schlucke', heavy: '4 Schlucke' },
   wine: { mild: '1 Schluck', medium: '2 Schlucke', heavy: '3 Schlucke' },
   cocktail: { mild: '1 Schluck', medium: '1 Schluck', heavy: '2 Schlucke' },
   shot: { mild: '⅛ Shot', medium: '¼ Shot', heavy: '½ Shot' },
   soft: { mild: '1 Schluck', medium: '2 Schlucke', heavy: '3 Schlucke' },
-  water: { mild: '1 Schluck', medium: '2 Schlucke', heavy: '3 Schlucke' }
+  water: { mild: '1 Schluck', medium: '2 Schlucke', heavy: '3 Schlucke' },
 }
 
 export const DRINK_OPTIONS = [
@@ -216,14 +521,13 @@ export const DRINK_OPTIONS = [
   { id: 'cocktail', label: 'Cocktail', icon: '🍹' },
   { id: 'shot', label: 'Shot', icon: '🥃' },
   { id: 'soft', label: 'Softdrink', icon: '🥤' },
-  { id: 'water', label: 'Wasser', icon: '💧' }
+  { id: 'water', label: 'Wasser', icon: '💧' },
 ]
 
-// Casual-Mode Strafen: keine Getränke, sondern Punktabzug/Penalties.
 export const CASUAL_PUNISHMENTS = {
   mild: '−5 Punkte',
   medium: '−10 Punkte, Challenge-Streak verloren',
-  heavy: '−20 Punkte, Challenge-Streak verloren'
+  heavy: '−20 Punkte, Challenge-Streak verloren',
 }
 
 export function getPunishmentLabel({ gameMode, drink, punishmentLevel }) {
