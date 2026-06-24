@@ -6,10 +6,21 @@ import { getSessionOnce } from '../lib/sessions'
 import { useState, useEffect } from 'react'
 import './MainMenu.css'
 
+function getLocalStats() {
+  try {
+    const raw = localStorage.getItem('daredrop_local_stats')
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
 export default function MainMenu({ player }) {
   const navigate = useNavigate()
   const character = getCharacterById(player.characterId)
   const [lastSession, setLastSession] = useState(null)
+  const [stats, setStats] = useState(null)
 
   useEffect(() => {
     const code = getLastSessionCode()
@@ -17,6 +28,8 @@ export default function MainMenu({ player }) {
     getSessionOnce(code).then((s) => {
       if (s && s.status !== 'ended') setLastSession(s)
     }).catch(() => {})
+
+    setStats(getLocalStats())
   }, [])
 
   const greeting = getGreeting()
@@ -52,6 +65,31 @@ export default function MainMenu({ player }) {
         </button>
       </motion.div>
 
+      {/* Stats bar — zeigt Spiele + Siege aus LocalStorage */}
+      {stats && (stats.gamesPlayed > 0) && (
+        <motion.div
+          className="home__stats-bar glass"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.05 }}
+        >
+          <div className="home__stat">
+            <span className="home__stat-value">{stats.gamesPlayed ?? 0}</span>
+            <span className="home__stat-label">Spiele</span>
+          </div>
+          <div className="home__stat-divider" />
+          <div className="home__stat">
+            <span className="home__stat-value">{stats.wins ?? 0}</span>
+            <span className="home__stat-label">Siege</span>
+          </div>
+          <div className="home__stat-divider" />
+          <div className="home__stat">
+            <span className="home__stat-value">{stats.challengesCompleted ?? 0}</span>
+            <span className="home__stat-label">Challenges</span>
+          </div>
+        </motion.div>
+      )}
+
       {/* Haupt-Aktionen */}
       <div className="home__actions">
         {[
@@ -59,8 +97,9 @@ export default function MainMenu({ player }) {
             key: 'host',
             icon: '➕',
             gradient: 'var(--gradient-accent)',
+            glowColor: 'rgba(99,102,241,0.25)',
             title: 'Spiel erstellen',
-            sub: 'Erstelle dein eigenes Spiel',
+            sub: 'Starte deine eigene Runde',
             path: '/host',
             delay: 0.08
           },
@@ -68,8 +107,9 @@ export default function MainMenu({ player }) {
             key: 'join',
             icon: '👥',
             gradient: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+            glowColor: 'rgba(236,72,153,0.2)',
             title: 'Spiel beitreten',
-            sub: 'Tritt einem Spiel bei',
+            sub: 'Mit Code einsteigen',
             path: '/join',
             delay: 0.14
           }
@@ -82,6 +122,7 @@ export default function MainMenu({ player }) {
             transition={{ duration: 0.35, delay: item.delay }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate(item.path)}
+            style={{ '--card-glow': item.glowColor }}
           >
             <div className="home__action-icon" style={{ background: item.gradient }}>
               <span>{item.icon}</span>
@@ -125,7 +166,7 @@ export default function MainMenu({ player }) {
             <div className="home__last-info">
               <span className="home__last-name">{lastSession.sessionName || 'Spiel'}</span>
               <span className="home__last-meta">
-                {lastSession.players?.length || 0} Spieler
+                {lastSession.players?.length || 0} Spieler · Fortsetzen
               </span>
             </div>
             <span className="home__action-arrow">›</span>
