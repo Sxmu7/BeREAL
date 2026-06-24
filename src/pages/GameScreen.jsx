@@ -128,14 +128,13 @@ export default function GameScreen({ player }) {
     }
   }, [session])
 
-  // Push-Benachrichtigung an ausgewählten Spieler schicken (nur Host)
+  // Push-Benachrichtigung: 30s nach Challenge-Start senden (Reminder, nicht sofort)
   useEffect(() => {
     if (!session?.currentRound) return
     const round = session.currentRound
     if (round.phase !== 'challenge') return
     if (session.hostId !== playerId) return
     if (lastNotifiedRoundRef.current === round.roundNumber) return
-    lastNotifiedRoundRef.current = round.roundNumber
 
     const target = session.players?.find((p) => p.id === round.selectedPlayerId)
     if (!target?.fcmToken || target.id === playerId) return
@@ -143,7 +142,15 @@ export default function GameScreen({ player }) {
     const lang = session.settings?.language || 'de'
     const title = lang === 'en' ? "⚡ It's your turn!" : '⚡ Du bist dran!'
     const body = (round.challengeText || '').slice(0, 100)
-    sendPushToPlayer(target.fcmToken, title, body)
+
+    // 30 Sekunden warten — falls Spieler schon schaut, braucht er keine Notification
+    const timer = setTimeout(() => {
+      if (lastNotifiedRoundRef.current === round.roundNumber) return
+      lastNotifiedRoundRef.current = round.roundNumber
+      sendPushToPlayer(target.fcmToken, title, body)
+    }, 30_000)
+
+    return () => clearTimeout(timer)
   }, [session?.currentRound?.roundNumber, session?.currentRound?.phase]) // eslint-disable-line
 
   // Generate spectator dare when challenge phase starts
