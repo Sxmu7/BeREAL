@@ -51,6 +51,10 @@ export default async function handler(req, res) {
             token,
             notification: { title, body },
             webpush: {
+              headers: {
+                Urgency: 'high',   // ← iOS liefert auch bei gesperrtem Bildschirm
+                TTL: '60',         // 60s gültig, danach verwerfen
+              },
               notification: {
                 title,
                 body,
@@ -58,7 +62,8 @@ export default async function handler(req, res) {
                 badge: '/icons/icon-192.png',
                 vibrate: [200, 100, 200],
                 requireInteraction: false,
-                tag: 'riot-turn',          // ersetzt vorherige Notification
+                tag: 'riot-turn',
+                renotify: true,    // vibriert erneut auch bei gleichem tag
               },
               fcm_options: { link: '/' },
             },
