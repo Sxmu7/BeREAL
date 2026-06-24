@@ -18,6 +18,8 @@ import { getPunishmentLabel } from '../lib/challenges'
 import WheelSpin from '../components/WheelSpin'
 import FullscreenTimer from '../components/FullscreenTimer'
 import VideoProofRecorder from '../components/VideoProofRecorder'
+import PhotoProofRecorder from '../components/PhotoProofRecorder'
+import AudioProofRecorder from '../components/AudioProofRecorder'
 import RoundCountdown from '../components/RoundCountdown'
 import LiveRanking from '../components/LiveRanking'
 import PartyEventBanner from '../components/PartyEventBanner'
@@ -38,8 +40,33 @@ const LOCATION_META = {
 
 const DIFF_LEVELS = { easy: 1, medium: 2, hard: 3, chaos: 4 }
 
+// Quick spectator mini-dares shown while selected player decides
+const SPECTATOR_DARES = [
+  'Wer kann am längsten die Luft anhalten?',
+  'Zeig deinen besten Schrei ohne Ton.',
+  'Mach deinen besten Dance Move – 3 Sekunden.',
+  'Stell die Person rechts von dir nach.',
+  'Wer findet zuerst etwas Blaues auf sich?',
+  'Mach deinen besten Filmzitat-Moment.',
+  'Wer kann am lautesten "RIOT!" schreien?',
+  'Mach eine Augenkontakt-Challenge mit deinem Nachbarn.',
+  'Wer kann am schnellsten auf einem Bein stehen?',
+  'Flüstere der Person neben dir ein Kompliment.',
+]
+
+function getRandomSpectatorDare() {
+  return SPECTATOR_DARES[Math.floor(Math.random() * SPECTATOR_DARES.length)]
+}
+
 function getOwnPlayerId() {
   return localStorage.getItem('daredrop_player_id')
+}
+
+function getSipMultiplier(punishmentLevel) {
+  if (punishmentLevel === 'mild') return 1
+  if (punishmentLevel === 'medium') return 2
+  if (punishmentLevel === 'heavy') return 3
+  return 1
 }
 
 export default function GameScreen({ player }) {
@@ -49,6 +76,10 @@ export default function GameScreen({ player }) {
   const [session, setSession] = useState(null)
   const hasFinalizedRef = useRef(false)
   const lastSoundedRoundRef = useRef(null)
+  const [sipCount, setSipCount] = useState(0)
+  const [streak, setStreak] = useState(0)
+  const lastResultRef = useRef(null)
+  const [spectatorDare, setSpectatorDare] = useState(null)
 
   useEffect(() => {
     const unsubscribe = subscribeToSession(
@@ -59,6 +90,7 @@ export default function GameScreen({ player }) {
     return unsubscribe
   }, [code, navigate])
 
+  // Sound + vibration on result
   useEffect(() => {
     if (!session?.currentRound) return
     const round = session.currentRound
@@ -76,6 +108,33 @@ export default function GameScreen({ player }) {
     }
   }, [session])
 
+  // Track sip count and streak
+  useEffect(() => {
+    if (!session?.currentRound) return
+    const round = session.currentRound
+    if (round.phase !== 'result' || !round.outcome) return
+    const resultKey = `${round.roundNumber}-${round.outcome}`
+    if (lastResultRef.current === resultKey) return
+    lastResultRef.current = resultKey
+
+    if (round.outcome === 'success') {
+      setStreak((s) => s + 1)
+    } else if (round.outcome === 'punished' || round.outcome === 'failed') {
+      setStreak(0)
+      const sips = getSipMultiplier(session.settings?.punishmentLevel)
+      setSipCount((c) => c + sips)
+    }
+  }, [session])
+
+  // Generate spectator dare when challenge phase starts
+  useEffect(() => {
+    if (!session?.currentRound) return
+    if (session.currentRound.phase === 'challenge') {
+      setSpectatorDare(getRandomSpectatorDare())
+    }
+  }, [session?.currentRound?.phase])
+
+  // Host starts first round
   useEffect(() => {
     if (!session) return
     const isHost = session.hostId === playerId
@@ -84,6 +143,7 @@ export default function GameScreen({ player }) {
         players: session.players,
         difficulty: session.settings.difficulty,
         locationMode: session.settings.locationMode,
+        language: session.settings.language || 'de',
         roundNumber: 1
       }).catch(console.error)
     }
@@ -105,7 +165,7 @@ export default function GameScreen({ player }) {
   const hasVoted = !!round.votes?.[playerId]
 
   const locationMode = session.settings.locationMode
-  const locationMeta = LOCATION_META[locationMode] || { emoji: '🎮', label: locationMode }
+  const locationMeta = LOCATION_META[locationMode] || { emoji: '⚡', label: locationMode }
   const difficultyLevel = DIFF_LEVELS[session.settings.difficulty] || 2
 
   function handleSpinComplete() {
@@ -117,16 +177,15 @@ export default function GameScreen({ player }) {
   }
 
   function handleCountdownDone() {
-    if (isHost) {
-      advanceToSpinning(code).catch(console.error)
-    }
+    if (isHost) advanceToSpinning(code).catch(console.error)
   }
 
   async function handleDecision(decision) {
     if (!isSelected) return
     playCardSound()
     vibrate(40)
-    await setRoundDecision(code, decision)
+    // proofType übergeben → 'none'-Challenges springen direkt zur Abstimmung
+    await setRoundDecision(code, decision, round.proofType || 'photo')
   }
 
   async function handleProofUploaded(url) {
@@ -142,11 +201,7 @@ export default function GameScreen({ player }) {
   }
 
   function checkAndFinalize(votes, force) {
-    const outcome = tallyVotes(
-      votes,
-      eligibleVoters.map((p) => p.id),
-      force
-    )
+    const outcome = tallyVotes(votes, eligibleVoters.map((p) => p.id), force)
     if (outcome && !hasFinalizedRef.current) {
       hasFinalizedRef.current = true
       finalizeRound(code, {
@@ -175,15 +230,14 @@ export default function GameScreen({ player }) {
       players: session.players,
       difficulty: session.settings.difficulty,
       locationMode: session.settings.locationMode,
+      language: session.settings.language || 'de',
       roundNumber: (round.roundNumber || 1) + 1,
       previousSelectedPlayerId: round.selectedPlayerId
     })
   }
 
   async function handleEndGame() {
-    if (isHost) {
-      await endSession(code).catch(console.error)
-    }
+    if (isHost) await endSession(code).catch(console.error)
     clearLastSession()
     navigate(`/recap/${code}`, {
       state: {
@@ -201,10 +255,7 @@ export default function GameScreen({ player }) {
 
   const punishmentLabel =
     session.settings.gameMode === 'casual'
-      ? getPunishmentLabel({
-          gameMode: 'casual',
-          punishmentLevel: session.settings.punishmentLevel
-        })
+      ? getPunishmentLabel({ gameMode: 'casual', punishmentLevel: session.settings.punishmentLevel })
       : getPunishmentLabel({
           gameMode: 'party',
           drink: selectedPlayer?.drink || 'soft',
@@ -222,13 +273,24 @@ export default function GameScreen({ player }) {
           ‹
         </button>
 
-        {/* Round badge — pulsing dot + label */}
         <div className="game-screen__round-badge">
           <div className="game-screen__round-dot" />
           <span className="game-screen__round-label">Runde {round.roundNumber}</span>
         </div>
 
         <div className="game-screen__header-actions">
+          {/* Streak indicator */}
+          {streak >= 2 && (
+            <div className="game-screen__streak">
+              <span className="game-screen__streak-label">🔥 {streak}x</span>
+            </div>
+          )}
+          {/* Sip counter */}
+          {sipCount > 0 && (
+            <div className="game-screen__sip-counter">
+              <span className="game-screen__sip-counter-label">🍺 {sipCount}</span>
+            </div>
+          )}
           {round.phase !== 'countdown' && round.phase !== 'result' && (
             <LiveRanking players={session.players} stats={session.stats} />
           )}
@@ -293,17 +355,14 @@ export default function GameScreen({ player }) {
                   <div className="game-screen__challenge-progress" />
                 </div>
 
-                {/* Styled challenge card */}
+                {/* Challenge card */}
                 <div className="game-screen__challenge-card">
                   <div className="game-screen__challenge-glow" />
-
                   <div className="game-screen__challenge-location-badge">
                     <span>{locationMeta.emoji}</span>
                     <span>{locationMeta.label}</span>
                   </div>
-
                   <p className="game-screen__challenge-text">{round.challengeText}</p>
-
                   <div className="game-screen__challenge-footer">
                     <div className="game-screen__challenge-difficulty">
                       <span className="game-screen__challenge-diff-label">Level</span>
@@ -316,9 +375,7 @@ export default function GameScreen({ player }) {
                         ))}
                       </div>
                     </div>
-                    <p className="game-screen__punishment-hint">
-                      ⚡ {punishmentLabel}
-                    </p>
+                    <p className="game-screen__punishment-hint">⚡ {punishmentLabel}</p>
                   </div>
                 </div>
 
@@ -338,9 +395,31 @@ export default function GameScreen({ player }) {
                     </button>
                   </div>
                 ) : (
-                  <p className="game-screen__waiting-text">
-                    Warte auf {selectedPlayer?.name}…
-                  </p>
+                  <>
+                    <p className="game-screen__waiting-text">
+                      Warte auf {selectedPlayer?.name}…
+                    </p>
+                    {/* Spectator mini-dare */}
+                    {spectatorDare && (
+                      <motion.div
+                        className="game-screen__spectator-dare"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <span className="game-screen__spectator-dare-label">
+                          ⚡ Mini-Dare für dich
+                        </span>
+                        <p className="game-screen__spectator-dare-text">{spectatorDare}</p>
+                        <button
+                          className="game-screen__spectator-dare-skip"
+                          onClick={() => setSpectatorDare(getRandomSpectatorDare())}
+                        >
+                          Andere →
+                        </button>
+                      </motion.div>
+                    )}
+                  </>
                 )}
               </>
             )}
@@ -356,12 +435,26 @@ export default function GameScreen({ player }) {
             className="game-screen__phase"
           >
             {isSelected ? (
-              <VideoProofRecorder onUploaded={handleProofUploaded} />
+              // Richtigen Recorder je nach proofType anzeigen
+              round.proofType === 'photo' ? (
+                <PhotoProofRecorder onUploaded={handleProofUploaded} />
+              ) : round.proofType === 'audio' ? (
+                <AudioProofRecorder onUploaded={handleProofUploaded} />
+              ) : (
+                <VideoProofRecorder onUploaded={handleProofUploaded} />
+              )
             ) : (
               <div className="game-screen__spectator">
-                <span className="game-screen__spectator-icon">🎥</span>
+                <span className="game-screen__spectator-icon">
+                  {round.proofType === 'photo' ? '📸' : round.proofType === 'audio' ? '🎤' : '🎥'}
+                </span>
                 <p className="game-screen__spectator-text">
-                  {selectedPlayer?.name} nimmt die Challenge auf…
+                  {selectedPlayer?.name}{' '}
+                  {round.proofType === 'photo'
+                    ? 'macht ein Foto…'
+                    : round.proofType === 'audio'
+                    ? 'nimmt Audio auf…'
+                    : 'nimmt die Challenge auf…'}
                 </p>
               </div>
             )}
@@ -376,7 +469,22 @@ export default function GameScreen({ player }) {
             exit={{ opacity: 0 }}
             className="game-screen__phase"
           >
-            {round.proofUrl && (
+            {/* Beweis je nach Typ anzeigen */}
+            {round.proofUrl && round.proofType === 'photo' && (
+              <img
+                className="game-screen__proof-photo"
+                src={round.proofUrl}
+                alt="Beweis"
+              />
+            )}
+            {round.proofUrl && round.proofType === 'audio' && (
+              <audio
+                className="game-screen__proof-audio"
+                src={round.proofUrl}
+                controls
+              />
+            )}
+            {round.proofUrl && (!round.proofType || round.proofType === 'video') && (
               <video
                 className="game-screen__proof-video"
                 src={round.proofUrl}
@@ -387,8 +495,7 @@ export default function GameScreen({ player }) {
 
             <div className="game-screen__vote-progress">
               <span className="eyebrow">
-                {Object.keys(round.votes || {}).length} von {eligibleVoters.length} haben
-                abgestimmt
+                {Object.keys(round.votes || {}).length} / {eligibleVoters.length} abgestimmt
               </span>
               <div className="game-screen__vote-progress-bar">
                 <motion.div
@@ -407,7 +514,7 @@ export default function GameScreen({ player }) {
 
             {isSelected ? (
               <p className="game-screen__waiting-text">
-                Die anderen stimmen ab, ob du es geschafft hast…
+                Die anderen stimmen ab…
               </p>
             ) : hasVoted ? (
               <motion.p
@@ -415,11 +522,11 @@ export default function GameScreen({ player }) {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                Stimme abgegeben. Warte auf die anderen…
+                Stimme abgegeben ✓
               </motion.p>
             ) : (
               <>
-                <p className="game-screen__vote-question">Challenge geschafft?</p>
+                <p className="game-screen__vote-question">Geschafft?</p>
                 <div className="game-screen__vote-actions">
                   <motion.button
                     className="game-screen__vote-no"
@@ -455,7 +562,7 @@ export default function GameScreen({ player }) {
               className="game-screen__result-hero"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 16, delay: 0.05 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.05 }}
             >
               <div
                 className={`game-screen__result-circle ${
@@ -480,9 +587,9 @@ export default function GameScreen({ player }) {
             >
               <p className="game-screen__result-title">
                 {round.partyEvent?.effect === 'all_drink'
-                  ? 'Alle haben getrunken! 🍻'
+                  ? 'Alle trinken! 🍻'
                   : round.outcome === 'success'
-                  ? `${selectedPlayer?.name} hat geschafft! 🎉`
+                  ? `${selectedPlayer?.name} hat's! 🎉`
                   : round.outcome === 'punished'
                   ? `${selectedPlayer?.name} nimmt die Strafe.`
                   : `${selectedPlayer?.name} hat's nicht geschafft.`}
@@ -495,12 +602,12 @@ export default function GameScreen({ player }) {
               )}
             </motion.div>
 
-            {/* Scoreboard with medal ranks */}
+            {/* Scoreboard with medals */}
             <motion.div
               className="game-screen__scoreboard"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.35 }}
+              transition={{ delay: 0.25 }}
             >
               <span className="eyebrow">Punktestand</span>
               <div className="game-screen__scoreboard-list">
@@ -520,7 +627,7 @@ export default function GameScreen({ player }) {
                         className={`game-screen__scoreboard-row ${i === 0 ? 'game-screen__scoreboard-row--first' : ''}`}
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + i * 0.05, duration: 0.25 }}
+                        transition={{ delay: 0.3 + i * 0.05 }}
                       >
                         <span className="game-screen__scoreboard-rank">
                           {medal || i + 1}

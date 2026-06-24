@@ -75,6 +75,31 @@
   border-color: var(--color-accent);
 }
 
+/* ── Sprach-Toggle ────────────────────────────────────── */
+.create-game__lang-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.create-game__lang-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast);
+  letter-spacing: 0.01em;
+}
+
+.create-game__lang-btn--active {
+  border-color: #FFE500;
+  background: rgba(255, 229, 0, 0.08);
+  color: #FFE500;
+}
+
 /* Modus-Buttons */
 .create-game__modes {
   display: flex;
@@ -201,7 +226,7 @@
   margin-bottom: 2px;
 }
 
-/* Location-Modus: 2-Spalten-Grid mit größeren Karten */
+/* Location-Modus: 2-Spalten-Grid */
 .create-game__location-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

@@ -8,37 +8,40 @@ import './HostSetupScreen.css'
 
 const MODES = [
   { value: 'casual', label: 'Casual', desc: 'Kein Alkohol nötig', icon: '😌' },
-  { value: 'party',  label: 'Party',  desc: 'Klassisches Trinkspiel', icon: '🍻' },
-  { value: 'chaos',  label: 'Hardcore', desc: 'Für Mutige', icon: '🔥' }
+  { value: 'party', label: 'Party', desc: 'Klassisches Trinkspiel', icon: '🍻' },
+  { value: 'chaos', label: 'Hardcore', desc: 'Für Mutige', icon: '🔥' }
 ]
 
 const DIFFICULTY_OPTIONS = [
-  { value: 'easy',   label: 'Easy' },
+  { value: 'easy', label: 'Easy' },
   { value: 'medium', label: 'Medium' },
-  { value: 'hard',   label: 'Hard' },
-  { value: 'chaos',  label: 'Chaos' }
+  { value: 'hard', label: 'Hard' },
+  { value: 'chaos', label: 'Chaos' }
 ]
 
-// Wie oft kommt eine Challenge (Minuten zwischen Runden)
 const FREQUENCY_OPTIONS = [
-  { value: 3,  label: '3 min', desc: 'Sehr oft' },
-  { value: 5,  label: '5 min', desc: 'Normal' },
+  { value: 3, label: '3 min', desc: 'Sehr oft' },
+  { value: 5, label: '5 min', desc: 'Normal' },
   { value: 10, label: '10 min', desc: 'Selten' },
   { value: 15, label: '15 min', desc: 'Entspannt' },
 ]
 
-// Zeit pro Challenge
 const TIMER_OPTIONS = [
-  { value: 30,  label: '30s' },
-  { value: 60,  label: '1 min' },
+  { value: 30, label: '30s' },
+  { value: 60, label: '1 min' },
   { value: 120, label: '2 min' },
   { value: 180, label: '3 min' },
 ]
 
 const PUNISHMENT_OPTIONS = [
-  { value: 'mild',   label: 'Mild', desc: '1 Schluck' },
+  { value: 'mild', label: 'Mild', desc: '1 Schluck' },
   { value: 'medium', label: 'Medium', desc: '2–3 Schlucke' },
-  { value: 'heavy',  label: 'Heavy', desc: 'Shot' },
+  { value: 'heavy', label: 'Heavy', desc: 'Shot' },
+]
+
+const LANGUAGE_OPTIONS = [
+  { value: 'de', label: '🇩🇪 Deutsch' },
+  { value: 'en', label: '🇬🇧 English' },
 ]
 
 export default function HostSetupScreen({ player }) {
@@ -50,6 +53,7 @@ export default function HostSetupScreen({ player }) {
   const [frequency, setFrequency] = useState(5)
   const [timer, setTimer] = useState(60)
   const [punishment, setPunishment] = useState('medium')
+  const [language, setLanguage] = useState('de')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState(null)
 
@@ -79,6 +83,7 @@ export default function HostSetupScreen({ player }) {
             challengeTimer: timer,
             difficulty,
             locationMode,
+            language,
             battleRoundEvery: 5,
             punishmentLevel: mode === 'chaos' ? 'heavy' : punishment
           }
@@ -113,7 +118,26 @@ export default function HostSetupScreen({ player }) {
           />
         </motion.div>
 
-        {/* Location-Modus: bestimmt komplett andere Challenge-Pools */}
+        {/* Sprache */}
+        <motion.div className="create-game__field"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+          <label className="create-game__label">Challenge-Sprache</label>
+          <div className="create-game__lang-row">
+            {LANGUAGE_OPTIONS.map((l) => (
+              <button
+                key={l.value}
+                className={language === l.value
+                  ? 'create-game__lang-btn create-game__lang-btn--active'
+                  : 'create-game__lang-btn'}
+                onClick={() => setLanguage(l.value)}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Location-Modus */}
         <motion.div className="create-game__field"
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
           <label className="create-game__label">Wo seid ihr unterwegs?</label>
@@ -207,7 +231,7 @@ export default function HostSetupScreen({ player }) {
           </div>
         </motion.div>
 
-        {/* Strafe (nur im Party/Chaos-Modus relevant) */}
+        {/* Strafe */}
         {mode !== 'casual' && (
           <motion.div className="create-game__field"
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
