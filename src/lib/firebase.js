@@ -23,16 +23,15 @@ export const db = getFirestore(app)
 /**
  * Fragt Push-Berechtigung an und liefert den FCM-Token zurück.
  *
- * Wichtige Einschränkung: Auf iOS funktioniert Web Push erst ab iOS 16.4
- * und NUR, wenn die App über "Zum Home-Bildschirm hinzufügen" installiert
- * wurde – nicht im normalen Safari-Tab. Diese Funktion gibt in dem Fall
- * `null` zurück, die App muss dann auf In-App-Polling/Listener zurückfallen.
+ * iOS-Voraussetzungen:
+ * - App als PWA installieren ("Zum Home-Bildschirm hinzufügen")
+ * - iOS 16.4+
  *
- * Voraussetzung in der Firebase Console:
- * 1. Cloud Messaging aktivieren, Web-Push-Zertifikat (VAPID Key) generieren
- * 2. VAPID Key unten eintragen (noch TODO, siehe Platzhalter)
- * 3. /public/firebase-messaging-sw.js mit der echten firebaseConfig befüllen
- *    (bereits eingetragen)
+ * Konfiguration:
+ * 1. Firebase Console → Projekteinstellungen → Cloud Messaging
+ *    → Web-Push-Zertifikate → Schlüsselpaar generieren → VAPID Key kopieren
+ * 2. In .env.local und Vercel Env-Vars eintragen:
+ *    VITE_FCM_VAPID_KEY=<dein VAPID Key>
  */
 export async function requestPushPermission() {
   const supported = await isSupported().catch(() => false)
@@ -44,11 +43,11 @@ export async function requestPushPermission() {
   try {
     const messaging = getMessaging(app)
     const token = await getToken(messaging, {
-      vapidKey: 'DEIN_VAPID_KEY' // TODO: aus Firebase Console → Cloud Messaging → Web Push certificates
+      vapidKey: import.meta.env.VITE_FCM_VAPID_KEY,
     })
     return token || null
   } catch (err) {
-    console.warn('FCM-Token konnte nicht erstellt werden:', err)
+    console.warn('[FCM] Token-Erstellung fehlgeschlagen:', err)
     return null
   }
 }
