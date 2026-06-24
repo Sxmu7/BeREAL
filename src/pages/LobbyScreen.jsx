@@ -37,6 +37,7 @@ export default function LobbyScreen({ player }) {
   const [copied, setCopied] = useState(false)
   const playerId = useRef(getOrCreatePlayerId()).current
   const pushRegisteredRef = useRef(false)
+  const [showPushPrompt, setShowPushPrompt] = useState(false)
 
   useEffect(() => {
     const unsub = subscribeToSession(code, (data) => {
@@ -56,13 +57,34 @@ export default function LobbyScreen({ player }) {
     return unsub
   }, [code]) // eslint-disable-line
 
-  // Push-Token registrieren, sobald der Spieler in der Session erscheint
+  // Push-Prompt anzeigen, sobald der Spieler in der Session erscheint (einmalig)
   useEffect(() => {
     if (pushRegisteredRef.current) return
     if (!session?.players?.some((p) => p.id === playerId)) return
-    pushRegisteredRef.current = true
-    registerForPush(code, playerId, session.players).catch(console.error)
+    const alreadyAsked = localStorage.getItem('riot_push_asked')
+    const alreadyGranted = Notification?.permission === 'granted'
+    if (alreadyAsked || alreadyGranted) {
+      // Direkt registrieren falls schon erlaubt
+      if (alreadyGranted) {
+        pushRegisteredRef.current = true
+        registerForPush(code, playerId, session.players).catch(console.error)
+      }
+      return
+    }
+    setShowPushPrompt(true)
   }, [session?.players?.length]) // eslint-disable-line
+
+  async function handleAllowPush() {
+    setShowPushPrompt(false)
+    localStorage.setItem('riot_push_asked', '1')
+    pushRegisteredRef.current = true
+    await registerForPush(code, playerId, session.players).catch(console.error)
+  }
+
+  function handleDenyPush() {
+    setShowPushPrompt(false)
+    localStorage.setItem('riot_push_asked', '1')
+  }
 
   function handleCopyCode() {
     navigator.clipboard?.writeText(code).then(() => {
@@ -186,6 +208,33 @@ export default function LobbyScreen({ player }) {
           </div>
         </div>
       </div>
+
+      {/* Push-Benachrichtigungen Prompt */}
+      <AnimatePresence>
+        {showPushPrompt && (
+          <motion.div
+            className="lobby__push-prompt"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+          >
+            <div className="lobby__push-icon">🔔</div>
+            <div className="lobby__push-text">
+              <p className="lobby__push-title">Mitteilungen erlauben?</p>
+              <p className="lobby__push-desc">Wir benachrichtigen dich wenn du dran bist — auch wenn die App im Hintergrund ist.</p>
+            </div>
+            <div className="lobby__push-actions">
+              <button className="lobby__push-btn lobby__push-btn--allow" onClick={handleAllowPush}>
+                Erlauben
+              </button>
+              <button className="lobby__push-btn lobby__push-btn--deny" onClick={handleDenyPush}>
+                Nicht jetzt
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* CTA */}
       <div className="lobby__footer">

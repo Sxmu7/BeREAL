@@ -160,6 +160,11 @@
   flex-shrink: 0;
 }
 
+.lobby__push-badge {
+  font-size: 0.75rem;
+  margin-left: var(--space-1);
+}
+
 .lobby__remove-btn {
   width: 24px;
   height: 24px;
@@ -171,6 +176,74 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ── Push-Prompt ─────────────────────────────────────────── */
+.lobby__push-prompt {
+  margin: 0 var(--space-5) var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1.5px solid rgba(255, 229, 0, 0.3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lobby__push-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.lobby__push-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lobby__push-title {
+  font-size: var(--fs-body);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.lobby__push-desc {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.lobby__push-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lobby__push-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  transition: all var(--duration-fast);
+}
+
+.lobby__push-btn--allow {
+  background: #FFE500;
+  color: #050505;
+  border: none;
+}
+
+.lobby__push-btn--allow:active {
+  transform: scale(0.97);
+  background: #f0d800;
+}
+
+.lobby__push-btn--deny {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 /* Footer */
