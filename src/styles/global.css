@@ -41,7 +41,7 @@ a { color: inherit; text-decoration: none; }
 
 ::selection {
   background: var(--color-accent);
-  color: white;
+  color: #000;
 }
 
 /* === CARD === */
@@ -59,6 +59,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* === BUTTONS === */
+
+/* Primary: white bg, black text — super clean & punchy */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -67,18 +69,19 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   padding: 17px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--gradient-accent);
-  color: #ffffff;
+  background: #ffffff;
+  color: #000000;
   font-size: var(--fs-body);
   font-weight: 700;
   letter-spacing: -0.01em;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 20px rgba(255,255,255,0.15);
   transition: transform var(--duration-fast) var(--ease-out-snap),
-              opacity var(--duration-fast) var(--ease-out-snap);
+    opacity var(--duration-fast) var(--ease-out-snap);
 }
 .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+.btn-primary:disabled { opacity: 0.3; pointer-events: none; }
 
+/* Secondary: outlined */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -87,22 +90,22 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   padding: 17px var(--space-6);
   border-radius: var(--radius-full);
-  background: var(--color-surface-elevated);
+  background: transparent;
   border: 1px solid var(--color-border-strong);
   color: var(--color-text-primary);
   font-size: var(--fs-body);
   font-weight: 600;
   transition: transform var(--duration-fast) var(--ease-out-snap),
-              background var(--duration-fast) var(--ease-out-snap);
+    background var(--duration-fast) var(--ease-out-snap);
 }
-.btn-secondary:active { transform: scale(0.97); background: var(--color-surface-high); }
-.btn-secondary:disabled { opacity: 0.4; pointer-events: none; }
+.btn-secondary:active { transform: scale(0.97); background: var(--color-surface); }
+.btn-secondary:disabled { opacity: 0.3; pointer-events: none; }
 
 /* === EYEBROW === */
 .eyebrow {
   font-size: var(--fs-caption);
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-tertiary);
 }
@@ -118,7 +121,7 @@ a { color: inherit; text-decoration: none; }
   font-size: 1.25rem;
   flex-shrink: 0;
   background: var(--gradient-avatar-1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .avatar-bubble--lg {
@@ -128,10 +131,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* === CODE DIGITS === */
-.code-digits {
-  display: flex;
-  gap: var(--space-2);
-}
+.code-digits { display: flex; gap: var(--space-2); }
+
 .code-digit {
   width: 44px;
   height: 52px;
