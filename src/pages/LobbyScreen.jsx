@@ -8,6 +8,7 @@ import {
 import { getCharacterById } from '../lib/characters'
 import QrCodeDisplay from '../components/QrCodeDisplay'
 import { getLocationMode } from '../lib/challenges'
+import { registerForPush } from '../lib/notifications'
 import './LobbyScreen.css'
 
 const AVATAR_GRADIENTS = [
@@ -35,6 +36,7 @@ export default function LobbyScreen({ player }) {
   const [showQr, setShowQr] = useState(false)
   const [copied, setCopied] = useState(false)
   const playerId = useRef(getOrCreatePlayerId()).current
+  const pushRegisteredRef = useRef(false)
 
   useEffect(() => {
     const unsub = subscribeToSession(code, (data) => {
@@ -52,7 +54,15 @@ export default function LobbyScreen({ player }) {
       }
     }, () => setNotFound(true))
     return unsub
-  }, [code])  // eslint-disable-line
+  }, [code]) // eslint-disable-line
+
+  // Push-Token registrieren, sobald der Spieler in der Session erscheint
+  useEffect(() => {
+    if (pushRegisteredRef.current) return
+    if (!session?.players?.some((p) => p.id === playerId)) return
+    pushRegisteredRef.current = true
+    registerForPush(code, playerId, session.players).catch(console.error)
+  }, [session?.players?.length]) // eslint-disable-line
 
   function handleCopyCode() {
     navigator.clipboard?.writeText(code).then(() => {
@@ -156,6 +166,9 @@ export default function LobbyScreen({ player }) {
                       {p.name}
                       {p.isHost && <span className="lobby__host-crown"> 👑</span>}
                     </span>
+                    {p.fcmToken && (
+                      <span className="lobby__push-badge" title="Push aktiviert">🔔</span>
+                    )}
                   </div>
                   <span className="lobby__player-online" />
                   {isHost && !p.isHost && (

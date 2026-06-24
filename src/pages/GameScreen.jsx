@@ -26,6 +26,7 @@ import PartyEventBanner from '../components/PartyEventBanner'
 import Confetti from '../components/Confetti'
 import { clearLastSession } from '../lib/lastSession'
 import { playSuccessSound, playFailSound, playCardSound, vibrate } from '../lib/sounds'
+import { sendPushToPlayer } from '../lib/notifications'
 import './GameScreen.css'
 
 const VOTING_SECONDS = 30
@@ -76,6 +77,7 @@ export default function GameScreen({ player }) {
   const [session, setSession] = useState(null)
   const hasFinalizedRef = useRef(false)
   const lastSoundedRoundRef = useRef(null)
+  const lastNotifiedRoundRef = useRef(null)
   const [sipCount, setSipCount] = useState(0)
   const [streak, setStreak] = useState(0)
   const lastResultRef = useRef(null)
@@ -125,6 +127,24 @@ export default function GameScreen({ player }) {
       setSipCount((c) => c + sips)
     }
   }, [session])
+
+  // Push-Benachrichtigung an ausgewählten Spieler schicken (nur Host)
+  useEffect(() => {
+    if (!session?.currentRound) return
+    const round = session.currentRound
+    if (round.phase !== 'challenge') return
+    if (session.hostId !== playerId) return
+    if (lastNotifiedRoundRef.current === round.roundNumber) return
+    lastNotifiedRoundRef.current = round.roundNumber
+
+    const target = session.players?.find((p) => p.id === round.selectedPlayerId)
+    if (!target?.fcmToken || target.id === playerId) return
+
+    const lang = session.settings?.language || 'de'
+    const title = lang === 'en' ? "⚡ It's your turn!" : '⚡ Du bist dran!'
+    const body = (round.challengeText || '').slice(0, 100)
+    sendPushToPlayer(target.fcmToken, title, body)
+  }, [session?.currentRound?.roundNumber, session?.currentRound?.phase]) // eslint-disable-line
 
   // Generate spectator dare when challenge phase starts
   useEffect(() => {
