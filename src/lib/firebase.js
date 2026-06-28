@@ -34,16 +34,34 @@ export const db = getFirestore(app)
  *    VITE_FCM_VAPID_KEY=<dein VAPID Key>
  */
 export async function requestPushPermission() {
-  const supported = await isSupported().catch(() => false)
-  if (!supported) return null
-
-  const permission = await Notification.requestPermission()
-  if (permission !== 'granted') return null
-
   try {
+    // Grundvoraussetzungen prüfen (iOS PWA braucht beides)
+    if (typeof Notification === 'undefined') return null
+    if (!('PushManager' in window)) return null
+
+    const supported = await isSupported().catch(() => false)
+    if (!supported) return null
+
+    const permission = await Notification.requestPermission()
+    if (permission !== 'granted') return null
+
+    // Firebase Messaging SW explizit registrieren —
+    // ohne das findet getToken() keinen passenden SW und schlägt fehl
+    const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+      scope: '/',
+    }).catch((err) => {
+      console.warn('[FCM] SW-Registrierung fehlgeschlagen:', err)
+      return null
+    })
+    if (!swReg) return null
+
+    // Warten bis der SW aktiv ist
+    await navigator.serviceWorker.ready
+
     const messaging = getMessaging(app)
     const token = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FCM_VAPID_KEY,
+      serviceWorkerRegistration: swReg,
     })
     return token || null
   } catch (err) {

@@ -59,7 +59,8 @@ export async function startNewRound(
       outcome: null,
       partyEvent: partyEvent || null,
       startedAt: serverTimestamp()
-    }
+    },
+    nextRoundAt: null           // Warteraum-Timer zurücksetzen
   })
 }
 
@@ -113,7 +114,7 @@ export function tallyVotes(votes, eligibleVoterIds, force = false) {
 
 export async function finalizeRound(
   sessionCode,
-  { outcome, players, stats, selectedPlayerId, pointsMultiplier = 1 }
+  { outcome, players, stats, selectedPlayerId, pointsMultiplier = 1, nextRoundDelayMs = null }
 ) {
   const updatedStats = { ...stats }
   const current = ensurePlayerStats(updatedStats, selectedPlayerId)
@@ -142,7 +143,11 @@ export async function finalizeRound(
   await updateDoc(ref, {
     'currentRound.outcome': outcome,
     'currentRound.phase': 'result',
-    stats: updatedStats
+    stats: updatedStats,
+    // Bei 'timed'-Modus: Zeitstempel für automatischen Rundenstart
+    nextRoundAt: nextRoundDelayMs != null
+      ? new Date(Date.now() + nextRoundDelayMs)
+      : null
   })
 }
 
