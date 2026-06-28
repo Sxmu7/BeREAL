@@ -64,7 +64,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #FFE500;
+  background: var(--color-accent);
   animation: round-pulse 2s ease-in-out infinite;
 }
 
@@ -105,8 +105,8 @@
   align-items: center;
   gap: 5px;
   padding: 4px 10px;
-  background: rgba(255,229,0,0.1);
-  border: 1px solid rgba(255,229,0,0.25);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.3);
   border-radius: var(--radius-full);
   animation: streak-pop 0.4s var(--ease-spring);
 }
@@ -119,7 +119,7 @@
 .game-screen__streak-label {
   font-size: var(--fs-caption);
   font-weight: 700;
-  color: #FFE500;
+  color: var(--color-accent);
   font-family: var(--font-mono);
 }
 
@@ -155,7 +155,7 @@
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  box-shadow: 0 0 0 2px rgba(255,229,0,0.2), 0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 0 0 2px rgba(139,92,246,0.25), 0 4px 20px rgba(0,0,0,0.4);
 }
 
 .game-screen__challenge-player-name {
@@ -168,7 +168,7 @@
 .game-screen__challenge-progress {
   width: 60px;
   height: 2px;
-  background: rgba(255,229,0,0.4);
+  background: rgba(139,92,246,0.4);
   border-radius: var(--radius-full);
 }
 
@@ -187,7 +187,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: #FFE500;
+  background: var(--color-accent);
   opacity: 0.7;
 }
 
@@ -197,11 +197,11 @@
   gap: 5px;
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  background: rgba(255,229,0,0.08);
-  border: 1px solid rgba(255,229,0,0.2);
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.25);
   font-size: var(--fs-caption);
   font-weight: 700;
-  color: #FFE500;
+  color: var(--color-accent);
   margin-bottom: var(--space-4);
   letter-spacing: 0.03em;
 }
@@ -248,7 +248,7 @@
 }
 
 .game-screen__challenge-dot--active {
-  background: #FFE500;
+  background: var(--color-accent);
 }
 
 .game-screen__punishment-hint {
@@ -316,7 +316,7 @@
 /* ── Spectator Mini-Dare ── */
 .game-screen__spectator-dare {
   background: rgba(255,229,0,0.05);
-  border: 1px solid rgba(255,229,0,0.15);
+  border: 1px solid rgba(139,92,246,0.2);
   border-radius: var(--radius-md);
   padding: var(--space-4) var(--space-4);
   display: flex;
@@ -327,7 +327,7 @@
 .game-screen__spectator-dare-label {
   font-size: var(--fs-caption);
   font-weight: 700;
-  color: #FFE500;
+  color: var(--color-accent);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -380,7 +380,7 @@
 .game-screen__proof-audio {
   width: 100%;
   border-radius: var(--radius-md);
-  accent-color: #FFE500;
+  accent-color: var(--color-accent);
 }
 
 .game-screen__proof-video {
@@ -409,7 +409,7 @@
 .game-screen__vote-progress-fill {
   height: 100%;
   border-radius: var(--radius-full);
-  background: #FFE500;
+  background: var(--color-accent);
 }
 
 .game-screen__vote-question {
@@ -509,7 +509,7 @@
 .game-screen__result-points {
   font-size: 1.125rem;
   font-weight: 800;
-  color: #FFE500;
+  color: var(--color-accent);
   margin: 0;
 }
 
@@ -539,8 +539,8 @@
 }
 
 .game-screen__scoreboard-row--first {
-  background: rgba(255,229,0,0.06);
-  border: 1px solid rgba(255,229,0,0.15);
+  background: rgba(139,92,246,0.06);
+  border: 1px solid rgba(139,92,246,0.2);
 }
 
 .game-screen__scoreboard-rank {
