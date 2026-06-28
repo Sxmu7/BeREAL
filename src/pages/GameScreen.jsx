@@ -78,8 +78,10 @@ export default function GameScreen({ player }) {
   const hasFinalizedRef = useRef(false)
   const lastSoundedRoundRef = useRef(null)
   const lastNotifiedRoundRef = useRef(null)
+  const autoStartedRef = useRef(false)
   const [sipCount, setSipCount] = useState(0)
   const [streak, setStreak] = useState(0)
+  const [countdown, setCountdown] = useState(null)
   const lastResultRef = useRef(null)
   const [spectatorDare, setSpectatorDare] = useState(null)
 
@@ -161,6 +163,47 @@ export default function GameScreen({ player }) {
     }
   }, [session?.currentRound?.phase])
 
+  // Warteraum-Countdown: tickt von nextRoundAt bis 0 (timed-Modus)
+  useEffect(() => {
+    if (!session?.nextRoundAt || session?.currentRound?.phase !== 'result') {
+      setCountdown(null)
+      return
+    }
+    autoStartedRef.current = false
+
+    const tick = () => {
+      const target = session.nextRoundAt
+      const targetMs =
+        typeof target?.toMillis === 'function'
+          ? target.toMillis()
+          : target instanceof Date
+          ? target.getTime()
+          : 0
+      const remaining = Math.max(0, Math.ceil((targetMs - Date.now()) / 1000))
+      setCountdown(remaining)
+    }
+
+    tick()
+    const id = setInterval(tick, 500)
+    return () => clearInterval(id)
+  }, [session?.nextRoundAt, session?.currentRound?.phase]) // eslint-disable-line
+
+  // Automatischer Rundenstart wenn Countdown auf 0 (nur Host)
+  useEffect(() => {
+    if (countdown !== 0 || autoStartedRef.current) return
+    if (!session || session.hostId !== playerId) return
+    autoStartedRef.current = true
+    hasFinalizedRef.current = false
+    startNewRound(code, {
+      players: session.players,
+      difficulty: session.settings.difficulty,
+      locationMode: session.settings.locationMode,
+      language: session.settings.language || 'de',
+      roundNumber: (session.currentRound?.roundNumber || 1) + 1,
+      previousSelectedPlayerId: session.currentRound?.selectedPlayerId
+    }).catch(console.error)
+  }, [countdown]) // eslint-disable-line
+
   // Host starts first round
   useEffect(() => {
     if (!session) return
@@ -231,12 +274,16 @@ export default function GameScreen({ player }) {
     const outcome = tallyVotes(votes, eligibleVoters.map((p) => p.id), force)
     if (outcome && !hasFinalizedRef.current) {
       hasFinalizedRef.current = true
+      const delayMs = session.settings?.roundMode === 'timed'
+        ? (session.settings?.challengeIntervalMinutes || 5) * 60 * 1000
+        : null
       finalizeRound(code, {
         outcome,
         players: session.players,
         stats: session.stats || {},
         selectedPlayerId: round.selectedPlayerId,
-        pointsMultiplier: round.partyEvent?.effect === 'double_points' ? 2 : 1
+        pointsMultiplier: round.partyEvent?.effect === 'double_points' ? 2 : 1,
+        nextRoundDelayMs: delayMs
       }).catch(console.error)
     }
   }
@@ -670,15 +717,41 @@ export default function GameScreen({ player }) {
               </div>
             </motion.div>
 
-            {isHost && (
-              <div className="game-screen__result-actions">
-                <button className="btn-primary" onClick={handleNextRound}>
-                  Nächste Runde
-                </button>
-                <button className="game-screen__end-game" onClick={handleEndGame}>
-                  Spiel beenden
-                </button>
-              </div>
+            {/* Timed-Modus: Countdown für alle, Host kann überspringen */}
+            {session.settings?.roundMode === 'timed' && countdown !== null ? (
+              <motion.div
+                className="game-screen__next-countdown"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+              >
+                <p className="game-screen__next-countdown-label">Nächste Runde in</p>
+                <p className="game-screen__next-countdown-time">
+                  {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
+                </p>
+                {isHost && (
+                  <div className="game-screen__result-actions">
+                    <button className="btn-primary" onClick={handleNextRound}>
+                      ⚡ Jetzt starten
+                    </button>
+                    <button className="game-screen__end-game" onClick={handleEndGame}>
+                      Spiel beenden
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              /* Direct-Modus: Host startet manuell */
+              isHost && session.settings?.roundMode !== 'timed' && (
+                <div className="game-screen__result-actions">
+                  <button className="btn-primary" onClick={handleNextRound}>
+                    Nächste Runde
+                  </button>
+                  <button className="game-screen__end-game" onClick={handleEndGame}>
+                    Spiel beenden
+                  </button>
+                </div>
+              )
             )}
           </motion.div>
         )}

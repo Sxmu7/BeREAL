@@ -44,6 +44,11 @@ const LANGUAGE_OPTIONS = [
   { value: 'en', label: '🇬🇧 English' },
 ]
 
+const ROUND_MODE_OPTIONS = [
+  { value: 'direct', label: '⚡ Sofort', desc: 'Host startet manuell' },
+  { value: 'timed', label: '⏳ Warteraum', desc: 'Automatisch nach Intervall' },
+]
+
 export default function HostSetupScreen({ player }) {
   const navigate = useNavigate()
   const [sessionName, setSessionName] = useState(`${player.name || 'Party'} Night`)
@@ -54,6 +59,7 @@ export default function HostSetupScreen({ player }) {
   const [timer, setTimer] = useState(60)
   const [punishment, setPunishment] = useState('medium')
   const [language, setLanguage] = useState('de')
+  const [roundMode, setRoundMode] = useState('direct')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState(null)
 
@@ -76,7 +82,8 @@ export default function HostSetupScreen({ player }) {
         locationMode,
         language,
         battleRoundEvery: 5,
-        punishmentLevel: mode === 'chaos' ? 'heavy' : punishment
+        punishmentLevel: mode === 'chaos' ? 'heavy' : punishment,
+        roundMode
       }
       const code = await createSession({
         hostId,
@@ -195,6 +202,24 @@ export default function HostSetupScreen({ player }) {
               >
                 <span className="create-game__pill-main">{f.label}</span>
                 <span className="create-game__pill-sub">{f.desc}</span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Rundenübergang */}
+        <motion.div className="create-game__field"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
+          <label className="create-game__label">Nach jeder Runde</label>
+          <div className="create-game__pill-row">
+            {ROUND_MODE_OPTIONS.map((r) => (
+              <button
+                key={r.value}
+                className={roundMode === r.value ? 'create-game__pill create-game__pill--active' : 'create-game__pill'}
+                onClick={() => setRoundMode(r.value)}
+              >
+                <span className="create-game__pill-main">{r.label}</span>
+                <span className="create-game__pill-sub">{r.desc}</span>
               </button>
             ))}
           </div>
