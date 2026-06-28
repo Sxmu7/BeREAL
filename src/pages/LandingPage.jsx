@@ -7,9 +7,9 @@ import { getSessionOnce } from '../lib/sessions'
 import './LandingPage.css'
 
 const FEATURES = [
-  { icon: '🎯', label: 'Challenges' },
-  { icon: '🍻', label: 'Trinkspiel' },
-  { icon: '🎮', label: 'Multiplayer' },
+  { label: 'Challenges' },
+  { label: 'Trinkspiel' },
+  { label: 'Multiplayer' },
 ]
 
 export default function LandingPage({ player, setName: setPlayerName }) {
@@ -47,11 +47,6 @@ export default function LandingPage({ player, setName: setPlayerName }) {
 
   return (
     <div className="landing">
-      {/* Atmosphäre-Schichten */}
-      <div className="landing__bg-glow-1" />
-      <div className="landing__bg-glow-2" />
-      <div className="landing__bg-glow-3" />
-
       <AnimatePresence mode="wait">
         {phase === 'intro' && (
           <motion.div
@@ -69,53 +64,52 @@ export default function LandingPage({ player, setName: setPlayerName }) {
           <motion.div
             key="main"
             className="landing__main"
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            {/* Logo mit Ringen */}
+            {/* Logo */}
             <motion.div
               className="landing__logo-wrap"
-              initial={{ scale: 0.7, opacity: 0 }}
+              initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="landing__logo-ring-2" />
+              <div className="landing__logo">
+                <span className="landing__logo-icon">⚡</span>
+              </div>
               <div className="landing__logo-ring" />
-              <div className="landing__logo">🥃</div>
             </motion.div>
 
             {/* Headline */}
             <motion.div
               className="landing__headline"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              transition={{ duration: 0.45, delay: 0.1 }}
             >
               <h1 className="landing__title">
-                {isReturning ? `Hey, ${player.name} 👋` : 'Willkommen'}
+                {isReturning ? `Hey, ${player.name}` : 'RIOT'}
               </h1>
               <p className="landing__tagline">
-                {isReturning
-                  ? 'Bereit für die nächste Runde?'
-                  : 'Bereit für eine legendäre Nacht?'}
+                Accept the dare. Or take the drink.
               </p>
             </motion.div>
 
-            {/* Resume-Banner */}
+            {/* Resume banner */}
             <AnimatePresence>
               {resumableSession && (
                 <motion.div
                   className="landing__resume"
-                  initial={{ opacity: 0, y: -10, scale: 0.97 }}
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
                   <div className="landing__resume-content">
-                    <span className="landing__resume-icon">🎮</span>
+                    <span className="landing__resume-icon">⚡</span>
                     <div>
-                      <p className="landing__resume-title">Laufendes Spiel gefunden</p>
+                      <p className="landing__resume-title">Laufendes Spiel</p>
                       <p className="landing__resume-sub">
                         {resumableSession.sessionName || 'Session'} · Fortsetzen?
                       </p>
@@ -123,7 +117,7 @@ export default function LandingPage({ player, setName: setPlayerName }) {
                   </div>
                   <div className="landing__resume-actions">
                     <button
-                      className="landing__cta"
+                      className="landing__cta landing__cta--accent"
                       onClick={() => navigate(
                         resumableSession.status === 'active'
                           ? `/game/${resumableSession.code}`
@@ -143,13 +137,12 @@ export default function LandingPage({ player, setName: setPlayerName }) {
               )}
             </AnimatePresence>
 
-            {/* Input-Gruppe */}
+            {/* Input */}
             <motion.div
               className="landing__input-group"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              style={{ width: '100%' }}
+              transition={{ duration: 0.45, delay: 0.18 }}
             >
               {!isReturning && (
                 <div className="landing__input-wrap">
@@ -178,21 +171,20 @@ export default function LandingPage({ player, setName: setPlayerName }) {
                 onClick={handleContinue}
                 disabled={!canContinue}
               >
-                Weiter
+                {isReturning ? 'Weiter →' : "Los geht's →"}
               </button>
             </motion.div>
 
-            {/* Feature-Pills */}
+            {/* Feature pills */}
             <motion.div
               className="landing__features"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             >
               {FEATURES.map((f, i) => (
                 <span key={i} className="landing__feature-pill">
-                  <span className="landing__feature-dot" />
-                  {f.icon} {f.label}
+                  {f.label}
                 </span>
               ))}
             </motion.div>

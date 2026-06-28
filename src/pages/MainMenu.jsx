@@ -24,22 +24,19 @@ export default function MainMenu({ player }) {
 
   useEffect(() => {
     const code = getLastSessionCode()
-    if (!code) return
-    getSessionOnce(code).then((s) => {
-      if (s && s.status !== 'ended') setLastSession(s)
-    }).catch(() => {})
-
+    if (code) {
+      getSessionOnce(code).then((s) => {
+        if (s && s.status !== 'ended') setLastSession(s)
+      }).catch(() => {})
+    }
     setStats(getLocalStats())
   }, [])
 
-  const greeting = getGreeting()
-
-  function getGreeting() {
-    const h = new Date().getHours()
-    if (h < 12) return 'Guten Morgen'
-    if (h < 18) return 'Hallo'
-    return 'Hey'
-  }
+  const h = new Date().getHours()
+  const greeting =
+    h < 12 ? `Guten Morgen, ${player.name || 'hey'} 👋`
+    : h < 18 ? `Hallo, ${player.name || 'hey'} 👋`
+    : `Hey, ${player.name || 'hey'} 👋`
 
   return (
     <div className="home">
@@ -51,9 +48,7 @@ export default function MainMenu({ player }) {
         transition={{ duration: 0.35 }}
       >
         <div>
-          <h1 className="home__greeting">
-            {greeting}, {player.name || 'Spieler'} 👋
-          </h1>
+          <h1 className="home__greeting">{greeting}</h1>
           <p className="home__sub">Was möchtest du tun?</p>
         </div>
         <button
@@ -65,8 +60,8 @@ export default function MainMenu({ player }) {
         </button>
       </motion.div>
 
-      {/* Stats bar — zeigt Spiele + Siege aus LocalStorage */}
-      {stats && (stats.gamesPlayed > 0) && (
+      {/* Stats bar */}
+      {stats && stats.gamesPlayed > 0 && (
         <motion.div
           className="home__stats-bar glass"
           initial={{ opacity: 0, y: 8 }}
@@ -90,53 +85,46 @@ export default function MainMenu({ player }) {
         </motion.div>
       )}
 
-      {/* Haupt-Aktionen */}
+      {/* Action cards */}
       <div className="home__actions">
-        {[
-          {
-            key: 'host',
-            icon: '➕',
-            gradient: 'var(--gradient-accent)',
-            glowColor: 'rgba(99,102,241,0.25)',
-            title: 'Spiel erstellen',
-            sub: 'Starte deine eigene Runde',
-            path: '/host',
-            delay: 0.08
-          },
-          {
-            key: 'join',
-            icon: '👥',
-            gradient: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-            glowColor: 'rgba(236,72,153,0.2)',
-            title: 'Spiel beitreten',
-            sub: 'Mit Code einsteigen',
-            path: '/join',
-            delay: 0.14
-          }
-        ].map((item) => (
-          <motion.button
-            key={item.key}
-            className="home__action-card glass"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: item.delay }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate(item.path)}
-            style={{ '--card-glow': item.glowColor }}
-          >
-            <div className="home__action-icon" style={{ background: item.gradient }}>
-              <span>{item.icon}</span>
-            </div>
-            <div className="home__action-text">
-              <span className="home__action-title">{item.title}</span>
-              <span className="home__action-sub">{item.sub}</span>
-            </div>
-            <span className="home__action-arrow">›</span>
-          </motion.button>
-        ))}
+        <motion.button
+          className="home__action-card home__action-card--host glass"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.08 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => navigate('/host')}
+        >
+          <div className="home__action-icon">
+            <span>⚡</span>
+          </div>
+          <div className="home__action-text">
+            <span className="home__action-title">Spiel erstellen</span>
+            <span className="home__action-sub">Starte deine eigene Runde</span>
+          </div>
+          <span className="home__action-arrow">›</span>
+        </motion.button>
+
+        <motion.button
+          className="home__action-card home__action-card--join glass"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, delay: 0.14 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => navigate('/join')}
+        >
+          <div className="home__action-icon">
+            <span>👥</span>
+          </div>
+          <div className="home__action-text">
+            <span className="home__action-title">Spiel beitreten</span>
+            <span className="home__action-sub">Mit Code einsteigen</span>
+          </div>
+          <span className="home__action-arrow">›</span>
+        </motion.button>
       </div>
 
-      {/* Letztes Spiel */}
+      {/* Last session */}
       {lastSession && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -174,7 +162,7 @@ export default function MainMenu({ player }) {
         </motion.div>
       )}
 
-      {/* Sekundäre Links */}
+      {/* Secondary */}
       <motion.div
         className="home__secondary"
         initial={{ opacity: 0 }}
@@ -183,7 +171,7 @@ export default function MainMenu({ player }) {
       >
         {[
           { icon: '📖', label: 'Regeln', path: '/rules' },
-          { icon: '🏆', label: 'Statistiken', path: '/profile' }
+          { icon: '🏆', label: 'Stats', path: '/profile' }
         ].map((item) => (
           <button
             key={item.path}
