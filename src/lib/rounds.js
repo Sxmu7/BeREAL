@@ -27,7 +27,7 @@ import { maybePickPartyEvent } from './partyEvents'
  */
 
 function emptyStats() {
-  return { wins: 0, losses: 0, completed: 0, failed: 0, punishments: 0, battleWins: 0 }
+  return { wins: 0, losses: 0, completed: 0, failed: 0, punishments: 0, battleWins: 0, skips: 0 }
 }
 
 export function ensurePlayerStats(stats, playerId) {
@@ -36,13 +36,31 @@ export function ensurePlayerStats(stats, playerId) {
 
 export async function startNewRound(
   sessionCode,
-  { players, difficulty, locationMode, roundNumber, previousSelectedPlayerId, skipCountdown = false, language = 'de' }
+  {
+    players, difficulty, locationMode, roundNumber,
+    previousSelectedPlayerId, skipCountdown = false,
+    language = 'de', customChallenges = [], battleRoundEvery = 5
+  }
 ) {
   const excludeIds = previousSelectedPlayerId ? [previousSelectedPlayerId] : []
   const selected = pickRandomPlayer(players, excludeIds)
-  const challengeText = pickRandomChallenge(difficulty, locationMode, language)
-  const proofType = getProofType(challengeText)   // ← auto-detect
-  const partyEvent = maybePickPartyEvent(roundNumber)
+
+  // Battle-Runde erkennen (jede N-te Runde, ab Runde 2, mind. 2 Spieler)
+  const isBattle =
+    battleRoundEvery > 0 &&
+    roundNumber > 1 &&
+    roundNumber % battleRoundEvery === 0 &&
+    players.length >= 2
+
+  let battleOpponentId = null
+  if (isBattle) {
+    const others = players.filter(p => p.id !== selected.id)
+    if (others.length > 0) battleOpponentId = pickRandomPlayer(others, []).id
+  }
+
+  const challengeText = pickRandomChallenge(difficulty, locationMode, language, customChallenges)
+  const proofType = isBattle ? 'none' : getProofType(challengeText)
+  const partyEvent = isBattle ? null : maybePickPartyEvent(roundNumber)
 
   const ref = doc(db, 'sessions', sessionCode)
   await updateDoc(ref, {
@@ -51,16 +69,22 @@ export async function startNewRound(
       phase: skipCountdown ? 'spinning' : 'countdown',
       selectedPlayerId: selected.id,
       challengeText,
-      proofType,                // ← gespeichert in Firestore
+      proofType,
       difficulty,
       decision: 'pending',
       proofUrl: null,
       votes: {},
       outcome: null,
       partyEvent: partyEvent || null,
-      startedAt: serverTimestamp()
+      startedAt: serverTimestamp(),
+      // Battle-Felder
+      isBattle: isBattle || false,
+      battleOpponentId: battleOpponentId || null,
+      battleDecisions: isBattle ? {} : null,
+      battleVotes: isBattle ? {} : null,
+      battleWinnerId: null,
     },
-    nextRoundAt: null           // Warteraum-Timer zurücksetzen
+    nextRoundAt: null
   })
 }
 
@@ -154,4 +178,94 @@ export async function finalizeRound(
 export async function clearRound(sessionCode) {
   const ref = doc(db, 'sessions', sessionCode)
   await updateDoc(ref, { currentRound: null })
+}
+
+// ── Challenge neu würfeln (Host, Challenge-Phase) ─────────────────────────────
+export async function rerollChallenge(sessionCode, difficulty, locationMode, language = 'de', customChallenges = []) {
+  const newText = pickRandomChallenge(difficulty, locationMode, language, customChallenges)
+  const proofType = getProofType(newText)
+  await updateDoc(doc(db, 'sessions', sessionCode), {
+    'currentRound.challengeText': newText,
+    'currentRound.proofType': proofType,
+  })
+}
+
+// ── Challenge überspringen (1× pro Spiel, ausgewählter Spieler) ───────────────
+export async function skipChallenge(sessionCode, playerId, stats) {
+  const updatedStats = { ...stats }
+  const current = ensurePlayerStats(updatedStats, playerId)
+  updatedStats[playerId] = { ...current, skips: (current.skips || 0) + 1 }
+  await updateDoc(doc(db, 'sessions', sessionCode), {
+    'currentRound.outcome': 'skipped',
+    'currentRound.phase': 'result',
+    stats: updatedStats,
+    nextRoundAt: null,
+  })
+}
+
+// ── Battle: Entscheidung eines Spielers speichern ────────────────────────────
+export async function setBattleDecision(sessionCode, playerId, decision) {
+  await updateDoc(doc(db, 'sessions', sessionCode), {
+    [`currentRound.battleDecisions.${playerId}`]: decision,
+  })
+}
+
+// ── Battle: Stimme abgeben (wer hat gewonnen?) ───────────────────────────────
+export async function castBattleVote(sessionCode, currentVotes, voterId, winnerPlayerId) {
+  const updatedVotes = { ...(currentVotes || {}), [voterId]: winnerPlayerId }
+  await updateDoc(doc(db, 'sessions', sessionCode), {
+    'currentRound.battleVotes': updatedVotes,
+  })
+  return updatedVotes
+}
+
+// ── Battle abschließen und Gewinner ermitteln ─────────────────────────────────
+export async function finalizeBattle(sessionCode, { decisions, mainId, oppId, stats, battleVotes = null }) {
+  const mainDecision = decisions?.[mainId]
+  const oppDecision = decisions?.[oppId]
+
+  let winnerId = null
+  let loserId = null
+
+  if (mainDecision === 'punishment' && oppDecision === 'punishment') {
+    // Beide bestraft → kein Gewinner
+  } else if (mainDecision !== 'punishment' && oppDecision === 'punishment') {
+    winnerId = mainId; loserId = oppId
+  } else if (mainDecision === 'punishment' && oppDecision !== 'punishment') {
+    winnerId = oppId; loserId = mainId
+  } else if (battleVotes && Object.keys(battleVotes).length > 0) {
+    // Beide accepted → Voting entscheidet
+    const counts = {}
+    Object.values(battleVotes).forEach(v => { counts[v] = (counts[v] || 0) + 1 })
+    if ((counts[mainId] || 0) >= (counts[oppId] || 0)) {
+      winnerId = mainId; loserId = oppId
+    } else {
+      winnerId = oppId; loserId = mainId
+    }
+  } else {
+    // Beide accepted, kein Voting → Unentschieden
+  }
+
+  const updatedStats = { ...stats }
+  if (winnerId) {
+    const ws = ensurePlayerStats(updatedStats, winnerId)
+    updatedStats[winnerId] = {
+      ...ws,
+      wins: (ws.wins || 0) + 2,          // Battle = doppelte Punkte
+      battleWins: (ws.battleWins || 0) + 1,
+      completed: (ws.completed || 0) + 1,
+    }
+  }
+  if (loserId) {
+    const ls = ensurePlayerStats(updatedStats, loserId)
+    updatedStats[loserId] = { ...ls, losses: (ls.losses || 0) + 1 }
+  }
+
+  await updateDoc(doc(db, 'sessions', sessionCode), {
+    'currentRound.phase': 'result',
+    'currentRound.battleWinnerId': winnerId,
+    'currentRound.outcome': winnerId ? 'success' : 'failed',
+    stats: updatedStats,
+    nextRoundAt: null,
+  })
 }

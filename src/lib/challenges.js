@@ -961,11 +961,13 @@ export const CHALLENGES_BY_LOCATION_EN = {
  * unbekannter Modus übergeben wird.
  * @param {'de'|'en'} language - Sprache der Challenges
  */
-export function pickRandomChallenge(difficulty, locationMode = 'houseparty', language = 'de') {
+export function pickRandomChallenge(difficulty, locationMode = 'houseparty', language = 'de', customChallenges = []) {
   const pool = language === 'en' ? CHALLENGES_BY_LOCATION_EN : CHALLENGES_BY_LOCATION
   const locationPool = pool[locationMode] || pool.houseparty
   const diffPool = locationPool[difficulty] || locationPool.medium
-  return diffPool[Math.floor(Math.random() * diffPool.length)]
+  // Eigene Challenges in den Pool mischen (gleichgewichtig)
+  const combined = customChallenges?.length > 0 ? [...diffPool, ...customChallenges] : diffPool
+  return combined[Math.floor(Math.random() * combined.length)]
 }
 
 export function pickRandomPlayer(players, excludeIds = []) {

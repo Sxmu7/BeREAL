@@ -1,178 +1,107 @@
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  onSnapshot,
-  serverTimestamp,
-  arrayUnion,
-  arrayRemove,
-  deleteDoc
-} from 'firebase/firestore'
+import { doc, setDoc, updateDoc, onSnapshot, getDoc } from 'firebase/firestore'
 import { db } from './firebase'
 
-/**
- * Firestore-Struktur:
- *
- * sessions/{sessionCode}
- *   hostId: string
- *   sessionName: string
- *   status: 'lobby' | 'active' | 'ended'
- *   settings: {
- *     gameMode: 'party' | 'casual'
- *     challengeFrequency: 'chill' | 'party' | 'chaos' | 'custom'
- *     customIntervalMin: number | null
- *     customIntervalMax: number | null
- *     challengeTimer: number   // Sekunden
- *     difficulty: 'easy' | 'medium' | 'hard' | 'chaos'
- *     battleRoundEvery: number | null
- *     punishmentLevel: 'mild' | 'medium' | 'heavy'
- *   }
- *   players: [{ id, name, characterId, drink, isHost, joinedAt }]
- *   createdAt: serverTimestamp
- */
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
-function randomSessionCode() {
-  // 5-stelliger Code, ohne verwechselbare Zeichen (0/O, 1/I)
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  let code = ''
-  for (let i = 0; i < 5; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return code
+function generateCode() {
+  return Array.from({ length: 6 }, () =>
+    CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]
+  ).join('')
 }
 
 export function generatePlayerId() {
-  return `p_${Math.random().toString(36).slice(2, 10)}`
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
 }
 
-const DEFAULT_SETTINGS = {
-  gameMode: 'party',
-  challengeFrequency: 'party',
-  customIntervalMin: 5,
-  customIntervalMax: 10,
-  challengeTimer: 180,
-  difficulty: 'medium',
-  battleRoundEvery: 5,
-  punishmentLevel: 'medium'
-}
-
-/**
- * Erstellt eine neue Session mit eindeutigem Code. Versucht bei
- * Kollision (sehr unwahrscheinlich) bis zu 5x neu.
- */
+// ── Session erstellen ─────────────────────────────────────────────────────────
 export async function createSession({ hostId, hostName, hostCharacterId, sessionName }) {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const code = randomSessionCode()
-    const ref = doc(db, 'sessions', code)
-    try {
-      await setDoc(ref, {
-        hostId,
-        sessionName: sessionName || `${hostName}'s Session`,
-        status: 'lobby',
-        settings: DEFAULT_SETTINGS,
-        players: [
-          {
-            id: hostId,
-            name: hostName,
-            characterId: hostCharacterId,
-            drink: null,
-            isHost: true,
-            joinedAt: Date.now()
-          }
-        ],
-        createdAt: serverTimestamp()
-      })
-      return code
-    } catch (err) {
-      console.warn('Session-Erstellung fehlgeschlagen, neuer Versuch:', err)
-    }
-  }
-  throw new Error('Session konnte nicht erstellt werden.')
-}
-
-export async function updateSessionSettings(sessionCode, settings) {
-  const ref = doc(db, 'sessions', sessionCode)
-  await updateDoc(ref, { settings })
-}
-
-export async function joinSession(sessionCode, player) {
-  const ref = doc(db, 'sessions', sessionCode)
-  await updateDoc(ref, {
-    players: arrayUnion({
-      id: player.id,
-      name: player.name,
-      characterId: player.characterId,
-      drink: null,
-      isHost: false,
-      joinedAt: Date.now()
-    })
+  const code = generateCode()
+  await setDoc(doc(db, 'sessions', code), {
+    code,
+    hostId,
+    sessionName: sessionName || 'RIOT',
+    status: 'lobby',
+    paused: false,
+    players: [{ id: hostId, name: hostName || 'Host', characterId: hostCharacterId || null, isHost: true }],
+    currentRound: null,
+    nextRoundAt: null,
+    stats: {},
+    settings: {},
+    createdAt: new Date(),
   })
+  return code
 }
 
-export async function leaveSession(sessionCode, playerEntry) {
-  const ref = doc(db, 'sessions', sessionCode)
-  await updateDoc(ref, {
-    players: arrayRemove(playerEntry)
-  })
-}
-
-export async function removePlayer(sessionCode, playerEntry) {
-  return leaveSession(sessionCode, playerEntry)
-}
-
-export async function setPlayerDrink(sessionCode, players, playerId, drink) {
-  const ref = doc(db, 'sessions', sessionCode)
-  const updated = players.map((p) => (p.id === playerId ? { ...p, drink } : p))
-  await updateDoc(ref, { players: updated })
-}
-
-export async function startSession(sessionCode) {
-  const ref = doc(db, 'sessions', sessionCode)
-  await updateDoc(ref, { status: 'active', startedAt: serverTimestamp() })
-}
-
-export async function endSession(sessionCode) {
-  const ref = doc(db, 'sessions', sessionCode)
-  await updateDoc(ref, { status: 'ended', endedAt: serverTimestamp() })
-}
-
-export async function deleteSession(sessionCode) {
-  await deleteDoc(doc(db, 'sessions', sessionCode))
-}
-
-/**
- * Abonniert Live-Updates einer Session. Gibt die Unsubscribe-Funktion
- * zurück. `onMissing` wird aufgerufen, wenn die Session nicht (mehr)
- * existiert (z.B. Code falsch eingegeben, oder Host hat beendet).
- */
-/**
- * Einmaliger Abruf einer Session ohne Live-Subscription. Wird für den
- * "Letztes Spiel fortsetzen"-Check beim App-Start gebraucht, wo wir
- * nur kurz prüfen wollen, ob die gespeicherte Session noch existiert,
- * ohne dafür einen dauerhaften Listener zu öffnen.
- */
-export async function getSessionOnce(sessionCode) {
-  const ref = doc(db, 'sessions', sessionCode)
+// ── Spieler beitreten ─────────────────────────────────────────────────────────
+export async function joinSession(code, { id, name, characterId }) {
+  const ref = doc(db, 'sessions', code)
   const snap = await getDoc(ref)
-  if (!snap.exists()) return null
-  return { code: snap.id, ...snap.data() }
+  if (!snap.exists()) return
+  const players = snap.data().players || []
+  if (players.some(p => p.id === id)) return // bereits drin
+  await updateDoc(ref, { players: [...players, { id, name, characterId, isHost: false }] })
 }
 
-export function subscribeToSession(sessionCode, onUpdate, onMissing) {
-  const ref = doc(db, 'sessions', sessionCode)
+// ── Spieler entfernen (Lobby) ─────────────────────────────────────────────────
+export async function removePlayer(code, player) {
+  const ref = doc(db, 'sessions', code)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) return
+  const players = (snap.data().players || []).filter(p => p.id !== player.id)
+  await updateDoc(ref, { players })
+}
+
+// ── Spieler rauswerfen (mid-game) ─────────────────────────────────────────────
+export async function kickPlayer(code, playerId) {
+  const ref = doc(db, 'sessions', code)
+  const snap = await getDoc(ref)
+  if (!snap.exists()) return
+  const players = (snap.data().players || []).filter(p => p.id !== playerId)
+  await updateDoc(ref, { players })
+}
+
+// ── Session starten ───────────────────────────────────────────────────────────
+export async function startSession(code) {
+  await updateDoc(doc(db, 'sessions', code), { status: 'active' })
+}
+
+// ── Session beenden ───────────────────────────────────────────────────────────
+export async function endSession(code) {
+  await updateDoc(doc(db, 'sessions', code), { status: 'ended' })
+}
+
+// ── Settings aktualisieren ────────────────────────────────────────────────────
+export async function updateSessionSettings(code, settings) {
+  await updateDoc(doc(db, 'sessions', code), { settings })
+}
+
+// ── Spiel pausieren / fortsetzen ──────────────────────────────────────────────
+export async function pauseSession(code) {
+  await updateDoc(doc(db, 'sessions', code), { paused: true })
+}
+
+export async function resumeSession(code) {
+  await updateDoc(doc(db, 'sessions', code), { paused: false })
+}
+
+// ── Realtime-Subscription ─────────────────────────────────────────────────────
+export function subscribeToSession(code, onData, onError) {
   return onSnapshot(
-    ref,
+    doc(db, 'sessions', code),
     (snap) => {
-      if (!snap.exists()) {
-        onMissing?.()
-        return
-      }
-      onUpdate({ code: snap.id, ...snap.data() })
+      if (!snap.exists()) { onError?.(); return }
+      onData({ ...snap.data(), code: snap.id })
     },
     (err) => {
-      console.error('Session-Listener-Fehler:', err)
-      onMissing?.()
+      console.error('[Session] Subscription error:', err)
+      onError?.()
     }
   )
+}
+
+// ── Einmalig lesen ────────────────────────────────────────────────────────────
+export async function getSessionOnce(code) {
+  const snap = await getDoc(doc(db, 'sessions', code))
+  if (!snap.exists()) return null
+  return { ...snap.data(), code: snap.id }
 }
