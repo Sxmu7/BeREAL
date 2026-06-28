@@ -1,6 +1,6 @@
 /* ============================================================
    RIOT – Design Tokens
-   Pure black · electric yellow · ultra-clean
+   Pure black · electric purple · ultra-clean
    ============================================================ */
 
 :root {
@@ -20,12 +20,13 @@
   --color-text-secondary:   rgba(255, 255, 255, 0.5);
   --color-text-tertiary:    rgba(255, 255, 255, 0.28);
 
-  /* --- Accent: electric yellow --- */
-  --color-accent:           #FFE500;
-  --color-accent-dim:       rgba(255, 229, 0, 0.1);
-  --color-accent-text:      #000000;
-  --gradient-accent:        linear-gradient(135deg, #FFE500 0%, #FF9500 100%);
-  --gradient-accent-soft:   linear-gradient(135deg, rgba(255,229,0,0.2) 0%, rgba(255,149,0,0.1) 100%);
+  /* --- Accent: electric purple --- */
+  --color-accent:           #8B5CF6;
+  --color-accent-rgb:       139, 92, 246;
+  --color-accent-dim:       rgba(139, 92, 246, 0.12);
+  --color-accent-text:      #ffffff;
+  --gradient-accent:        linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+  --gradient-accent-soft:   linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(99,102,241,0.1) 100%);
 
   /* --- Avatar gradients (keep colorful for player bubbles) --- */
   --gradient-avatar-1: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -45,8 +46,8 @@
 
   /* --- Shadows --- */
   --shadow-card:    0 1px 3px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.5);
-  --shadow-glow:    0 0 32px rgba(255,229,0,0.2);
-  --shadow-glow-sm: 0 0 16px rgba(255,229,0,0.15);
+  --shadow-glow:    0 0 32px rgba(139,92,246,0.25);
+  --shadow-glow-sm: 0 0 16px rgba(139,92,246,0.18);
 
   /* --- Typography --- */
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -91,7 +92,7 @@
   --safe-right:  env(safe-area-inset-right, 0px);
 
   /* --- Dot animation --- */
-  --color-dot: rgba(255, 229, 0, 0.15);
+  --color-dot: rgba(139, 92, 246, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
