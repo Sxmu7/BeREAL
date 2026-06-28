@@ -37,32 +37,58 @@ export async function requestPushPermission() {
   try {
     // Grundvoraussetzungen prüfen (iOS PWA braucht beides)
     if (typeof Notification === 'undefined') return null
+    if (!('serviceWorker' in navigator)) return null
     if (!('PushManager' in window)) return null
 
     const supported = await isSupported().catch(() => false)
     if (!supported) return null
 
+    // Permission anfragen (muss nach User-Gesture passieren)
     const permission = await Notification.requestPermission()
     if (permission !== 'granted') return null
 
-    // Firebase Messaging SW explizit registrieren —
-    // ohne das findet getToken() keinen passenden SW und schlägt fehl
-    const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-      scope: '/',
-    }).catch((err) => {
-      console.warn('[FCM] SW-Registrierung fehlgeschlagen:', err)
-      return null
-    })
-    if (!swReg) return null
+    // Firebase Messaging SW registrieren
+    let swReg
+    try {
+      swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+        scope: '/firebase-cloud-messaging-push-scope',
+        updateViaCache: 'none',
+      })
+    } catch {
+      // Fallback: scope '/' falls der enge scope nicht klappt
+      try {
+        swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+          scope: '/',
+          updateViaCache: 'none',
+        })
+      } catch (err) {
+        console.warn('[FCM] SW-Registrierung fehlgeschlagen:', err)
+        return null
+      }
+    }
 
-    // Warten bis der SW aktiv ist
-    await navigator.serviceWorker.ready
+    // Auf DIESEN spezifischen SW warten (nicht navigator.serviceWorker.ready,
+    // das könnte den Vite-PWA-SW zurückgeben)
+    await new Promise((resolve) => {
+      if (swReg.active) return resolve()
+      const sw = swReg.installing || swReg.waiting
+      if (!sw) return resolve()
+      sw.addEventListener('statechange', function handler() {
+        if (sw.state === 'activated') {
+          sw.removeEventListener('statechange', handler)
+          resolve()
+        }
+      })
+      // Timeout nach 5s damit es nicht ewig hängt
+      setTimeout(resolve, 5000)
+    })
 
     const messaging = getMessaging(app)
     const token = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FCM_VAPID_KEY,
       serviceWorkerRegistration: swReg,
     })
+    console.log('[FCM] Token erhalten:', token ? '✓' : 'null')
     return token || null
   } catch (err) {
     console.warn('[FCM] Token-Erstellung fehlgeschlagen:', err)
