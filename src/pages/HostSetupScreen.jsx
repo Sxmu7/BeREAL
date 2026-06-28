@@ -60,6 +60,7 @@ export default function HostSetupScreen({ player }) {
   const [punishment, setPunishment] = useState('medium')
   const [language, setLanguage] = useState('de')
   const [roundMode, setRoundMode] = useState('direct')
+  const [customChallengesText, setCustomChallengesText] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState(null)
 
@@ -83,7 +84,11 @@ export default function HostSetupScreen({ player }) {
         language,
         battleRoundEvery: 5,
         punishmentLevel: mode === 'chaos' ? 'heavy' : punishment,
-        roundMode
+        roundMode,
+        customChallenges: customChallengesText
+          .split('\n')
+          .map(l => l.trim())
+          .filter(l => l.length > 3)
       }
       const code = await createSession({
         hostId,
@@ -278,6 +283,24 @@ export default function HostSetupScreen({ player }) {
             </div>
           </motion.div>
         )}
+
+        {/* Eigene Challenges */}
+        <motion.div className="create-game__field"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
+          <label className="create-game__label">Eigene Challenges (optional)</label>
+          <textarea
+            className="create-game__textarea"
+            placeholder={'Eine Challenge pro Zeile\nz.B. Ruf laut "RIOT!" durch den Raum\nStell dich als berühmte Person vor'}
+            value={customChallengesText}
+            onChange={(e) => setCustomChallengesText(e.target.value)}
+            rows={4}
+          />
+          {customChallengesText.split('\n').filter(l => l.trim().length > 3).length > 0 && (
+            <span className="create-game__field-hint">
+              ✓ {customChallengesText.split('\n').filter(l => l.trim().length > 3).length} eigene Challenge(s)
+            </span>
+          )}
+        </motion.div>
 
         {error && <p className="create-game__error">{error}</p>}
       </div>

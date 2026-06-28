@@ -197,6 +197,46 @@
   color: var(--color-text-secondary);
 }
 
+/* ── Game History ── */
+.home__history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.home__history-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.home__history-avatars {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.home__history-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home__history-name {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.home__history-meta {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
 /* Secondary buttons */
 .home__secondary {
   display: flex;

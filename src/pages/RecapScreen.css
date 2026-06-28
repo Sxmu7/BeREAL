@@ -281,6 +281,24 @@
   color: var(--color-text-tertiary);
 }
 
+/* ── Share ── */
+.recap-screen__share-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--duration-fast);
+}
+
+.recap-screen__share-btn:active {
+  background: var(--color-bg-elevated);
+}
+
 /* ── Actions ── */
 .recap-screen__actions {
   display: flex;

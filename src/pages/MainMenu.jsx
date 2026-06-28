@@ -16,11 +16,34 @@ function getLocalStats() {
   }
 }
 
+function getGameHistory() {
+  try {
+    const raw = localStorage.getItem('riot_game_history')
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
+function formatTimeAgo(ms) {
+  if (!ms) return ''
+  const diffMs = Date.now() - ms
+  const diffMin = Math.round(diffMs / 60000)
+  if (diffMin < 2) return 'gerade eben'
+  if (diffMin < 60) return `vor ${diffMin} Min`
+  const diffH = Math.round(diffMin / 60)
+  if (diffH < 24) return `vor ${diffH} Std`
+  const diffD = Math.round(diffH / 24)
+  return `vor ${diffD} Tag${diffD > 1 ? 'en' : ''}`
+}
+
 export default function MainMenu({ player }) {
   const navigate = useNavigate()
   const character = getCharacterById(player.characterId)
   const [lastSession, setLastSession] = useState(null)
   const [stats, setStats] = useState(null)
+  const [history, setHistory] = useState([])
 
   useEffect(() => {
     const code = getLastSessionCode()
@@ -30,6 +53,7 @@ export default function MainMenu({ player }) {
       }).catch(() => {})
     }
     setStats(getLocalStats())
+    setHistory(getGameHistory())
   }, [])
 
   const h = new Date().getHours()
@@ -159,6 +183,42 @@ export default function MainMenu({ player }) {
             </div>
             <span className="home__action-arrow">›</span>
           </button>
+        </motion.div>
+      )}
+
+      {/* Session-Verlauf */}
+      {history.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.26 }}
+        >
+          <p className="home__section-title">Vergangene Spiele</p>
+          <div className="home__history">
+            {history.slice(0, 3).map((entry, i) => (
+              <motion.div
+                key={entry.endedAtMs || i}
+                className="home__history-row glass"
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.28 + i * 0.06 }}
+              >
+                <div className="home__history-avatars">
+                  {(entry.players || []).slice(0, 3).map((p, idx) => (
+                    <span key={p.id} className="home__last-avatar" style={{ marginLeft: idx > 0 ? -12 : 0, zIndex: 3 - idx }}>
+                      {getCharacterById(p.characterId)?.icon || '🎮'}
+                    </span>
+                  ))}
+                </div>
+                <div className="home__history-info">
+                  <span className="home__history-name">{entry.sessionName}</span>
+                  <span className="home__history-meta">
+                    {entry.winner ? `🏆 ${entry.winner}` : '–'} · {entry.roundNumber} Runden · {formatTimeAgo(entry.endedAtMs)}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       )}
 

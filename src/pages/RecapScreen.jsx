@@ -46,6 +46,22 @@ export default function RecapScreen({}) {
       won: isTopPlayer,
       wasMvp: isTopPlayer
     })
+
+    // Session-Verlauf in localStorage speichern
+    try {
+      const history = JSON.parse(localStorage.getItem('riot_game_history') || '[]')
+      history.unshift({
+        sessionName: snapshot.sessionName || 'RIOT',
+        players: snapshot.players.map(p => ({ id: p.id, name: p.name, characterId: p.characterId })),
+        roundNumber: snapshot.roundNumber || 0,
+        winner: sortedByWins[0]?.name || null,
+        createdAtMs: snapshot.createdAtMs || Date.now(),
+        endedAtMs: Date.now(),
+      })
+      // Max. 20 Einträge behalten
+      localStorage.setItem('riot_game_history', JSON.stringify(history.slice(0, 20)))
+    } catch (_) {/* ignore */}
+
     setLocalStatsRecorded(true)
   }, [snapshot, ownPlayerId])
 
@@ -234,6 +250,23 @@ export default function RecapScreen({}) {
         transition={{ duration: 0.4, delay: 0.4 }}
         className="recap-screen__actions"
       >
+        {/* Share-Button */}
+        {typeof navigator?.share === 'function' && (
+          <button
+            className="recap-screen__share-btn"
+            onClick={() => {
+              const winnerName = sortedPlayers[0]?.name || '?'
+              const sessionName = snapshot.sessionName || 'RIOT'
+              navigator.share({
+                title: `${sessionName} – RIOT`,
+                text: `🏆 ${winnerName} hat gewonnen! ${snapshot.roundNumber} Runden, ${totalChallenges} Challenges. Wer ist beim nächsten Mal dabei?`,
+                url: window.location.origin,
+              }).catch(() => {})
+            }}
+          >
+            Ergebnis teilen ↑
+          </button>
+        )}
         <button className="btn-primary" onClick={() => navigate('/menu')}>
           Zurück zum Menü
         </button>
